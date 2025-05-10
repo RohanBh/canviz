@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive Learning Platform</title>
+
+    <!-- Modern font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Analytics (privacy-friendly) -->
+    <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+    <noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt=""
+            referrerpolicy="no-referrer-when-downgrade" /></noscript>
+
+    <script defer>
+        function showTab(tabName) {
+            const contents = document.querySelectorAll(".tab-content");
+            contents.forEach(el => el.style.display = "none");
+            document.getElementById(tabName).style.display = "block";
+
+            const tabs = document.querySelectorAll(".tab-button");
+            tabs.forEach(btn => btn.classList.remove("active"));
+            document.querySelector(`[data-tab='${tabName}']`).classList.add("active");
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Smooth scroll for navigation
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        window.scrollTo({
+                            top: target.offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Initialize tabs
+            showTab("research");
+
+            // Animate elements when they come into view
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.animate').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Form submission
+            const form = document.getElementById('signup-form');
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const button = this.querySelector('button[type="submit"]');
+                    button.classList.add('loading');
+
+                    // Simulate form submission
+                    setTimeout(() => {
+                        button.classList.remove('loading');
+                        button.textContent = "You're on the list!";
+                        button.classList.add('success');
+
+                        // Reset after 3 seconds
+                        setTimeout(() => {
+                            form.reset();
+                            button.textContent = "Request Access";
+                            button.classList.remove('success');
+                        }, 3000);
+                    }, 1500);
+                });
+            }
+        });
+    </script>
+
+    <style>
+        :root {
+            --background: #0a0a0c;
+            --surface: #12131a;
+            --surface-hover: #1d1f2b;
+            --border: rgba(255, 255, 255, 0.1);
+            --primary: #3d5afe;
+            --primary-light: #536dfe;
+            --success: #00c853;
+            --text: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-tertiary: rgba(255, 255, 255, 0.5);
+            --card-radius: 16px;
+            --button-radius: 12px;
+            --input-radius: 12px;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+            --glow: 0 0 20px rgba(61, 90, 254, 0.2);
+        }
+
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Typography */
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            letter-spacing: -0.03em;
+            background: linear-gradient(90deg, #fff 0%, #a9b3f5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            letter-spacing: -0.02em;
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: var(--primary-light);
+        }
+
+        /* Buttons */
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 28px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--button-radius);
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--glow);
+        }
+
+        .button.secondary {
+            background-color: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .button.secondary:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .button.loading::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            right: 16px;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .button.success {
+            background-color: var(--success);
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Nav */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 0;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-mark {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary), #536dfe);
+            border-radius: 8px;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        /* Hero section */
+        .hero {
+            padding: 120px 0 80px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 80px;
+        }
+
+        .gradient-blob {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle at center, rgba(61, 90, 254, 0.2) 0%, rgba(61, 90, 254, 0) 70%);
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.8;
+        }
+
+        .blob-1 {
+            top: -200px;
+            right: -100px;
+        }
+
+        .blob-2 {
+            bottom: -300px;
+            left: -200px;
+            background: radial-gradient(circle at center, rgba(83, 109, 254, 0.2) 0%, rgba(83, 109, 254, 0) 70%);
+        }
+
+        /* Features section */
+        .features {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .feature-card {
+            background-color: var(--surface);
+            border-radius: var(--card-radius);
+            padding: 32px;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background-color: var(--surface-hover);
+        }
+
+        .feature-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background-color: rgba(61, 90, 254, 0.1);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+        }
+
+        /* Demo section */
+        .demo {
+            padding: 80px 0;
+        }
+
+        .tab-container {
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tab-button {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 12px 24px;
+            margin: 0 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .tab-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+        }
+
+        .tab-button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(61, 90, 254, 0.3);
+        }
+
+        .demo-container {
+            background-color: var(--surface);
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+
+        /* CTA section */
+        .cta {
+            padding: 120px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-container {
+            background-color: var(--surface);
+            border-radius: var(--card-radius);
+            padding: 60px;
+            border: 1px solid var(--border);
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            background: radial-gradient(circle at center, rgba(61, 90, 254, 0.1) 0%, rgba(61, 90, 254, 0) 70%);
+            filter: blur(80px);
+            z-index: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: var(--input-radius);
+            color: var(--text);
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .form-submit {
+            width: 100%;
+            margin-top: 8px;
+            padding: 16px;
+        }
+
+        /* Footer */
+        footer {
+            padding: 60px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 16px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .social-icon:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        /* Animation classes */
+        .animate {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        .animate-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .delay-1 {
+            transition-delay: 0.1s;
+        }
+
+        .delay-2 {
+            transition-delay: 0.2s;
+        }
+
+        .delay-3 {
+            transition-delay: 0.3s;
+        }
+
+        .delay-4 {
+            transition-delay: 0.4s;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 80px 0 40px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .cta-container {
+                padding: 40px 24px;
+            }
+
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            iframe {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Decorative blobs -->
+    <div class="gradient-blob blob-1"></div>
+    <div class="gradient-blob blob-2"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#" class="logo">
+                    <div class="logo-mark">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 4L4 12M4 4L12 12" stroke="white" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    Kinesthetic
+                </a>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#demo">Demo</a>
+                    <a href="#cta">Get Access</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 class="animate">Visual Learning Reimagined</h1>
+            <p class="hero-subtitle animate delay-1">Interactive, kinesthetic learning experiences that give you the big
+                picture first, then let you explore deeper into what matters most to you.</p>
+            <div class="hero-buttons animate delay-2">
+                <a href="#demo" class="button">See It In Action</a>
+                <a href="#cta" class="button secondary">Request Early Access</a>
+            </div>
+
+            <!-- Feature highlights -->
+            <div class="features-grid animate delay-3">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 3V21M3 12H21" stroke="#3D5AFE" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Interactive Elements</h3>
+                    <p>Touch, manipulate, and experiment with concepts to see changes in real-time.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 14L12 10L16 14" stroke="#3D5AFE" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Phased Learning</h3>
+                    <p>Start with broad concepts and progressively dive deeper into specific details.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
+                                stroke="#3D5AFE" stroke-width="2" />
+                            <path
+                                d="M15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 10.3431 10.3431 9 12 9C13.6569 9 15 10.3431 15 12Z"
+                                stroke="#3D5AFE" stroke-width="2" />
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Visual Reasoning</h3>
+                    <p>Develop intuition and insights through dynamic visual representations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title animate">Transform Your Learning Experience</h2>
+
+            <div class="features-grid animate delay-1">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M5 3V19C5 20.1046 5.89543 21 7 21H19C19.5523 21 20 20.5523 20 20V7.41421C20 7.149 19.8946 6.89464 19.7071 6.70711L16.2929 3.29289C16.1054 3.10536 15.851 3 15.5858 3H6C5.44772 3 5 3.44772 5 4V3ZM5 3C3.89543 3 3 3.89543 3 5V17C3 18.1046 3.89543 19 5 19H6"
+                                stroke="#3D5AFE" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Research Mathematics</h3>
+                    <p>Visualize complex mathematical concepts, from calculus to topology, with interactive models that
+                        let you manipulate variables and see results instantly.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M3 9H21M7 3V21M17 3V21M3 15H21M3 5V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V5C21 3.89543 20.1046 3 19 3H5C3.89543 3 3 3.89543 3 5Z"
+                                stroke="#3D5AFE" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Business Applications</h3>
+                    <p>Explore economic models, market trends, and business strategies through interactive
+                        visualizations that make complex business concepts intuitive.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M5 5C5 3.89543 5.89543 3 7 3H17C18.1046 3 19 3.89543 19 5V19C19 20.1046 18.1046 21 17 21H7C5.89543 21 5 20.1046 5 19V5Z"
+                                stroke="#3D5AFE" stroke-width="2" />
+                            <path d="M9 7H15M9 12H15M9 17H13" stroke="#3D5AFE" stroke-width="2"
+                                stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Scientific Discovery</h3>
+                    <p>From physics to biology, learn scientific principles by interacting with simulations that respond
+                        to your input and demonstrate cause and effect.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="9" stroke="#3D5AFE" stroke-width="2" />
+                            <path d="M12 7V12L15 15" stroke="#3D5AFE" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Sports Analytics</h3>
+                    <p>Understand game strategies, player movements, and performance metrics through dynamic
+                        visualizations that bring sports data to life.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M3 7C3 5.89543 3.89543 5 5 5H19C20.1046 5 21 5.89543 21 7V17C21 18.1046 20.1046 19 19 19H5C3.89543 19 3 18.1046 3 17V7Z"
+                                stroke="#3D5AFE" stroke-width="2" />
+                            <path d="M9 9L15 15M15 9L9 15" stroke="#3D5AFE" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Visual Reasoning</h3>
+                    <p>Develop and test your spatial reasoning abilities with challenges that improve your ability to
+                        visualize and manipulate objects mentally.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M14 3V7C14 7.55228 14.4477 8 15 8H19M14 3H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V7M14 3L19 7M9 17H15M9 13H15M9 9H10"
+                                stroke="#3D5AFE" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Customizable Learning</h3>
+                    <p>Learn at your own pace and focus on what matters most to you with customizable learning paths
+                        that adapt to your interests.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section class="demo" id="demo">
+        <div class="container">
+            <h2 class="section-title animate">Interactive Demonstrations</h2>
+
+            <div class="tab-container animate delay-1">
+                <button class="tab-button active" data-tab="research" onclick="showTab('research')">Research
+                    Math</button>
+                <button class="tab-button" data-tab="business" onclick="showTab('business')">Business</button>
+                <button class="tab-button" data-tab="science" onclick="showTab('science')">Science</button>
+                <button class="tab-button" data-tab="sports" onclick="showTab('sports')">Sports</button>
+                <button class="tab-button" data-tab="visual" onclick="showTab('visual')">Visual Reasoning</button>
+            </div>
+
+            <div class="demo-container animate delay-2">
+                <div id="research" class="tab-content">
+                    <iframe src="demos/research.html"></iframe>
+                </div>
+                <div id="business" class="tab-content">
+                    <iframe src="demos/business.html"></iframe>
+                </div>
+                <div id="science" class="tab-content">
+                    <iframe src="demos/science.html"></iframe>
+                </div>
+                <div id="sports" class="tab-content">
+                    <iframe src="demos/sports.html"></iframe>
+                </div>
+                <div id="visual" class="tab-content">
+                    <iframe src="demos/visual.html"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta" id="cta">
+        <div class="container">
+            <div class="cta-container animate">
+                <h2>Get Early Access</h2>
+                <p>Join our exclusive early access program and be among the first to experience our revolutionary
+                    learning platform.</p>
+
+                <form id="signup-form">
+                    <div class="form-group">
+                        <input type="text" class="form-input" placeholder="Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" class="form-input" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-input" placeholder="How would you use our platform?" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="button form-submit">Request Access</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="copyright">
+                    © 2025 Kinesthetic Learning Platform
+                </div>
+                <div class="social-links">
+                    <a href="#" class="social-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M22 6C22 6 21.3 8.1 20 9.4C21.6 17.4 15.3 22 9 22C5.7 22 3 20.6 3 20.6C3 20.6 6 20.2 8 18.2C5 17.4 4 14.5 4 14.5C4 14.5 5 14.9 6 14.5C3 13.2 3 10 3 10C3 10 4 10.8 5 11C3 9 4 6 4 6C4 6 8 10.6 13 11C12.2 7.1 16 5 18 7C19 7 21 6 21 6C21 6 20.5 7.5 19 8C20 8 22 7 22 6Z"
+                                stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </a>
+                    <a href="#" class="social-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M16 8C17.5913 8 19.1174 8.63214 20.2426 9.75736C21.3679 10.8826 22 12.4087 22 14V21H18V14C18 13.4696 17.7893 12.9609 17.4142 12.5858C17.0391 12.2107 16.5304 12 16 12C15.4696 12 14.9609 12.2107 14.5858 12.5858C14.2107 12.9609 14 13.4696 14 14V21H10V14C10 12.4087 10.6321 10.8826 11.7574 9.75736C12.8826 8.63214 14.4087 8 16 8Z"
+                                stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M6 9H2V21H6V9Z" stroke="white" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <path
+                                d="M4 6C5.10457 6 6 5.10457 6 4C6 2.89543 5.10457 2 4 2C2.89543 2 2 2.89543 2 4C2 5.10457 2.89543 6 4 6Z"
+                                stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </a>
+                    <a href="#" class="social-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z"
+                                stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M16 8V8.01" stroke="white" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <rect x="3" y="3" width="18" height="18" rx="5" stroke="white" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </a>
+                    <a href="#" class="social-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M18 2H15C13.6739 2 12.4021 2.52678 11.4645 3.46447C10.5268 4.40215 10 5.67392 10 7V10H7V14H10V22H14V14H17L18 10H14V7C14 6.73478 14.1054 6.48043 14.2929 6.29289C14.4804 6.10536 14.7348 6 15 6H18V2Z"
+                                stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
