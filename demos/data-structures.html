@@ -1,9 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prim's vs Kruskal's Algorithms</title>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-1DB24KTNYY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-1DB24KTNYY');
+  </script>
   <style>
     :root {
       --primary: #2563eb;
@@ -46,7 +56,10 @@
       padding: 2rem;
     }
 
-    h1, h2, h3, h4 {
+    h1,
+    h2,
+    h3,
+    h4 {
       font-weight: 700;
       line-height: 1.2;
       color: var(--neutral-900);
@@ -541,7 +554,8 @@
       transition: fill 0.3s;
     }
 
-    .prim-tree .node-label, .kruskal-tree .node-label {
+    .prim-tree .node-label,
+    .kruskal-tree .node-label {
       fill: white;
     }
 
@@ -719,9 +733,17 @@
     }
 
     @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+
+      100% {
+        transform: scale(1);
+      }
     }
 
     .node.pulse {
@@ -729,8 +751,15 @@
     }
 
     @keyframes highlight-fade {
-      0% { opacity: 1; transform: scale(1); }
-      100% { opacity: 0; transform: scale(1.5); }
+      0% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      100% {
+        opacity: 0;
+        transform: scale(1.5);
+      }
     }
 
     .highlight-ring {
@@ -818,8 +847,13 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
     }
 
     .code-block {
@@ -867,15 +901,17 @@
     }
   </style>
 </head>
+
 <body>
   <h1>Prim's vs Kruskal's Algorithms</h1>
   <div class="subtitle">A visual guide to understanding Minimum Spanning Tree algorithms</div>
-  
+
   <div class="container">
     <div class="explanation">
       <h2>Minimum Spanning Tree Algorithms</h2>
-      <p>A <strong>Minimum Spanning Tree (MST)</strong> connects all vertices in a weighted graph using the minimum possible total edge weight, without forming cycles.</p>
-      
+      <p>A <strong>Minimum Spanning Tree (MST)</strong> connects all vertices in a weighted graph using the minimum
+        possible total edge weight, without forming cycles.</p>
+
       <div class="key-differences">
         <div class="difference-card prim">
           <h3>
@@ -883,10 +919,11 @@
             Prim's Algorithm
           </h3>
           <p><strong>Approach:</strong> Grows a <em>single tree</em> starting from one vertex.</p>
-          <p><strong>Strategy:</strong> At each step, adds the minimum-weight edge that connects the growing tree to a new vertex.</p>
+          <p><strong>Strategy:</strong> At each step, adds the minimum-weight edge that connects the growing tree to a
+            new vertex.</p>
           <p><strong>Data Structure:</strong> Priority queue to track edges connecting tree to outside vertices.</p>
         </div>
-        
+
         <div class="difference-card kruskal">
           <h3>
             <div class="algo-icon kruskal">K</div>
@@ -896,7 +933,7 @@
           <p><strong>Strategy:</strong> Processes edges in order of increasing weight, regardless of location.</p>
           <p><strong>Data Structure:</strong> Disjoint-set (Union-Find) to detect and prevent cycles.</p>
         </div>
-        
+
         <div class="difference-card comparison">
           <h3>
             <svg class="svg-icon" viewBox="0 0 24 24">
@@ -905,8 +942,10 @@
             </svg>
             Key Insight
           </h3>
-          <p>Prim's grows <strong>locally</strong> from a single point, while Kruskal's considers edges <strong>globally</strong> based solely on weight.</p>
-          <p>This fundamental difference affects how they handle problems, their implementation, and their performance on different types of graphs.</p>
+          <p>Prim's grows <strong>locally</strong> from a single point, while Kruskal's considers edges
+            <strong>globally</strong> based solely on weight.</p>
+          <p>This fundamental difference affects how they handle problems, their implementation, and their performance
+            on different types of graphs.</p>
         </div>
       </div>
     </div>
@@ -944,7 +983,7 @@
         <span id="play-text">Play Animation</span>
       </button>
     </div>
-    
+
     <div class="speed-control">
       <span class="speed-label">Speed:</span>
       <input type="range" min="0.5" max="3" step="0.5" value="1" class="speed-slider" id="speed-slider">
@@ -1004,12 +1043,14 @@
         <div class="step-info">
           <div class="step-title prim-color" id="prims-step-title">Getting Started</div>
           <div class="step-description" id="prims-info">
-            Prim's algorithm starts from a single vertex and grows the MST by adding the minimum-weight edge connecting the tree to a new vertex.
+            Prim's algorithm starts from a single vertex and grows the MST by adding the minimum-weight edge connecting
+            the tree to a new vertex.
           </div>
         </div>
         <div class="explanation-tooltip" id="prim-explanation">
           <h4>Priority Queue</h4>
-          <p>In Prim's algorithm, the priority queue stores edges that connect vertices in the current tree to vertices outside the tree, ordered by weight.</p>
+          <p>In Prim's algorithm, the priority queue stores edges that connect vertices in the current tree to vertices
+            outside the tree, ordered by weight.</p>
         </div>
       </div>
 
@@ -1070,16 +1111,19 @@
         <div class="step-info">
           <div class="step-title kruskal-color" id="kruskals-step-title">Getting Started</div>
           <div class="step-description" id="kruskals-info">
-            Kruskal's algorithm sorts all edges by weight and adds them to the MST if they don't create a cycle, using a disjoint-set data structure.
+            Kruskal's algorithm sorts all edges by weight and adds them to the MST if they don't create a cycle, using a
+            disjoint-set data structure.
           </div>
         </div>
         <div class="explanation-tooltip" id="kruskal-edges-explanation">
           <h4>Sorted Edges</h4>
-          <p>Kruskal's algorithm first sorts all edges by weight and then processes them one by one in ascending order.</p>
+          <p>Kruskal's algorithm first sorts all edges by weight and then processes them one by one in ascending order.
+          </p>
         </div>
         <div class="explanation-tooltip" id="kruskal-sets-explanation">
           <h4>Disjoint Sets</h4>
-          <p>The Union-Find data structure helps detect whether adding an edge would create a cycle by tracking which vertices are connected.</p>
+          <p>The Union-Find data structure helps detect whether adding an edge would create a cycle by tracking which
+            vertices are connected.</p>
         </div>
       </div>
     </div>
@@ -1090,27 +1134,27 @@
         <div></div>
         <div class="comparison-header comparison-prim">Prim's Algorithm</div>
         <div class="comparison-header comparison-kruskal">Kruskal's Algorithm</div>
-        
+
         <div class="comparison-category">Growth Strategy</div>
         <div class="comparison-cell">Grows a single tree from a starting vertex</div>
         <div class="comparison-cell">Creates a forest of trees that gradually merge</div>
-        
+
         <div class="comparison-category">Edge Selection</div>
         <div class="comparison-cell">Selects minimum-weight edge connecting tree to a new vertex</div>
         <div class="comparison-cell">Selects minimum-weight edge from the entire graph</div>
-        
+
         <div class="comparison-category">Time Complexity</div>
         <div class="comparison-cell">O(E log V) with binary heap<br>O(E + V log V) with Fibonacci heap</div>
         <div class="comparison-cell">O(E log E) or O(E log V)<br>Dominated by the sorting step</div>
-        
+
         <div class="comparison-category">Space Complexity</div>
         <div class="comparison-cell">O(V + E)</div>
         <div class="comparison-cell">O(V + E)</div>
-        
+
         <div class="comparison-category">Best For</div>
         <div class="comparison-cell">Dense graphs (where E is close to V²)</div>
         <div class="comparison-cell">Sparse graphs (where E is close to V)</div>
-        
+
         <div class="comparison-category">Key Insight</div>
         <div class="comparison-cell">Only needs to track edges crossing the frontier</div>
         <div class="comparison-cell">Doesn't need a connected graph initially</div>
@@ -1126,7 +1170,9 @@
         </svg>
         Why These Algorithms Matter
       </h4>
-      <p>Minimum Spanning Tree algorithms are essential in network design, circuit design, transportation planning, and clustering. The choice between Prim's and Kruskal's often depends on the graph's characteristics - Prim's performs better on dense graphs, while Kruskal's is often faster on sparse graphs.</p>
+      <p>Minimum Spanning Tree algorithms are essential in network design, circuit design, transportation planning, and
+        clustering. The choice between Prim's and Kruskal's often depends on the graph's characteristics - Prim's
+        performs better on dense graphs, while Kruskal's is often faster on sparse graphs.</p>
     </div>
   </div>
 
@@ -1176,7 +1222,7 @@
       .attr("height", "100%")
       .attr("viewBox", "0 0 350 250")
       .attr("preserveAspectRatio", "xMidYMid meet");
-      
+
     const kruskalsSvg = d3.select("#kruskals-graph")
       .append("svg")
       .attr("width", "100%")
@@ -1208,22 +1254,22 @@
     function* primsAlgorithm(graph) {
       const { vertices, edges } = graph;
       const vertexMap = new Map(vertices.map(v => [v.id, v]));
-      
+
       // Start with vertex A
       const startVertex = 'A';
       const mst = [];
       const visited = new Set([startVertex]);
       let priorityQueue = [];
-      
+
       // Get all edges connected to the start vertex
       edges.filter(e => e.source === startVertex || e.target === startVertex)
         .forEach(e => {
           priorityQueue.push(e);
         });
-      
+
       // Sort the priority queue by weight
       priorityQueue.sort((a, b) => a.weight - b.weight);
-      
+
       // Initial state
       yield {
         mst: [],
@@ -1236,11 +1282,11 @@
         title: "Initializing",
         hint: "Prim's algorithm starts from a single vertex and grows outward."
       };
-      
+
       while (priorityQueue.length > 0 && visited.size < vertices.length) {
         // Get the minimum weight edge
         const minEdge = priorityQueue.shift();
-        
+
         // Determine which endpoint is not yet in the tree
         let nextVertex;
         if (visited.has(minEdge.source) && !visited.has(minEdge.target)) {
@@ -1262,11 +1308,11 @@
           };
           continue;
         }
-        
+
         // Add the edge to MST and the vertex to visited
         mst.push(minEdge);
         visited.add(nextVertex);
-        
+
         yield {
           mst: [...mst],
           visited: new Set(visited),
@@ -1278,24 +1324,24 @@
           title: "Growing the Tree",
           hint: `Prim's always connects a new vertex to the existing tree using the minimum-weight edge available.`
         };
-        
+
         // Get all edges connected to the new vertex
-        const newEdges = edges.filter(e => 
-          (e.source === nextVertex || e.target === nextVertex) && 
+        const newEdges = edges.filter(e =>
+          (e.source === nextVertex || e.target === nextVertex) &&
           !mst.includes(e)
         );
-        
+
         // Add only edges that connect to unvisited vertices
         const edgesToAdd = newEdges.filter(e => {
           const otherVertex = e.source === nextVertex ? e.target : e.source;
           return !visited.has(otherVertex);
         });
-        
+
         if (edgesToAdd.length > 0) {
           priorityQueue.push(...edgesToAdd);
           // Sort the priority queue by weight
           priorityQueue.sort((a, b) => a.weight - b.weight);
-          
+
           yield {
             mst: [...mst],
             visited: new Set(visited),
@@ -1309,7 +1355,7 @@
           };
         }
       }
-      
+
       // Final state
       const totalWeight = mst.reduce((sum, e) => sum + e.weight, 0);
       yield {
@@ -1328,16 +1374,16 @@
     // Kruskal's algorithm steps generator
     function* kruskalsAlgorithm(graph) {
       const { vertices, edges } = graph;
-      
+
       // Sort edges by weight
       const sortedEdges = [...edges].sort((a, b) => a.weight - b.weight);
-      
+
       // Initialize disjoint set (each vertex in its own set)
       const parents = {};
       vertices.forEach(v => {
         parents[v.id] = v.id;
       });
-      
+
       // Find function for disjoint set
       function find(vertex) {
         if (parents[vertex] !== vertex) {
@@ -1345,16 +1391,16 @@
         }
         return parents[vertex];
       }
-      
+
       // Union function for disjoint set
       function union(x, y) {
         parents[find(x)] = find(y);
       }
-      
+
       const mst = [];
       const processedEdges = [];
       const rejectedEdges = [];
-      
+
       // Initial state
       yield {
         mst: [],
@@ -1362,18 +1408,18 @@
         currentIndex: -1,
         processedEdges: [],
         rejectedEdges: [],
-        parents: {...parents},
+        parents: { ...parents },
         message: `Kruskal's first sorts all edges by weight. We'll process them in ascending order to build our MST.`,
         title: "Sorting Edges",
         hint: `Unlike Prim's, Kruskal's considers edges from anywhere in the graph, not just from a growing tree.`,
         mergingSets: []
       };
-      
+
       for (let i = 0; i < sortedEdges.length; i++) {
         const edge = sortedEdges[i];
         const rootSource = find(edge.source);
         const rootTarget = find(edge.target);
-        
+
         // Consider the current edge
         yield {
           mst: [...mst],
@@ -1381,29 +1427,29 @@
           currentIndex: i,
           processedEdges: [...processedEdges],
           rejectedEdges: [...rejectedEdges],
-          parents: {...parents},
+          parents: { ...parents },
           message: `Considering edge ${edge.source}-${edge.target} (weight ${edge.weight}). Checking if it would create a cycle...`,
           title: "Evaluating Edge",
           hint: `To avoid cycles, we check if the vertices of this edge are already in the same connected component.`,
           mergingSets: []
         };
-        
+
         if (rootSource !== rootTarget) {
           // Add to MST - no cycle formed
           mst.push(edge);
-          
-          let beforeParents = {...parents};
+
+          let beforeParents = { ...parents };
           union(edge.source, edge.target);
-          
+
           processedEdges.push(edge);
-          
+
           yield {
             mst: [...mst],
             sortedEdges: [...sortedEdges],
             currentIndex: i,
             processedEdges: [...processedEdges],
             rejectedEdges: [...rejectedEdges],
-            parents: {...parents},
+            parents: { ...parents },
             prevParents: beforeParents,
             message: `Added edge ${edge.source}-${edge.target} to MST. Vertices are in different sets (${rootSource} and ${rootTarget}), so no cycle is formed. Merging these sets.`,
             title: "Adding to MST",
@@ -1413,14 +1459,14 @@
         } else {
           // Reject - would form a cycle
           rejectedEdges.push(edge);
-          
+
           yield {
             mst: [...mst],
             sortedEdges: [...sortedEdges],
             currentIndex: i,
             processedEdges: [...processedEdges],
             rejectedEdges: [...rejectedEdges],
-            parents: {...parents},
+            parents: { ...parents },
             message: `Rejected edge ${edge.source}-${edge.target}. Both vertices are already in the same set (${rootSource}), so adding this edge would create a cycle.`,
             title: "Rejecting Edge",
             hint: `If both endpoints are in the same set, there's already a path between them. Adding this edge would create a cycle.`,
@@ -1428,7 +1474,7 @@
           };
         }
       }
-      
+
       // Final state
       const totalWeight = mst.reduce((sum, e) => sum + e.weight, 0);
       yield {
@@ -1437,7 +1483,7 @@
         currentIndex: sortedEdges.length,
         processedEdges: [...processedEdges],
         rejectedEdges: [...rejectedEdges],
-        parents: {...parents},
+        parents: { ...parents },
         message: `Kruskal's algorithm complete! The MST contains ${mst.length} edges with a total weight of ${totalWeight}.`,
         title: "Complete",
         hint: `Kruskal's algorithm guarantees the minimum spanning tree by always choosing the globally lightest edge that doesn't create a cycle.`,
@@ -1448,10 +1494,10 @@
     // Initialize the algorithm generators
     let primsSteps = primsAlgorithm(primsGraph);
     let kruskalsSteps = kruskalsAlgorithm(kruskalsGraph);
-    
+
     let primsState = primsSteps.next().value;
     let kruskalsState = kruskalsSteps.next().value;
-    
+
     let currentStep = 0;
     let maxSteps = 0; // Will be calculated
     let isPlaying = false;
@@ -1462,10 +1508,10 @@
     function drawGraph(svg, graph, algorithm, state) {
       // Clear the SVG
       svg.selectAll("*").remove();
-      
+
       // Create a group for all elements
       const g = svg.append("g");
-      
+
       // Draw highlight rings (for animations)
       const rings = g.selectAll(".highlight-ring")
         .data(graph.vertices)
@@ -1475,7 +1521,7 @@
         .attr("cx", d => d.x)
         .attr("cy", d => d.y)
         .attr("r", 20);
-      
+
       // Draw edges
       const edgeElements = g.selectAll(".edge")
         .data(graph.edges)
@@ -1483,40 +1529,40 @@
         .append("line")
         .attr("class", d => {
           let classes = "edge";
-          
+
           if (algorithm === "prims") {
-            if (state.mst.some(e => e.source === d.source && e.target === d.target || 
-                                 e.source === d.target && e.target === d.source)) {
+            if (state.mst.some(e => e.source === d.source && e.target === d.target ||
+              e.source === d.target && e.target === d.source)) {
               classes += " selected";
-            } else if (state.rejected.some(e => e.source === d.source && e.target === d.target || 
-                                         e.source === d.target && e.target === d.source)) {
+            } else if (state.rejected.some(e => e.source === d.source && e.target === d.target ||
+              e.source === d.target && e.target === d.source)) {
               classes += " rejected";
-            } else if (state.considered.some(e => e.source === d.source && e.target === d.target || 
-                                          e.source === d.target && e.target === d.source)) {
+            } else if (state.considered.some(e => e.source === d.source && e.target === d.target ||
+              e.source === d.target && e.target === d.source)) {
               classes += " considered";
             } else {
               classes += " unprocessed";
             }
           } else if (algorithm === "kruskals") {
-            if (state.mst.some(e => e.source === d.source && e.target === d.target || 
-                               e.source === d.target && e.target === d.source)) {
+            if (state.mst.some(e => e.source === d.source && e.target === d.target ||
+              e.source === d.target && e.target === d.source)) {
               classes += " selected";
-            } else if (state.rejectedEdges.some(e => e.source === d.source && e.target === d.target || 
-                                             e.source === d.target && e.target === d.source)) {
+            } else if (state.rejectedEdges.some(e => e.source === d.source && e.target === d.target ||
+              e.source === d.target && e.target === d.source)) {
               classes += " rejected";
-            } else if (state.currentIndex >= 0 && 
-                      state.sortedEdges[state.currentIndex].source === d.source && 
-                      state.sortedEdges[state.currentIndex].target === d.target) {
+            } else if (state.currentIndex >= 0 &&
+              state.sortedEdges[state.currentIndex].source === d.source &&
+              state.sortedEdges[state.currentIndex].target === d.target) {
               classes += " considered";
-            } else if (state.currentIndex >= 0 && 
-                      state.sortedEdges[state.currentIndex].source === d.target && 
-                      state.sortedEdges[state.currentIndex].target === d.source) {
+            } else if (state.currentIndex >= 0 &&
+              state.sortedEdges[state.currentIndex].source === d.target &&
+              state.sortedEdges[state.currentIndex].target === d.source) {
               classes += " considered";
             } else {
               classes += " unprocessed";
             }
           }
-          
+
           return classes;
         })
         .attr("x1", d => getVertexObject(graph, d.source).x)
@@ -1526,10 +1572,10 @@
         .on("mouseover", (event, d) => {
           const rect = event.target.getBoundingClientRect();
           const text = `Edge ${d.source}-${d.target}: Weight ${d.weight}`;
-          showTooltip(text, rect.x + rect.width/2, rect.y);
+          showTooltip(text, rect.x + rect.width / 2, rect.y);
         })
         .on("mouseout", hideTooltip);
-      
+
       // Draw weight highlights (circles behind weight labels)
       const weightHighlights = g.selectAll(".edge-weight-highlight")
         .data(graph.edges)
@@ -1537,21 +1583,21 @@
         .append("circle")
         .attr("class", d => {
           let classes = "edge-weight-highlight";
-          
+
           if (algorithm === "prims" && state.considered.includes(d)) {
             classes += " active";
-          } else if (algorithm === "kruskals" && 
-                    state.currentIndex >= 0 && 
-                    state.sortedEdges[state.currentIndex] === d) {
+          } else if (algorithm === "kruskals" &&
+            state.currentIndex >= 0 &&
+            state.sortedEdges[state.currentIndex] === d) {
             classes += " active";
           }
-          
+
           return classes;
         })
         .attr("cx", d => (getVertexObject(graph, d.source).x + getVertexObject(graph, d.target).x) / 2 + 10)
         .attr("cy", d => (getVertexObject(graph, d.source).y + getVertexObject(graph, d.target).y) / 2 - 10)
         .attr("r", 12);
-      
+
       // Draw edge weights
       const edgeLabels = g.selectAll(".edge-label")
         .data(graph.edges)
@@ -1561,7 +1607,7 @@
         .attr("x", d => (getVertexObject(graph, d.source).x + getVertexObject(graph, d.target).x) / 2 + 10)
         .attr("y", d => (getVertexObject(graph, d.source).y + getVertexObject(graph, d.target).y) / 2 - 10)
         .text(d => d.weight);
-      
+
       // Draw vertices
       const nodeGroups = g.selectAll(".node-group")
         .data(graph.vertices)
@@ -1569,11 +1615,11 @@
         .append("g")
         .attr("class", "node-group")
         .attr("transform", d => `translate(${d.x}, ${d.y})`);
-      
+
       nodeGroups.append("circle")
         .attr("class", d => {
           let classes = "node";
-          
+
           if (algorithm === "prims") {
             if (state.visited.has(d.id)) {
               classes += " prim-tree";
@@ -1587,27 +1633,27 @@
               classes += " unprocessed";
             }
           }
-          
+
           return classes;
         })
         .attr("r", 15)
         .on("mouseover", (event, d) => {
           const rect = event.target.getBoundingClientRect();
           let text = `Vertex ${d.id}`;
-          
+
           if (algorithm === "kruskals" && state.parents) {
             text += `, Set: ${state.parents[d.id]}`;
           }
-          
-          showTooltip(text, rect.x + rect.width/2, rect.y);
+
+          showTooltip(text, rect.x + rect.width / 2, rect.y);
         })
         .on("mouseout", hideTooltip);
-      
+
       // Draw vertex labels
       nodeGroups.append("text")
         .attr("class", "node-label")
         .text(d => d.id);
-      
+
       // For Kruskal's algorithm, add set labels
       if (algorithm === "kruskals") {
         nodeGroups.append("text")
@@ -1624,9 +1670,9 @@
     function updatePrimsQueue() {
       const container = d3.select("#prims-queue");
       container.html("");
-      
+
       if (!primsState.priorityQueue) return;
-      
+
       primsState.priorityQueue.forEach((edge, idx) => {
         const div = container.append("div")
           .attr("class", "data-item" + (idx === 0 ? " active" : ""))
@@ -1638,24 +1684,24 @@
     function updateKruskalsEdges() {
       const container = d3.select("#kruskals-edges");
       container.html("");
-      
+
       if (!kruskalsState.sortedEdges) return;
-      
+
       kruskalsState.sortedEdges.forEach((edge, idx) => {
         let className = "data-item";
-        
+
         if (idx === kruskalsState.currentIndex) {
           className += " active";
         } else if (idx < kruskalsState.currentIndex) {
           if (kruskalsState.mst.some(e => e.source === edge.source && e.target === edge.target ||
-                                      e.source === edge.target && e.target === edge.source)) {
+            e.source === edge.target && e.target === edge.source)) {
             className += " processed";
           } else if (kruskalsState.rejectedEdges.some(e => e.source === edge.source && e.target === edge.target ||
-                                                     e.source === edge.target && e.target === edge.source)) {
+            e.source === edge.target && e.target === edge.source)) {
             className += " rejected";
           }
         }
-        
+
         container.append("div")
           .attr("class", className)
           .html(`${edge.source}–${edge.target} (${edge.weight})`);
@@ -1666,9 +1712,9 @@
     function updateKruskalsSets() {
       const container = d3.select("#kruskals-sets");
       container.html("");
-      
+
       if (!kruskalsState.parents) return;
-      
+
       // Group vertices by their parent (set)
       const sets = {};
       for (const vertexId in kruskalsState.parents) {
@@ -1678,24 +1724,24 @@
         }
         sets[setId].push(vertexId);
       }
-      
+
       // Sort sets by their representative
       const sortedSetIds = Object.keys(sets).sort();
-      
+
       sortedSetIds.forEach(setId => {
-        const isBeingMerged = kruskalsState.mergingSets && 
-                              kruskalsState.mergingSets.includes(setId);
-        
+        const isBeingMerged = kruskalsState.mergingSets &&
+          kruskalsState.mergingSets.includes(setId);
+
         const setDiv = container.append("div")
           .attr("class", "disjoint-set" + (isBeingMerged ? " merging" : ""));
-        
+
         setDiv.append("div")
           .attr("class", "set-label")
           .text(`Set ${setId}`);
-        
+
         const elementsDiv = setDiv.append("div")
           .attr("class", "set-elements");
-        
+
         sets[setId].sort().forEach(vertexId => {
           elementsDiv.append("div")
             .attr("class", "set-element")
@@ -1708,10 +1754,10 @@
     function updateInfoText() {
       d3.select("#prims-step-title").text(primsState.title || "");
       d3.select("#prims-info").text(primsState.message || "");
-      
+
       d3.select("#kruskals-step-title").text(kruskalsState.title || "");
       d3.select("#kruskals-info").text(kruskalsState.message || "");
-      
+
       // Update step counter
       d3.select("#step-counter").text(`Step ${currentStep} of ${maxSteps}`);
     }
@@ -1730,14 +1776,14 @@
     function nextStep() {
       const primsResult = primsSteps.next();
       const kruskalsResult = kruskalsSteps.next();
-      
+
       if (!primsResult.done && !kruskalsResult.done) {
         primsState = primsResult.value;
         kruskalsState = kruskalsResult.value;
         currentStep++;
         d3.select("#prev-btn").attr("disabled", null);
         render();
-        
+
         // Show highlighting animations
         highlightChanges();
       } else {
@@ -1751,17 +1797,17 @@
       if (currentStep > 0) {
         // Reset and replay until the previous step
         resetAlgorithms(false); // Reset without redrawing
-        
+
         for (let i = 0; i < currentStep - 1; i++) {
           const primsResult = primsSteps.next();
           const kruskalsResult = kruskalsSteps.next();
-          
+
           if (!primsResult.done && !kruskalsResult.done) {
             primsState = primsResult.value;
             kruskalsState = kruskalsResult.value;
           }
         }
-        
+
         currentStep--;
         if (currentStep === 0) {
           d3.select("#prev-btn").attr("disabled", "disabled");
@@ -1779,7 +1825,7 @@
       currentStep = 0;
       d3.select("#prev-btn").attr("disabled", "disabled");
       d3.select("#next-btn").attr("disabled", null);
-      
+
       if (redraw) {
         render();
       }
@@ -1794,7 +1840,7 @@
         result = tempPrimsSteps.next();
         if (!result.done) count++;
       } while (!result.done);
-      
+
       maxSteps = count - 1; // -1 because we start at step 0
       d3.select("#step-counter").text(`Step ${currentStep} of ${maxSteps}`);
     }
@@ -1813,11 +1859,11 @@
       d3.select("#play-text").text("Pause Animation");
       d3.select("#play-icon").classed("hidden", true);
       d3.select("#pause-icon").classed("hidden", false);
-      
+
       animationTimer = setInterval(() => {
         const primsResult = primsSteps.next();
         const kruskalsResult = kruskalsSteps.next();
-        
+
         if (!primsResult.done && !kruskalsResult.done) {
           primsState = primsResult.value;
           kruskalsState = kruskalsResult.value;
@@ -1846,45 +1892,45 @@
       if (primsState.currentEdge) {
         const target = primsState.currentEdge.target;
         const source = primsState.currentEdge.source;
-        
+
         // Determine which vertex was just added
-        const newVertex = primsState.visited.has(target) && 
-                         primsState.mst.some(e => e.source === source && e.target === target || 
-                                             e.source === target && e.target === source) 
-                         ? target : source;
-        
+        const newVertex = primsState.visited.has(target) &&
+          primsState.mst.some(e => e.source === source && e.target === target ||
+            e.source === target && e.target === source)
+          ? target : source;
+
         if (newVertex && primsState.visited.has(newVertex)) {
           const vertexObj = getVertexObject(primsGraph, newVertex);
-          
+
           // Pulse animation on the vertex
           primsSvg.selectAll(".node")
             .filter(d => d.id === newVertex)
             .classed("pulse", true)
-            .on("animationend", function() {
+            .on("animationend", function () {
               d3.select(this).classed("pulse", false);
             });
-          
+
           // Highlight ring animation
           primsSvg.selectAll(".highlight-ring")
             .filter(d => d.id === newVertex)
             .classed("active", true)
-            .on("animationend", function() {
+            .on("animationend", function () {
               d3.select(this).classed("active", false);
             });
         }
       }
-      
+
       // For Kruskal's, highlight the merged sets
       if (kruskalsState.mergingSets && kruskalsState.mergingSets.length > 0) {
         // Highlight the merged sets in the UI
         d3.selectAll(".disjoint-set")
-          .filter(function() {
+          .filter(function () {
             const setLabel = d3.select(this).select(".set-label").text();
             const setId = setLabel.replace("Set ", "");
             return kruskalsState.mergingSets.includes(setId);
           })
           .classed("merging", true);
-        
+
         // After a delay, remove the highlight
         setTimeout(() => {
           d3.selectAll(".disjoint-set").classed("merging", false);
@@ -1897,49 +1943,49 @@
       const primTooltip = d3.select("#prim-explanation");
       const kruskalEdgesTooltip = d3.select("#kruskal-edges-explanation");
       const kruskalSetsTooltip = d3.select("#kruskal-sets-explanation");
-      
-      d3.select("#prim-help-btn").on("click", function(event) {
+
+      d3.select("#prim-help-btn").on("click", function (event) {
         const rect = this.getBoundingClientRect();
         primTooltip
           .style("left", `${rect.right}px`)
           .style("top", `${rect.bottom}px`)
           .classed("visible", !primTooltip.classed("visible"));
-          
+
         // Hide other tooltips
         kruskalEdgesTooltip.classed("visible", false);
         kruskalSetsTooltip.classed("visible", false);
       });
-      
-      d3.select("#kruskal-edges-help-btn").on("click", function(event) {
+
+      d3.select("#kruskal-edges-help-btn").on("click", function (event) {
         const rect = this.getBoundingClientRect();
         kruskalEdgesTooltip
           .style("left", `${rect.right}px`)
           .style("top", `${rect.bottom}px`)
           .classed("visible", !kruskalEdgesTooltip.classed("visible"));
-          
+
         // Hide other tooltips
         primTooltip.classed("visible", false);
         kruskalSetsTooltip.classed("visible", false);
       });
-      
-      d3.select("#kruskal-sets-help-btn").on("click", function(event) {
+
+      d3.select("#kruskal-sets-help-btn").on("click", function (event) {
         const rect = this.getBoundingClientRect();
         kruskalSetsTooltip
           .style("left", `${rect.right}px`)
           .style("top", `${rect.bottom}px`)
           .classed("visible", !kruskalSetsTooltip.classed("visible"));
-          
+
         // Hide other tooltips
         primTooltip.classed("visible", false);
         kruskalEdgesTooltip.classed("visible", false);
       });
-      
+
       // Hide tooltips when clicking elsewhere
-      document.addEventListener("click", function(event) {
-        if (!event.target.closest("#prim-help-btn") && 
-            !event.target.closest("#kruskal-edges-help-btn") && 
-            !event.target.closest("#kruskal-sets-help-btn") &&
-            !event.target.closest(".explanation-tooltip")) {
+      document.addEventListener("click", function (event) {
+        if (!event.target.closest("#prim-help-btn") &&
+          !event.target.closest("#kruskal-edges-help-btn") &&
+          !event.target.closest("#kruskal-sets-help-btn") &&
+          !event.target.closest(".explanation-tooltip")) {
           primTooltip.classed("visible", false);
           kruskalEdgesTooltip.classed("visible", false);
           kruskalSetsTooltip.classed("visible", false);
@@ -1951,11 +1997,11 @@
     function setupSpeedControl() {
       const slider = document.getElementById("speed-slider");
       const value = document.getElementById("speed-value");
-      
-      slider.addEventListener("input", function() {
+
+      slider.addEventListener("input", function () {
         playbackSpeed = parseFloat(this.value);
         value.textContent = `${playbackSpeed}x`;
-        
+
         // If already playing, restart with new speed
         if (isPlaying) {
           stopAnimation();
@@ -1967,7 +2013,7 @@
     // Attach event handlers
     d3.select("#next-btn").on("click", nextStep);
     d3.select("#prev-btn").on("click", prevStep);
-    d3.select("#reset-btn").on("click", function() {
+    d3.select("#reset-btn").on("click", function () {
       stopAnimation();
       resetAlgorithms();
     });
@@ -1984,10 +2030,10 @@
       const highlightBubble = d3.select("#highlight-bubble");
       const targetElement = d3.select(target);
       const rect = targetElement.node().getBoundingClientRect();
-      
+
       let top, left;
-      
-      switch(position) {
+
+      switch (position) {
         case "top":
           top = rect.top - 40;
           left = rect.left + rect.width / 2;
@@ -2005,22 +2051,23 @@
           left = rect.right + 10;
           break;
       }
-      
+
       highlightBubble
         .style("top", `${top}px`)
         .style("left", `${left}px`)
         .text("!")
-        .on("mouseover", function() {
+        .on("mouseover", function () {
           const bubbleRect = this.getBoundingClientRect();
           showTooltip(text, bubbleRect.left, bubbleRect.top);
         })
         .on("mouseout", hideTooltip)
         .style("opacity", 1);
-      
+
       setTimeout(() => {
         highlightBubble.style("opacity", 0);
       }, 3000);
     }
   </script>
 </body>
+
 </html>

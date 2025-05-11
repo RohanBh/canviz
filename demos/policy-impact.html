@@ -1,9 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Macroeconomic Relationships</title>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1DB24KTNYY"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-1DB24KTNYY');
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -18,13 +28,13 @@
             --danger-color: #ef4444;
             --purple-color: #8b5cf6;
             --teal-color: #14b8a6;
-            
+
             --interest-color: #3b82f6;
             --spending-color: #10b981;
             --inflation-color: #ef4444;
             --unemployment-color: #f59e0b;
             --output-color: #8b5cf6;
-            
+
             --positive-color: #10b981;
             --negative-color: #ef4444;
             --neutral-color: #64748b;
@@ -282,7 +292,8 @@
             transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .node:hover::before, .node.active::before {
+        .node:hover::before,
+        .node.active::before {
             transform: scale(1);
         }
 
@@ -547,9 +558,11 @@
             0% {
                 transform: scale(1);
             }
+
             50% {
                 transform: scale(1.15);
             }
+
             100% {
                 transform: scale(1);
             }
@@ -564,6 +577,7 @@
                 transform: scale(0);
                 opacity: 0;
             }
+
             100% {
                 transform: scale(1);
                 opacity: 1;
@@ -578,6 +592,7 @@
             0% {
                 opacity: 0;
             }
+
             100% {
                 opacity: 1;
             }
@@ -612,6 +627,7 @@
             0% {
                 transform: rotate(0deg);
             }
+
             100% {
                 transform: rotate(360deg);
             }
@@ -622,29 +638,30 @@
                 flex-direction: column;
                 align-items: stretch;
             }
-            
+
             .button-group {
                 width: 100%;
             }
-            
+
             button {
                 flex: 1;
             }
-            
+
             .visualization-container {
                 height: 500px;
             }
-            
+
             h1 {
                 font-size: 1.8rem;
             }
-            
+
             .node-title {
                 font-size: 0.9rem;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
@@ -660,7 +677,7 @@
                 </div>
                 <input type="range" id="interest-slider" class="slider" min="1" max="9" value="5" step="0.1">
             </div>
-            
+
             <div class="slider-container">
                 <div class="slider-label">
                     <span>Government Spending</span>
@@ -668,10 +685,11 @@
                 </div>
                 <input type="range" id="spending-slider" class="slider" min="1" max="9" value="5" step="0.1">
             </div>
-            
+
             <div class="button-group">
                 <button id="simulate-btn" class="btn-primary">
-                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="23 4 23 10 17 10"></polyline>
                         <polyline points="1 20 1 14 7 14"></polyline>
                         <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
@@ -679,7 +697,8 @@
                     Simulate Effects
                 </button>
                 <button id="reset-btn" class="btn-secondary">
-                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 2v6h6"></path>
                         <path d="M21 12A9 9 0 0 0 6 5.3L3 8"></path>
                         <path d="M21 22v-6h-6"></path>
@@ -693,35 +712,39 @@
         <div class="card visualization-container">
             <div id="visualization">
                 <canvas id="canvas-connections"></canvas>
-                
+
                 <div id="node-interest" class="node node-interest" data-node="interest">
-                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                     </svg>
                     <div class="node-title">Interest Rates</div>
                     <div class="node-value">5%</div>
                 </div>
-                
+
                 <div id="node-spending" class="node node-spending" data-node="spending">
-                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                         <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                     </svg>
                     <div class="node-title">Government Spending</div>
                     <div class="node-value">5</div>
                 </div>
-                
+
                 <div id="node-inflation" class="node node-inflation" data-node="inflation">
-                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="12" y1="19" x2="12" y2="5"></line>
                         <polyline points="5 12 12 5 19 12"></polyline>
                     </svg>
                     <div class="node-title">Inflation</div>
                     <div class="node-value">5%</div>
                 </div>
-                
+
                 <div id="node-unemployment" class="node node-unemployment" data-node="unemployment">
-                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                         <circle cx="9" cy="7" r="4"></circle>
                         <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -730,9 +753,10 @@
                     <div class="node-title">Unemployment</div>
                     <div class="node-value">5%</div>
                 </div>
-                
+
                 <div id="node-output" class="node node-output" data-node="output">
-                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
                     </svg>
                     <div class="node-title">Economic Output</div>
@@ -740,7 +764,7 @@
                 </div>
 
                 <div id="tooltip" class="tooltip"></div>
-                
+
                 <!-- Connection labels -->
                 <div id="connection-interest-inflation" class="connection-label negative">Reduces</div>
                 <div id="connection-interest-output" class="connection-label negative">Slows</div>
@@ -750,63 +774,71 @@
                 <div id="connection-unemployment-inflation" class="connection-label negative">Reduces</div>
                 <div id="connection-output-inflation" class="connection-label positive">Can increase</div>
                 <div id="connection-inflation-interest" class="connection-label positive">Drives up</div>
-                
+
                 <!-- Node type labels -->
                 <div class="node-label policy" id="policy-label-interest">Policy Tool</div>
                 <div class="node-label policy" id="policy-label-spending">Policy Tool</div>
                 <div class="node-label outcome" id="outcome-label-inflation">Economic Outcome</div>
                 <div class="node-label outcome" id="outcome-label-unemployment">Economic Outcome</div>
                 <div class="node-label outcome" id="outcome-label-output">Economic Outcome</div>
-                
+
                 <!-- Floating info boxes -->
                 <div class="floating-info" id="phillips-curve-info">
                     <div class="info-title">Phillips Curve</div>
-                    <p>The Phillips Curve shows the inverse relationship between unemployment and inflation. When unemployment decreases, inflation tends to rise, and vice versa.</p>
+                    <p>The Phillips Curve shows the inverse relationship between unemployment and inflation. When
+                        unemployment decreases, inflation tends to rise, and vice versa.</p>
                 </div>
-                
+
                 <div class="floating-info" id="okuns-law-info">
                     <div class="info-title">Okun's Law</div>
-                    <p>Okun's Law describes how GDP growth relates to changes in unemployment. Typically, a 1% increase in GDP corresponds to a 0.5% decrease in unemployment.</p>
+                    <p>Okun's Law describes how GDP growth relates to changes in unemployment. Typically, a 1% increase
+                        in GDP corresponds to a 0.5% decrease in unemployment.</p>
                 </div>
-                
+
                 <div class="floating-info" id="monetary-policy-info">
                     <div class="info-title">Monetary Policy</div>
-                    <p>Central banks use interest rates as their primary tool to influence inflation, employment, and economic growth by affecting borrowing costs throughout the economy.</p>
+                    <p>Central banks use interest rates as their primary tool to influence inflation, employment, and
+                        economic growth by affecting borrowing costs throughout the economy.</p>
                 </div>
-                
+
                 <div class="floating-info" id="fiscal-policy-info">
                     <div class="info-title">Fiscal Policy</div>
-                    <p>Government spending is a key fiscal policy tool that directly affects aggregate demand in the economy, influencing both output and inflation.</p>
+                    <p>Government spending is a key fiscal policy tool that directly affects aggregate demand in the
+                        economy, influencing both output and inflation.</p>
                 </div>
-                
+
                 <div class="scenario-selector">
                     <div class="scenario-btn" data-scenario="recession">Recession</div>
                     <div class="scenario-btn" data-scenario="growth">Growth</div>
                     <div class="scenario-btn" data-scenario="stagflation">Stagflation</div>
                 </div>
-                
+
                 <div class="loading-overlay">
                     <div class="spinner"></div>
                 </div>
             </div>
         </div>
-        
+
         <div class="card explanation-card">
             <div class="explanation-title">
                 <h2 id="explanation-title">How These Economic Variables Interact</h2>
             </div>
             <div id="explanation-content" class="explanation-content">
-                <p>This visualization shows the interconnected relationships between key macroeconomic variables. The economy functions as a dynamic system where changes in one variable create ripple effects throughout.</p>
-                
+                <p>This visualization shows the interconnected relationships between key macroeconomic variables. The
+                    economy functions as a dynamic system where changes in one variable create ripple effects
+                    throughout.</p>
+
                 <div class="key-fact">
-                    <p><span class="highlight">Policy Variables:</span> Interest rates (monetary policy) and government spending (fiscal policy) are the primary tools used to influence economic outcomes.</p>
+                    <p><span class="highlight">Policy Variables:</span> Interest rates (monetary policy) and government
+                        spending (fiscal policy) are the primary tools used to influence economic outcomes.</p>
                 </div>
-                
-                <p>To see these relationships in action, adjust the sliders for interest rates and government spending, then click "Simulate Effects" to watch how these changes propagate through the economic system.</p>
-                
+
+                <p>To see these relationships in action, adjust the sliders for interest rates and government spending,
+                    then click "Simulate Effects" to watch how these changes propagate through the economic system.</p>
+
                 <p>Click on any variable to see detailed information about its relationships with other variables.</p>
             </div>
-            
+
             <div class="focus-controls">
                 <div class="focus-btn" data-focus="interest">Interest Rates</div>
                 <div class="focus-btn" data-focus="spending">Government Spending</div>
@@ -819,12 +851,12 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Canvas setup for connections
             const canvas = document.getElementById('canvas-connections');
             const ctx = canvas.getContext('2d');
             resizeCanvas();
-            
+
             // Node positions and data
             const nodes = {
                 interest: {
@@ -944,66 +976,66 @@
 
             // Define relationships between nodes
             const connections = [
-                { 
-                    from: 'interest', 
-                    to: 'inflation', 
-                    effect: 'negative', 
+                {
+                    from: 'interest',
+                    to: 'inflation',
+                    effect: 'negative',
                     strength: 0.8,
                     description: "Higher interest rates reduce aggregate demand and help control inflation by making borrowing more expensive.",
                     labelElement: document.getElementById('connection-interest-inflation')
                 },
-                { 
-                    from: 'interest', 
-                    to: 'output', 
-                    effect: 'negative', 
+                {
+                    from: 'interest',
+                    to: 'output',
+                    effect: 'negative',
                     strength: 0.7,
                     description: "Higher interest rates reduce borrowing, investment, and consumer spending, slowing economic output.",
                     labelElement: document.getElementById('connection-interest-output')
                 },
-                { 
-                    from: 'spending', 
-                    to: 'output', 
-                    effect: 'positive', 
+                {
+                    from: 'spending',
+                    to: 'output',
+                    effect: 'positive',
                     strength: 0.8,
                     description: "Increased government spending directly adds to aggregate demand, boosting economic output.",
                     labelElement: document.getElementById('connection-spending-output')
                 },
-                { 
-                    from: 'spending', 
-                    to: 'inflation', 
-                    effect: 'positive', 
+                {
+                    from: 'spending',
+                    to: 'inflation',
+                    effect: 'positive',
                     strength: 0.5,
                     description: "Higher government spending can increase aggregate demand, potentially driving up prices if the economy is near capacity.",
                     labelElement: document.getElementById('connection-spending-inflation')
                 },
-                { 
-                    from: 'output', 
-                    to: 'unemployment', 
-                    effect: 'negative', 
+                {
+                    from: 'output',
+                    to: 'unemployment',
+                    effect: 'negative',
                     strength: 0.9,
                     description: "Higher economic output creates jobs, reducing unemployment (Okun's Law).",
                     labelElement: document.getElementById('connection-output-unemployment')
                 },
-                { 
-                    from: 'unemployment', 
-                    to: 'inflation', 
-                    effect: 'negative', 
+                {
+                    from: 'unemployment',
+                    to: 'inflation',
+                    effect: 'negative',
                     strength: 0.7,
                     description: "Lower unemployment can lead to wage growth and higher inflation (Phillips Curve).",
                     labelElement: document.getElementById('connection-unemployment-inflation')
                 },
-                { 
-                    from: 'output', 
-                    to: 'inflation', 
-                    effect: 'positive', 
+                {
+                    from: 'output',
+                    to: 'inflation',
+                    effect: 'positive',
                     strength: 0.6,
                     description: "When output exceeds the economy's potential, inflation tends to rise due to resource constraints.",
                     labelElement: document.getElementById('connection-output-inflation')
                 },
-                { 
-                    from: 'inflation', 
-                    to: 'interest', 
-                    effect: 'positive', 
+                {
+                    from: 'inflation',
+                    to: 'interest',
+                    effect: 'positive',
                     strength: 0.8,
                     description: "Rising inflation often prompts central banks to raise interest rates to cool the economy.",
                     labelElement: document.getElementById('connection-inflation-interest')
@@ -1052,22 +1084,22 @@
                     description: "Stagflation combines high inflation with low growth and high unemployment. In this challenging scenario, central banks may raise rates to fight inflation while governments increase spending to stimulate growth."
                 }
             };
-            
+
             // Particles for animated connections
             let particles = [];
-            
+
             // State variables
             let isSimulating = false;
             let simulationSpeed = 1;
             let activeFocus = 'all';
             let activeNode = null;
-            
+
             // Position nodes in the visualization
             function positionNodes() {
                 const container = document.getElementById('visualization');
                 const width = container.clientWidth;
                 const height = container.clientHeight;
-                
+
                 // Calculate positions based on container size
                 const positions = {
                     interest: { x: width * 0.2, y: height * 0.5 },
@@ -1076,23 +1108,23 @@
                     unemployment: { x: width * 0.2, y: height * 0.8 },
                     output: { x: width * 0.8, y: height * 0.8 }
                 };
-                
+
                 // Update node positions
                 for (const [key, node] of Object.entries(nodes)) {
                     node.x = positions[key].x;
                     node.y = positions[key].y;
                     node.element.style.left = `${node.x}px`;
                     node.element.style.top = `${node.y}px`;
-                    
+
                     // Position node type labels
                     const nodeLabel = document.getElementById(`${node.type}-label-${key}`);
                     if (nodeLabel) {
                         nodeLabel.style.left = `${node.x}px`;
-                        nodeLabel.style.top = `${node.y - node.baseSize/2 - 25}px`;
+                        nodeLabel.style.top = `${node.y - node.baseSize / 2 - 25}px`;
                         nodeLabel.style.transform = 'translateX(-50%)';
                     }
                 }
-                
+
                 // Position connection labels
                 for (const conn of connections) {
                     if (conn.labelElement) {
@@ -1100,12 +1132,12 @@
                         const toNode = nodes[conn.to];
                         const midX = (fromNode.x + toNode.x) / 2;
                         const midY = (fromNode.y + toNode.y) / 2;
-                        
+
                         conn.labelElement.style.left = `${midX}px`;
                         conn.labelElement.style.top = `${midY}px`;
                     }
                 }
-                
+
                 // Position floating info boxes
                 for (const info of floatingInfos) {
                     const infoBox = document.getElementById(info.id);
@@ -1116,16 +1148,16 @@
                     }
                 }
             }
-            
+
             // Update node sizes based on their values
             function updateNodes() {
                 for (const [key, node] of Object.entries(nodes)) {
                     const scaleFactor = 0.9 + (node.value / 10) * 0.4; // Scale between 90% and 130%
                     const newSize = node.baseSize * scaleFactor;
-                    
+
                     node.element.style.width = `${newSize}px`;
                     node.element.style.height = `${newSize}px`;
-                    
+
                     // Update value display
                     const valueElement = node.element.querySelector('.node-value');
                     if (valueElement) {
@@ -1135,39 +1167,39 @@
                     }
                 }
             }
-            
+
             // Draw connections between nodes
             function drawConnections() {
                 if (!canvas.width || !canvas.height) return;
-                
+
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
+
                 // Draw connections
                 for (const conn of connections) {
                     const fromNode = nodes[conn.from];
                     const toNode = nodes[conn.to];
-                    
+
                     // Skip if we're focusing on a specific node and this connection doesn't involve it
                     if (activeFocus !== 'all' && activeFocus !== conn.from && activeFocus !== conn.to) {
                         continue;
                     }
-                    
+
                     const centerX1 = fromNode.x;
                     const centerY1 = fromNode.y;
                     const centerX2 = toNode.x;
                     const centerY2 = toNode.y;
-                    
+
                     // Calculate distance and angle
                     const dx = centerX2 - centerX1;
                     const dy = centerY2 - centerY1;
                     const distance = Math.sqrt(dx * dx + dy * dy);
-                    
+
                     // Draw the connection line with gradient
                     ctx.beginPath();
-                    
+
                     // Create gradient based on effect (positive/negative)
                     const gradient = ctx.createLinearGradient(centerX1, centerY1, centerX2, centerY2);
-                    
+
                     if (conn.effect === 'positive') {
                         gradient.addColorStop(0, 'rgba(16, 185, 129, 0.1)');
                         gradient.addColorStop(1, 'rgba(16, 185, 129, 0.5)');
@@ -1175,30 +1207,30 @@
                         gradient.addColorStop(0, 'rgba(239, 68, 68, 0.1)');
                         gradient.addColorStop(1, 'rgba(239, 68, 68, 0.5)');
                     }
-                    
+
                     ctx.strokeStyle = gradient;
                     ctx.lineWidth = 5;
-                    
+
                     // Calculate radius (half of the node size)
                     const radius1 = fromNode.baseSize / 2 * (0.9 + (fromNode.value / 10) * 0.4);
                     const radius2 = toNode.baseSize / 2 * (0.9 + (toNode.value / 10) * 0.4);
-                    
+
                     // Calculate start and end points (on the edge of nodes)
                     const angle = Math.atan2(dy, dx);
                     const startX = centerX1 + Math.cos(angle) * radius1;
                     const startY = centerY1 + Math.sin(angle) * radius1;
                     const endX = centerX2 - Math.cos(angle) * radius2;
                     const endY = centerY2 - Math.sin(angle) * radius2;
-                    
+
                     // Draw the line
                     ctx.moveTo(startX, startY);
                     ctx.lineTo(endX, endY);
                     ctx.stroke();
-                    
+
                     // Draw arrow at the end
                     const arrowSize = 10;
                     const arrowAngle = Math.atan2(dy, dx);
-                    
+
                     ctx.beginPath();
                     ctx.moveTo(endX, endY);
                     ctx.lineTo(
@@ -1210,15 +1242,15 @@
                         endY - arrowSize * Math.sin(arrowAngle + Math.PI / 6)
                     );
                     ctx.closePath();
-                    
+
                     if (conn.effect === 'positive') {
                         ctx.fillStyle = 'rgba(16, 185, 129, 0.8)';
                     } else {
                         ctx.fillStyle = 'rgba(239, 68, 68, 0.8)';
                     }
-                    
+
                     ctx.fill();
-                    
+
                     // Show connection label if focusing or hovering
                     if (conn.labelElement) {
                         if (activeFocus === conn.from || activeFocus === conn.to || activeNode === conn.from || activeNode === conn.to) {
@@ -1230,58 +1262,58 @@
                         }
                     }
                 }
-                
+
                 // Draw particles
                 for (let i = 0; i < particles.length; i++) {
                     const p = particles[i];
-                    
+
                     // Skip if we're focusing on a specific node and this particle doesn't involve it
                     if (activeFocus !== 'all' && activeFocus !== p.from && activeFocus !== p.to) {
                         continue;
                     }
-                    
+
                     // Update particle position
                     p.progress += p.speed;
-                    
+
                     if (p.progress >= 1) {
                         // Remove particle once it reaches the end
                         particles.splice(i, 1);
                         i--;
                         continue;
                     }
-                    
+
                     // Calculate current position
                     const fromNode = nodes[p.from];
                     const toNode = nodes[p.to];
-                    
+
                     // Calculate radius (half of the node size)
                     const radius1 = fromNode.baseSize / 2 * (0.9 + (fromNode.value / 10) * 0.4);
                     const radius2 = toNode.baseSize / 2 * (0.9 + (toNode.value / 10) * 0.4);
-                    
+
                     // Calculate start and end points (on the edge of nodes)
                     const dx = toNode.x - fromNode.x;
                     const dy = toNode.y - fromNode.y;
                     const angle = Math.atan2(dy, dx);
-                    
+
                     const startX = fromNode.x + Math.cos(angle) * radius1;
                     const startY = fromNode.y + Math.sin(angle) * radius1;
                     const endX = toNode.x - Math.cos(angle) * radius2;
                     const endY = toNode.y - Math.sin(angle) * radius2;
-                    
+
                     // Calculate current position using cubic easing for more natural movement
                     const t = p.progress;
-                    const tc = t*t*t; // Cubic easing
+                    const tc = t * t * t; // Cubic easing
                     const x = startX + (endX - startX) * tc;
                     const y = startY + (endY - startY) * tc;
-                    
+
                     // Draw particle
                     ctx.beginPath();
                     const size = p.size * (1 - 0.5 * Math.sin(p.progress * Math.PI)); // Particle gets smaller near the end
-                    
+
                     // Create gradient for particle
                     const gradientSize = size * 2;
                     const particleGradient = ctx.createRadialGradient(x, y, 0, x, y, gradientSize);
-                    
+
                     if (p.effect === 'positive') {
                         particleGradient.addColorStop(0, 'rgba(16, 185, 129, 0.8)');
                         particleGradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
@@ -1289,59 +1321,59 @@
                         particleGradient.addColorStop(0, 'rgba(239, 68, 68, 0.8)');
                         particleGradient.addColorStop(1, 'rgba(239, 68, 68, 0)');
                     }
-                    
+
                     ctx.fillStyle = particleGradient;
                     ctx.arc(x, y, gradientSize, 0, Math.PI * 2);
                     ctx.fill();
-                    
+
                     // Inner circle for stronger visual
                     ctx.beginPath();
                     ctx.arc(x, y, size * 0.6, 0, Math.PI * 2);
-                    
+
                     if (p.effect === 'positive') {
                         ctx.fillStyle = 'rgba(16, 185, 129, 0.8)';
                     } else {
                         ctx.fillStyle = 'rgba(239, 68, 68, 0.8)';
                     }
-                    
+
                     ctx.fill();
                 }
             }
-            
+
             // Show tooltip
             function showTooltip(node, event) {
                 const tooltip = document.getElementById('tooltip');
                 const nodeData = nodes[node];
-                
+
                 if (!nodeData) return;
-                
+
                 tooltip.innerHTML = `
                     <div class="tooltip-title">${nodeData.element.querySelector('.node-title').textContent}</div>
                     <p>${nodeData.description}</p>
                 `;
-                
+
                 const rect = nodeData.element.getBoundingClientRect();
                 const vizRect = document.getElementById('visualization').getBoundingClientRect();
-                
+
                 const offsetY = 20; // Distance below the node
-                
+
                 tooltip.style.left = `${nodeData.x}px`;
-                tooltip.style.top = `${nodeData.y + rect.height/2 + offsetY}px`;
+                tooltip.style.top = `${nodeData.y + rect.height / 2 + offsetY}px`;
                 tooltip.style.transform = 'translateX(-50%)';
                 tooltip.style.opacity = '1';
             }
-            
+
             // Hide tooltip
             function hideTooltip() {
                 document.getElementById('tooltip').style.opacity = '0';
             }
-            
+
             // Create a particle effect for connection
             function createParticleEffect(from, to, count = 5) {
                 const connection = connections.find(c => c.from === from && c.to === to);
-                
+
                 if (!connection) return;
-                
+
                 for (let i = 0; i < count; i++) {
                     particles.push({
                         from: from,
@@ -1353,45 +1385,45 @@
                     });
                 }
             }
-            
+
             // Simulate the effects of changes in interest rates and government spending
             function simulateEffects() {
                 if (isSimulating) return;
-                
+
                 isSimulating = true;
                 showLoading();
-                
+
                 // Get the current values from sliders
                 const interestValue = parseFloat(document.getElementById('interest-slider').value);
                 const spendingValue = parseFloat(document.getElementById('spending-slider').value);
-                
+
                 // Update the policy variables
                 nodes.interest.value = interestValue;
                 nodes.spending.value = spendingValue;
-                
+
                 // Calculate changes from baseline (5)
                 const interestChange = interestValue - 5;
                 const spendingChange = spendingValue - 5;
-                
+
                 // Reset economic outcome variables
                 nodes.inflation.value = 5;
                 nodes.unemployment.value = 5;
                 nodes.output.value = 5;
-                
+
                 // Update nodes immediately
                 updateNodes();
-                
+
                 // Set active focus to 'all' to show all connections
                 setActiveFocus('all');
-                
+
                 // Create a sequence of animations to show how changes propagate
                 setTimeout(() => {
                     hideLoading();
-                    
+
                     // Highlight policy nodes
                     nodes.interest.element.classList.add('pulse-animation');
                     nodes.spending.element.classList.add('pulse-animation');
-                    
+
                     updateExplanation("Simulation Started", `
                         <p>The simulation shows how changes in interest rates and government spending affect the economy. We'll track how these policy changes create ripple effects through the economic system.</p>
                         <div class="key-fact">
@@ -1403,7 +1435,7 @@
                         </div>
                         <p>Watch as these changes propagate through the economy...</p>
                     `);
-                    
+
                     // First wave of effects: Policy variables → Output and Inflation
                     setTimeout(() => {
                         // Create particle effects for the connections
@@ -1411,21 +1443,21 @@
                         createParticleEffect('interest', 'inflation');
                         createParticleEffect('spending', 'output');
                         createParticleEffect('spending', 'inflation');
-                        
+
                         // Calculate first-order effects
                         const outputEffect = -0.7 * interestChange + 0.8 * spendingChange;
                         const inflationEffect = -0.8 * interestChange + 0.5 * spendingChange;
-                        
+
                         // Schedule the update of output and inflation after particles reach them
                         setTimeout(() => {
                             nodes.output.value = Math.max(1, Math.min(9, 5 + outputEffect));
                             nodes.inflation.value = Math.max(1, Math.min(9, 5 + inflationEffect));
-                            
+
                             // Update and pulse affected nodes
                             updateNodes();
                             nodes.output.element.classList.add('pulse-animation');
                             nodes.inflation.element.classList.add('pulse-animation');
-                            
+
                             updateExplanation("Primary Effects", `
                                 <p>The policy changes are now affecting output and inflation directly:</p>
                                 <div class="key-fact">
@@ -1437,27 +1469,27 @@
                                 <p>${interestChange > 0 ? 'Higher' : 'Lower'} interest rates ${interestChange > 0 ? 'slow' : 'stimulate'} economic activity and ${interestChange > 0 ? 'reduce' : 'increase'} inflation pressure.</p>
                                 <p>${spendingChange > 0 ? 'Higher' : 'Lower'} government spending ${spendingChange > 0 ? 'boosts' : 'reduces'} aggregate demand, ${spendingChange > 0 ? 'increasing' : 'decreasing'} both output and inflation.</p>
                             `);
-                            
+
                             // Second wave: Output → Unemployment
                             setTimeout(() => {
                                 createParticleEffect('output', 'unemployment');
                                 createParticleEffect('output', 'inflation');
-                                
+
                                 // Calculate secondary effects
                                 const outputChange = nodes.output.value - 5;
                                 const unemploymentEffect = -0.9 * outputChange;
                                 const additionalInflationEffect = 0.6 * outputChange;
-                                
+
                                 setTimeout(() => {
                                     nodes.unemployment.value = Math.max(1, Math.min(9, 5 + unemploymentEffect));
                                     nodes.inflation.value = Math.max(1, Math.min(9, nodes.inflation.value + additionalInflationEffect));
-                                    
+
                                     updateNodes();
                                     nodes.unemployment.element.classList.add('pulse-animation');
                                     nodes.inflation.element.classList.add('pulse-animation');
-                                    
+
                                     showFloatingInfo('okuns-law-info');
-                                    
+
                                     updateExplanation("Secondary Effects", `
                                         <p>Changes in economic output are now affecting unemployment and creating additional inflation effects:</p>
                                         <div class="key-fact">
@@ -1469,23 +1501,23 @@
                                         <p>This demonstrates <span class="highlight">Okun's Law</span>: Higher output reduces unemployment as businesses hire more workers to meet increased demand.</p>
                                         <p>Additionally, when output changes, it can create further inflation effects as the economy approaches or moves away from its capacity constraints.</p>
                                     `);
-                                    
+
                                     // Third wave: Unemployment → Inflation
                                     setTimeout(() => {
                                         createParticleEffect('unemployment', 'inflation');
-                                        
+
                                         // Calculate tertiary effects
                                         const unemploymentChange = nodes.unemployment.value - 5;
                                         const finalInflationEffect = -0.7 * unemploymentChange;
-                                        
+
                                         setTimeout(() => {
                                             nodes.inflation.value = Math.max(1, Math.min(9, nodes.inflation.value + finalInflationEffect));
-                                            
+
                                             updateNodes();
                                             nodes.inflation.element.classList.add('pulse-animation');
-                                            
+
                                             showFloatingInfo('phillips-curve-info');
-                                            
+
                                             updateExplanation("Phillips Curve Effect", `
                                                 <p>Changes in unemployment are now affecting inflation, demonstrating the Phillips Curve relationship:</p>
                                                 <div class="key-fact">
@@ -1495,22 +1527,22 @@
                                                 </div>
                                                 <p>The <span class="highlight">Phillips Curve</span> shows that ${unemploymentChange > 0 ? 'higher' : 'lower'} unemployment typically leads to ${finalInflationEffect > 0 ? 'higher' : 'lower'} inflation, as labor market conditions affect wage pressures.</p>
                                             `);
-                                            
+
                                             // Final wave: Inflation → Interest Rates (feedback loop)
                                             setTimeout(() => {
                                                 createParticleEffect('inflation', 'interest');
-                                                
+
                                                 // This represents how central banks would respond to inflation changes
                                                 const inflationChange = nodes.inflation.value - 5;
                                                 const interestResponse = 0.8 * inflationChange;
-                                                
+
                                                 // We don't actually change the interest rate value since it's set by the user
                                                 // But we show the effect to illustrate the feedback loop
-                                                
+
                                                 setTimeout(() => {
                                                     // Just pulse the interest rate node to show the feedback
                                                     nodes.interest.element.classList.add('pulse-animation');
-                                                    
+
                                                     updateExplanation("Feedback Loop Complete", `
                                                         <p>The simulation is now complete, showing how changes in policy variables create ripple effects throughout the economy.</p>
                                                         <div class="key-fact">
@@ -1524,7 +1556,7 @@
                                                         <p>Note how inflation would typically cause a central bank response: ${inflationChange > 0 ? 'Rising' : 'Falling'} inflation would normally lead to ${interestResponse > 0 ? 'higher' : 'lower'} interest rates as policymakers respond.</p>
                                                         <p>This completes the circular flow of economic relationships, creating a dynamic system that constantly adjusts to maintain equilibrium.</p>
                                                     `);
-                                                    
+
                                                     setTimeout(() => {
                                                         isSimulating = false;
                                                     }, 1000);
@@ -1538,34 +1570,34 @@
                     }, 1000);
                 }, 500);
             }
-            
+
             // Reset the visualization
             function resetVisualization() {
                 // Reset all values to 5 (baseline)
                 for (const key in nodes) {
                     nodes[key].value = 5;
                 }
-                
+
                 // Reset sliders
                 document.getElementById('interest-slider').value = 5;
                 document.getElementById('spending-slider').value = 5;
                 document.getElementById('interest-value').textContent = '5%';
                 document.getElementById('spending-value').textContent = '5';
-                
+
                 // Clear particles
                 particles = [];
-                
+
                 // Reset active focus
                 setActiveFocus('all');
-                
+
                 // Update nodes
                 updateNodes();
-                
+
                 // Hide all floating infos
                 document.querySelectorAll('.floating-info').forEach(info => {
                     info.style.opacity = '0';
                 });
-                
+
                 // Reset explanation
                 updateExplanation("How These Economic Variables Interact", `
                     <p>This visualization shows the interconnected relationships between key macroeconomic variables. The economy functions as a dynamic system where changes in one variable create ripple effects throughout.</p>
@@ -1578,45 +1610,45 @@
                     
                     <p>Click on any variable to see detailed information about its relationships with other variables.</p>
                 `);
-                
+
                 // Remove any animation classes
                 document.querySelectorAll('.pulse-animation').forEach(el => {
                     el.classList.remove('pulse-animation');
                 });
             }
-            
+
             // Update the explanation panel
             function updateExplanation(title, content) {
                 document.getElementById('explanation-title').textContent = title;
                 document.getElementById('explanation-content').innerHTML = content;
             }
-            
+
             // Show a specific floating info box
             function showFloatingInfo(infoId) {
                 document.querySelectorAll('.floating-info').forEach(info => {
                     info.style.opacity = '0';
                 });
-                
+
                 const infoBox = document.getElementById(infoId);
                 if (infoBox) {
                     infoBox.style.opacity = '1';
-                    
+
                     // Auto-hide after 5 seconds
                     setTimeout(() => {
                         infoBox.style.opacity = '0';
                     }, 5000);
                 }
             }
-            
+
             // Set active focus
             function setActiveFocus(focus) {
                 activeFocus = focus;
-                
+
                 // Update focus buttons
                 document.querySelectorAll('.focus-btn').forEach(btn => {
                     btn.classList.toggle('active', btn.dataset.focus === focus);
                 });
-                
+
                 // Show/hide node labels based on focus
                 for (const [key, node] of Object.entries(nodes)) {
                     const label = document.getElementById(`${node.type}-label-${key}`);
@@ -1628,7 +1660,7 @@
                         }
                     }
                 }
-                
+
                 // Update active node
                 if (focus !== 'all') {
                     setActiveNode(focus);
@@ -1636,20 +1668,20 @@
                     setActiveNode(null);
                 }
             }
-            
+
             // Set active node (for highlighting)
             function setActiveNode(nodeKey) {
                 activeNode = nodeKey;
-                
+
                 // Remove active class from all nodes
                 for (const key in nodes) {
                     nodes[key].element.classList.remove('active');
                 }
-                
+
                 // Add active class to selected node
                 if (nodeKey && nodes[nodeKey]) {
                     nodes[nodeKey].element.classList.add('active');
-                    
+
                     // Update explanation with node details
                     updateExplanation(
                         nodes[nodeKey].element.querySelector('.node-title').textContent,
@@ -1657,21 +1689,21 @@
                     );
                 }
             }
-            
+
             // Apply a scenario
             function applyScenario(scenarioKey) {
                 if (!scenarios[scenarioKey]) return;
-                
+
                 const scenario = scenarios[scenarioKey];
-                
+
                 // Update sliders
                 document.getElementById('interest-slider').value = scenario.interest;
                 document.getElementById('spending-slider').value = scenario.spending;
-                
+
                 // Trigger input events to update displays
                 document.getElementById('interest-slider').dispatchEvent(new Event('input'));
                 document.getElementById('spending-slider').dispatchEvent(new Event('input'));
-                
+
                 // Update explanation with scenario description
                 updateExplanation(`${scenarioKey.charAt(0).toUpperCase() + scenarioKey.slice(1)} Scenario`, `
                     <p>${scenario.description}</p>
@@ -1684,111 +1716,112 @@
                     </div>
                     <p>Click "Simulate Effects" to see how these policy settings affect the economy.</p>
                 `);
-                
+
                 // Highlight scenario button
                 document.querySelectorAll('.scenario-btn').forEach(btn => {
                     btn.classList.toggle('active', btn.dataset.scenario === scenarioKey);
                 });
             }
-            
+
             // Show loading overlay
             function showLoading() {
                 document.querySelector('.loading-overlay').style.opacity = '1';
                 document.querySelector('.loading-overlay').style.pointerEvents = 'auto';
             }
-            
+
             // Hide loading overlay
             function hideLoading() {
                 document.querySelector('.loading-overlay').style.opacity = '0';
                 document.querySelector('.loading-overlay').style.pointerEvents = 'none';
             }
-            
+
             // Resize canvas to match container
             function resizeCanvas() {
                 const container = document.getElementById('visualization');
                 canvas.width = container.clientWidth;
                 canvas.height = container.clientHeight;
             }
-            
+
             // Animation loop
             function animate() {
                 drawConnections();
                 requestAnimationFrame(animate);
             }
-            
+
             // Initialize everything
             function initialize() {
                 // Set up nodes
                 updateNodes();
                 positionNodes();
-                
+
                 // Start animation loop
                 animate();
-                
+
                 // Add event listeners
-                
+
                 // Slider events
-                document.getElementById('interest-slider').addEventListener('input', function() {
+                document.getElementById('interest-slider').addEventListener('input', function () {
                     const value = parseFloat(this.value);
                     document.getElementById('interest-value').textContent = `${value.toFixed(1)}%`;
                     nodes.interest.value = value;
                     updateNodes();
                 });
-                
-                document.getElementById('spending-slider').addEventListener('input', function() {
+
+                document.getElementById('spending-slider').addEventListener('input', function () {
                     const value = parseFloat(this.value);
                     document.getElementById('spending-value').textContent = value.toFixed(1);
                     nodes.spending.value = value;
                     updateNodes();
                 });
-                
+
                 // Button events
                 document.getElementById('simulate-btn').addEventListener('click', simulateEffects);
                 document.getElementById('reset-btn').addEventListener('click', resetVisualization);
-                
+
                 // Node events
                 for (const [key, node] of Object.entries(nodes)) {
                     // Hover events for tooltip
                     node.element.addEventListener('mouseenter', () => showTooltip(key));
                     node.element.addEventListener('mouseleave', hideTooltip);
-                    
+
                     // Click event to focus on node
                     node.element.addEventListener('click', () => {
                         setActiveFocus(key);
                     });
                 }
-                
+
                 // Focus button events
                 document.querySelectorAll('.focus-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
+                    btn.addEventListener('click', function () {
                         setActiveFocus(this.dataset.focus);
                     });
                 });
-                
+
                 // Scenario button events
                 document.querySelectorAll('.scenario-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
+                    btn.addEventListener('click', function () {
                         applyScenario(this.dataset.scenario);
                     });
                 });
-                
+
                 // Show node type labels after a short delay
                 setTimeout(() => {
                     document.querySelectorAll('.node-label').forEach(label => {
                         label.style.opacity = '1';
                     });
                 }, 1000);
-                
+
                 // Window resize event
                 window.addEventListener('resize', () => {
                     resizeCanvas();
                     positionNodes();
                 });
             }
-            
+
             // Initialize when DOM is loaded
             initialize();
         });
     </script>
 </body>
+
 </html>

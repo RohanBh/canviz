@@ -1,9 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Special Relativity: Einstein's Train</title>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-1DB24KTNYY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-1DB24KTNYY');
+  </script>
   <style>
     :root {
       --primary: #3498db;
@@ -13,7 +23,7 @@
       --light: #ecf0f1;
       --success: #2ecc71;
     }
-    
+
     body {
       margin: 0;
       padding: 0;
@@ -22,18 +32,18 @@
       color: var(--dark);
       line-height: 1.6;
     }
-    
+
     .container {
       max-width: 1000px;
       margin: 2rem auto;
       padding: 0 1rem;
     }
-    
+
     header {
       text-align: center;
       margin-bottom: 2rem;
     }
-    
+
     h1 {
       margin: 0;
       color: var(--dark);
@@ -41,14 +51,14 @@
       font-weight: 700;
       letter-spacing: -0.5px;
     }
-    
+
     h2 {
       font-size: 1.4rem;
       font-weight: 400;
       color: #555;
       margin-top: 0.5rem;
     }
-    
+
     .visualization-container {
       position: relative;
       background: white;
@@ -56,50 +66,50 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
       overflow: hidden;
     }
-    
+
     #canvas-container {
       position: relative;
       width: 100%;
       height: 500px;
       overflow: hidden;
     }
-    
+
     canvas {
       display: block;
       width: 100%;
       height: 100%;
     }
-    
+
     .controls {
       display: flex;
       flex-wrap: wrap;
       padding: 1.5rem;
-      background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,1));
-      border-top: 1px solid rgba(0,0,0,0.05);
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 1));
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
       gap: 1rem;
       align-items: center;
     }
-    
+
     .control-group {
       display: flex;
       flex-direction: column;
       flex: 1;
       min-width: 200px;
     }
-    
+
     .slider-container {
       display: flex;
       align-items: center;
       gap: 1rem;
       margin-bottom: 0.5rem;
     }
-    
+
     .slider-container label {
       width: 140px;
       font-size: 0.95rem;
       font-weight: 500;
     }
-    
+
     input[type="range"] {
       flex: 1;
       height: 6px;
@@ -108,36 +118,36 @@
       border-radius: 10px;
       outline: none;
     }
-    
+
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       width: 18px;
       height: 18px;
       border-radius: 50%;
       background: white;
-      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
       cursor: pointer;
       border: 2px solid var(--primary);
       transition: all 0.2s;
     }
-    
+
     input[type="range"]::-webkit-slider-thumb:hover {
       transform: scale(1.1);
     }
-    
+
     .value-display {
       font-weight: 600;
       min-width: 80px;
       text-align: right;
       font-variant-numeric: tabular-nums;
     }
-    
+
     .button-group {
       display: flex;
       gap: 0.5rem;
       margin-top: 0.5rem;
     }
-    
+
     button {
       background: var(--primary);
       color: white;
@@ -151,51 +161,51 @@
       align-items: center;
       justify-content: center;
       gap: 0.4rem;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
-    
+
     button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
-    
+
     button:active {
       transform: translateY(1px);
     }
-    
+
     button.secondary {
       background: white;
       color: var(--primary);
       border: 1px solid var(--primary);
     }
-    
+
     button.view-toggle {
       background: white;
       color: var(--dark);
-      border: 1px solid rgba(0,0,0,0.1);
+      border: 1px solid rgba(0, 0, 0, 0.1);
       padding: 0.4rem 1rem;
       flex: 1;
       min-width: 0;
     }
-    
+
     button.view-toggle.active {
       background: var(--primary);
       color: white;
       border-color: var(--primary);
     }
-    
+
     .view-toggle-group {
       display: flex;
       gap: 0.5rem;
       margin-top: 0.5rem;
     }
-    
+
     .frame-toggle-group {
       display: flex;
       gap: 0.5rem;
       margin-top: 0.5rem;
     }
-    
+
     .tooltip {
       position: absolute;
       background: rgba(44, 62, 80, 0.85);
@@ -203,7 +213,7 @@
       padding: 1rem;
       border-radius: 6px;
       max-width: 280px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
       z-index: 100;
       opacity: 0;
       transition: opacity 0.3s ease, transform 0.3s ease;
@@ -212,12 +222,12 @@
       font-size: 0.9rem;
       line-height: 1.5;
     }
-    
+
     .tooltip.visible {
       opacity: 1;
       transform: translateY(0);
     }
-    
+
     .tooltip::after {
       content: '';
       position: absolute;
@@ -230,22 +240,22 @@
       left: 50%;
       transform: translateX(-50%);
     }
-    
+
     .tooltip h3 {
       margin-top: 0;
       margin-bottom: 0.5rem;
       font-size: 1rem;
       color: var(--accent);
     }
-    
+
     .explanation {
       padding: 1.5rem;
       background: white;
-      border-top: 1px solid rgba(0,0,0,0.05);
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
       font-size: 1rem;
       line-height: 1.6;
     }
-    
+
     .explanation h3 {
       margin-top: 0;
       font-size: 1.2rem;
@@ -254,15 +264,15 @@
       align-items: center;
       gap: 0.5rem;
     }
-    
+
     .explanation p {
       margin-bottom: 0.75rem;
     }
-    
+
     .explanation p:last-child {
       margin-bottom: 0;
     }
-    
+
     .formula {
       background: rgba(52, 152, 219, 0.05);
       padding: 0.5rem 1rem;
@@ -271,7 +281,7 @@
       text-align: center;
       margin: 1rem 0;
     }
-    
+
     .overlay-controls {
       position: absolute;
       bottom: 20px;
@@ -281,7 +291,7 @@
       gap: 1rem;
       z-index: 10;
     }
-    
+
     .overlay-button {
       background: rgba(255, 255, 255, 0.9);
       border: 1px solid rgba(0, 0, 0, 0.1);
@@ -296,13 +306,13 @@
       gap: 0.4rem;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
-    
+
     .overlay-button:hover {
       background: white;
       transform: translateY(-2px);
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
     }
-    
+
     .phenomenon-indicator {
       position: absolute;
       top: 20px;
@@ -315,19 +325,34 @@
       pointer-events: none;
       transition: opacity 0.3s;
     }
-    
+
     /* Animation for appearing elements */
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
-    
+
     @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+
+      100% {
+        transform: scale(1);
+      }
     }
-    
+
     /* Loading indicator */
     .loading {
       position: absolute;
@@ -342,7 +367,7 @@
       justify-content: center;
       z-index: 1000;
     }
-    
+
     .loading-spinner {
       width: 50px;
       height: 50px;
@@ -352,10 +377,15 @@
       animation: spin 1s linear infinite;
       margin-bottom: 1rem;
     }
-    
+
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
     }
 
     /* Day-night toggle */
@@ -371,10 +401,10 @@
       display: flex;
       align-items: center;
       padding: 0 5px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       cursor: pointer;
     }
-    
+
     .toggle-knob {
       position: relative;
       width: 22px;
@@ -383,13 +413,14 @@
       border-radius: 50%;
       transition: transform 0.3s ease;
     }
-    
+
     .day-night-toggle.night .toggle-knob {
       transform: translateX(30px);
       background: var(--dark);
     }
 
-    .day-icon, .night-icon {
+    .day-icon,
+    .night-icon {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
@@ -397,27 +428,27 @@
       height: 14px;
       transition: opacity 0.3s ease;
     }
-    
+
     .day-icon {
       left: 8px;
       opacity: 1;
       color: #f39c12;
     }
-    
+
     .night-icon {
       right: 8px;
       opacity: 0;
       color: #f1c40f;
     }
-    
+
     .day-night-toggle.night .day-icon {
       opacity: 0;
     }
-    
+
     .day-night-toggle.night .night-icon {
       opacity: 1;
     }
-    
+
     /* Event markers */
     .event-marker {
       position: absolute;
@@ -428,11 +459,11 @@
       z-index: 5;
       transition: all 0.3s;
     }
-    
+
     .event-marker:hover {
       transform: translate(-50%, -50%) scale(1.2);
     }
-    
+
     .event-marker::before {
       content: '';
       position: absolute;
@@ -445,13 +476,13 @@
       transform: translate(-50%, -50%);
       box-shadow: 0 0 0 4px rgba(241, 196, 15, 0.3);
     }
-    
+
     .event-marker.triggered::before {
       background: var(--success);
-      box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.3), 
-                  0 0 20px rgba(46, 204, 113, 0.6);
+      box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.3),
+        0 0 20px rgba(46, 204, 113, 0.6);
     }
-    
+
     /* Time display */
     .time-display {
       position: absolute;
@@ -468,24 +499,24 @@
       display: flex;
       gap: 1rem;
     }
-    
+
     .time-value {
       display: flex;
       align-items: center;
       gap: 0.5rem;
     }
-    
+
     .train-indicator {
       width: 12px;
       height: 12px;
       border-radius: 50%;
       display: inline-block;
     }
-    
+
     .train-indicator.stationary {
       background-color: var(--primary);
     }
-    
+
     .train-indicator.moving {
       background-color: var(--secondary);
     }
@@ -495,58 +526,59 @@
       .controls {
         flex-direction: column;
       }
-      
+
       .control-group {
         width: 100%;
       }
-      
+
       h1 {
         font-size: 1.8rem;
       }
-      
+
       h2 {
         font-size: 1.1rem;
       }
-      
+
       #canvas-container {
         height: 400px;
       }
-      
+
       .slider-container {
         flex-direction: column;
         align-items: flex-start;
       }
-      
+
       .slider-container label {
         width: 100%;
         margin-bottom: 0.5rem;
       }
-      
+
       .value-display {
         text-align: left;
       }
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <header>
       <h1>Special Relativity: Einstein's Train Thought Experiment</h1>
       <h2>Explore how motion changes time and space for different observers</h2>
     </header>
-    
+
     <div class="visualization-container">
       <div id="canvas-container">
         <canvas id="relativistic-canvas"></canvas>
-        
+
         <div class="day-night-toggle">
           <div class="toggle-knob"></div>
           <div class="day-icon">☀️</div>
           <div class="night-icon">🌙</div>
         </div>
-        
+
         <div class="phenomenon-indicator">Time Dilation</div>
-        
+
         <div class="time-display">
           <div class="time-value">
             <span class="train-indicator stationary"></span>
@@ -557,13 +589,13 @@
             <span>Train: <span id="moving-time">0.00s</span></span>
           </div>
         </div>
-        
+
         <div class="overlay-controls">
           <button class="overlay-button" id="place-lightning">Place Lightning Strike</button>
           <button class="overlay-button" id="trigger-event">Send Light Signal</button>
         </div>
       </div>
-      
+
       <div class="controls">
         <div class="control-group">
           <div class="slider-container">
@@ -571,36 +603,38 @@
             <input type="range" id="velocity-slider" min="0" max="95" value="50" step="1">
             <div class="value-display"><span id="velocity-value">50</span>% of c</div>
           </div>
-          
+
           <div class="button-group">
             <button id="play-pause"><span id="play-icon">⏸️</span> <span id="play-text">Pause</span></button>
             <button class="secondary" id="reset">↺ Reset</button>
           </div>
         </div>
-        
+
         <div class="control-group">
           <div class="view-toggle-group">
             <button class="view-toggle active" data-view="time-dilation">Time Dilation</button>
             <button class="view-toggle" data-view="length-contraction">Length Contraction</button>
             <button class="view-toggle" data-view="simultaneity">Simultaneity</button>
           </div>
-          
+
           <div class="frame-toggle-group">
             <button class="view-toggle active" data-frame="platform">Platform Observer</button>
             <button class="view-toggle" data-frame="train">Train Observer</button>
           </div>
         </div>
       </div>
-      
+
       <div class="explanation">
         <h3>⏱️ Time Dilation</h3>
-        <p>As the train moves faster, time on the train appears to slow down when viewed from the platform. This isn't an illusion—it's a real effect of motion through spacetime.</p>
-        <p>The clock on the moving train ticks more slowly than the clock on the platform. The faster the train moves, the more pronounced this effect becomes.</p>
+        <p>As the train moves faster, time on the train appears to slow down when viewed from the platform. This isn't
+          an illusion—it's a real effect of motion through spacetime.</p>
+        <p>The clock on the moving train ticks more slowly than the clock on the platform. The faster the train moves,
+          the more pronounced this effect becomes.</p>
         <div class="formula">Time Dilation: Δt' = γ × Δt where γ = 1/√(1-v²/c²)</div>
       </div>
-      
+
       <div class="tooltip" id="tooltip"></div>
-      
+
       <div class="loading">
         <div class="loading-spinner"></div>
         <div>Preparing visualization...</div>
@@ -613,17 +647,17 @@
     function lerp(start, end, t) {
       return start * (1 - t) + end * t;
     }
-    
+
     function easeInOutQuad(t) {
       return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
     }
-    
+
     function easeOutBack(t) {
       const c1 = 1.70158;
       const c3 = c1 + 1;
       return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
     }
-    
+
     // Main visualization
     class RelativityVisualization {
       constructor() {
@@ -646,7 +680,7 @@
         this.placeLightningButton = document.getElementById('place-lightning');
         this.sendLightSignalButton = document.getElementById('trigger-event');
         this.loadingElement = document.querySelector('.loading');
-        
+
         // State
         this.velocity = 50; // As percentage of c (0-95%)
         this.animating = true;
@@ -658,10 +692,10 @@
         this.gamma = 1;
         this.resizeTimeout = null;
         this.tooltipTimeout = null;
-        
+
         // Canvas size
         this.updateCanvasSize();
-        
+
         // Assets
         this.assets = {
           trainImage: new Image(),
@@ -673,25 +707,25 @@
           city: new Image(),
           starField: this.generateStarField()
         };
-        
+
         this.totalAssets = 6;
         this.loadedAssets = 0;
-        
+
         // Initialize events and clocks
         this.initializeEvents();
         this.initializeClocks();
-        
+
         // Light beams and particles
         this.lightBeams = [];
         this.particles = [];
-        
+
         // Start loading assets
         this.loadAssets();
-        
+
         // Set up event listeners
         this.setupEventListeners();
       }
-      
+
       loadAssets() {
         // Define asset loading function
         const loadAsset = (asset, src) => {
@@ -703,7 +737,7 @@
             }
           };
         };
-        
+
         // Load all images
         loadAsset(this.assets.trainImage, 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgODAiPjxwYXRoIGZpbGw9IiNlNzRjM2MiIGQ9Ik0yOTAsNjBIMjAwYy01LDAsMC0zMCwzMC0zMGgzMGM1LDAsMTAsNCwxNSw0LDEwLDAsMTUsMTAsMTUsMTBWNjBaIi8+PHBhdGggZmlsbD0iI2M0MzgyYyIgZD0iTTI5MCw2MEgyMzBjMCwwLDMwLTMwLDMwLTMwaDMwYzUsMCw1LDQsMTAsNGMxNSwwLDE1LDExLDE1LDExdjE1WiIvPjxwYXRoIGZpbGw9IiNlNzRjM2MiIGQ9Ik0xOTAsNjBIMTBDNSw2MCwwLDU1LDAsNTBWMzVjMCwwLDUtMTAsMTUtMTBjNSwwLDEwLTQsMTUtNGgzMGMzMCwwLDM1LDMwLDMwLDMwSDgwIi8+PHBhdGggZmlsbD0iI2M0MzgyYyIgZD0iTTE1LDYwSDEwQzUsNjAsMCw1NSwwLDUwVjM1YzAsMCwwLTUsMTAtMTBjNSwyLDEwLDQsMTUsNWMxMCwyLDIwLDUsMzAsNXMzMCwwLDUwLDBjNSwwLDEwLDAsMTUsMHMxMCwwLDE1LDVjNSw1LDEwLDEwLDEwLDEwbC01LDEwSDE5MFoiLz48cmVjdCB4PSI2MCIgeT0iMjAiIHdpZHRoPSIzMCIgaGVpZ2h0PSIyMCIgcng9IjUiIGZpbGw9IiNlY2YwZjEiLz48cmVjdCB4PSIxMDAiIHk9IjIwIiB3aWR0aD0iMzAiIGhlaWdodD0iMjAiIHJ4PSI1IiBmaWxsPSIjZWNmMGYxIi8+PHJlY3QgeD0iMTQwIiB5PSIyMCIgd2lkdGg9IjMwIiBoZWlnaHQ9IjIwIiByeD0iNSIgZmlsbD0iI2VjZjBmMSIvPjxjaXJjbGUgY3g9IjQwIiBjeT0iNjAiIHI9IjE1IiBmaWxsPSIjMzQzNzQ4Ii8+PGNpcmNsZSBjeD0iNDAiIGN5PSI2MCIgcj0iOCIgZmlsbD0iIzdjOGE5YyIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjYwIiByPSIxNSIgZmlsbD0iIzM0Mzc0OCIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjYwIiByPSI4IiBmaWxsPSIjN2M4YTljIi8+PGNpcmNsZSBjeD0iMTYwIiBjeT0iNjAiIHI9IjE1IiBmaWxsPSIjMzQzNzQ4Ii8+PGNpcmNsZSBjeD0iMTYwIiBjeT0iNjAiIHI9IjgiIGZpbGw9IiM3YzhhOWMiLz48Y2lyY2xlIGN4PSIyNDAiIGN5PSI2MCIgcj0iMTUiIGZpbGw9IiMzNDM3NDgiLz48Y2lyY2xlIGN4PSIyNDAiIGN5PSI2MCIgcj0iOCIgZmlsbD0iIzdjOGE5YyIvPjxjaXJjbGUgY3g9IjE5MCIgY3k9IjI1IiByPSI4IiBmaWxsPSIjZjFjNDBmIi8+PC9zdmc+');
         loadAsset(this.assets.platformImage, 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2MDAgNDAiPjxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNDAiIGZpbGw9IiM5NTk1OTUiLz48cmVjdCB3aWR0aD0iNjAwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjNzc3Ii8+PHJlY3QgeT0iMTAiIHdpZHRoPSI2MDAiIGhlaWdodD0iNSIgZmlsbD0iIzU1NSIvPjxnIGZpbGw9IiMzMzMiPjxyZWN0IHg9IjEwIiB5PSIyMCIgd2lkdGg9IjMwIiBoZWlnaHQ9IjIwIi8+PHJlY3QgeD0iNjAiIHk9IjIwIiB3aWR0aD0iMzAiIGhlaWdodD0iMjAiLz48cmVjdCB4PSIxMTAiIHk9IjIwIiB3aWR0aD0iMzAiIGhlaWdodD0iMjAiLz48cmVjdCB4PSIxNjAiIHk9IjIwIiB3aWR0aD0iMzAiIGhlaWdodD0iMjAiLz48cmVjdCB4PSIyMTAiIHk9IjIwIiB3aWR0aD0iMzAiIGhlaWdodD0iMjAiLz48cmVjdCB4PSIyNjAiIHk9IjIwIiB3aWR0aD0iMzAiIGhlaWdodD0iMjAiLz48cmVjdCB4PSIzMTAiIHk9IjIwIiB3aWR0aD0iMzAiIGhlaWdodD0iMjAiLz48cmVjdCB4PSIzNjAiIHk9IjIwIiB3aWR0aD0iMzAiIGhlaWdodD0iMjAiLz48cmVjdCB4PSI0MTAiIHk9IjIwIiB3aWR0aD0iMzAiIGhlaWdodD0iMjAiLz48cmVjdCB4PSI0NjAiIHk9IjIwIiB3aWR0aD0iMzAiIGhlaWdodD0iMjAiLz48cmVjdCB4PSI1MTAiIHk9IjIwIiB3aWR0aD0iMzAiIGhlaWdodD0iMjAiLz48cmVjdCB4PSI1NjAiIHk9IjIwIiB3aWR0aD0iMzAiIGhlaWdodD0iMjAiLz48L2c+PHJlY3QgeT0iMTUiIHdpZHRoPSI2MDAiIGhlaWdodD0iMSIgZmlsbD0iIzIyMiIvPjwvc3ZnPg==');
@@ -712,58 +746,58 @@
         loadAsset(this.assets.mountains, 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAwIDIwMCI+PHBhdGggZD0iTTAsOTloNDBsNjAsLTMwbDQwLDIwbDIwLC0xMGwyMCwxMGw0MCwtMjBsNjAsMzBsNDAsLTYwbDQwLDMwbDQwLC0yMGw2MCw0MGw0MCwtOTBsNjAsNzBsNjAsLTMwbDQwLDIwbDQwLC00MGw2MCw1MGw0MCwtMzBsNDAsNTBsNDAsLTEwbDgwLDQwbDQwLC0yMGw0MCwyMHY1MGgtMTAwMHYtNTAiIGZpbGw9IiM0ZDYyOGUiLz48cGF0aCBkPSJNMCwxOTlsNDAsLTYwbDgwLDQwbDYwLC0zMGw2MCw1MGgxMjBsNDAsLTcwbDgwLDUwbDQwLC0xMGw4MCw0MGw0MCwtMzBsNjAsNDBsNDAsLTgwbDYwLDQwbDQwLC0yMGw0MCwyMGw0MCwtNjBsODAsNzB2NTBoLTEwMDB2LTQwIiBmaWxsPSIjMmMzZTUwIi8+PC9zdmc+');
         loadAsset(this.assets.city, 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAwIDEwMCI+PGcgZmlsbD0iIzI0MzM0MiI+PHJlY3QgeD0iMTAiIHk9IjUwIiB3aWR0aD0iMjAiIGhlaWdodD0iNTAiLz48cmVjdCB4PSI0MCIgeT0iMzAiIHdpZHRoPSIzMCIgaGVpZ2h0PSI3MCIvPjxyZWN0IHg9IjgwIiB5PSI2MCIgd2lkdGg9IjE1IiBoZWlnaHQ9IjQwIi8+PHJlY3QgeD0iMTEwIiB5PSI0MCIgd2lkdGg9IjI1IiBoZWlnaHQ9IjYwIi8+PHJlY3QgeD0iMTUwIiB5PSIyMCIgd2lkdGg9IjMwIiBoZWlnaHQ9IjgwIi8+PHJlY3QgeD0iMTkwIiB5PSI1MCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjUwIi8+PHJlY3QgeD0iMjMwIiB5PSIxMCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjkwIi8+PHJlY3QgeD0iMjgwIiB5PSI0MCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjYwIi8+PHJlY3QgeD0iMzEwIiB5PSI2MCIgd2lkdGg9IjE1IiBoZWlnaHQ9IjQwIi8+PHJlY3QgeD0iMzQwIiB5PSIzMCIgd2lkdGg9IjI1IiBoZWlnaHQ9IjcwIi8+PHJlY3QgeD0iMzgwIiB5PSI1MCIgd2lkdGg9IjMwIiBoZWlnaHQ9IjUwIi8+PHJlY3QgeD0iNDIwIiB5PSIyMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjgwIi8+PHJlY3QgeD0iNDUwIiB5PSI1MCIgd2lkdGg9IjE1IiBoZWlnaHQ9IjUwIi8+PHJlY3QgeD0iNDgwIiB5PSIzMCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjcwIi8+PHJlY3QgeD0iNTMwIiB5PSI2MCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjQwIi8+PHJlY3QgeD0iNTYwIiB5PSI0MCIgd2lkdGg9IjMwIiBoZWlnaHQ9IjYwIi8+PHJlY3QgeD0iNjAwIiB5PSIyMCIgd2lkdGg9IjM1IiBoZWlnaHQ9IjgwIi8+PHJlY3QgeD0iNjUwIiB5PSIxMCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjkwIi8+PHJlY3QgeD0iNjgwIiB5PSI0MCIgd2lkdGg9IjI1IiBoZWlnaHQ9IjYwIi8+PHJlY3QgeD0iNzIwIiB5PSI1MCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjUwIi8+PHJlY3QgeD0iNzUwIiB5PSIzMCIgd2lkdGg9IjMwIiBoZWlnaHQ9IjcwIi8+PHJlY3QgeD0iNzkwIiB5PSI2MCIgd2lkdGg9IjE1IiBoZWlnaHQ9IjQwIi8+PHJlY3QgeD0iODIwIiB5PSI0MCIgd2lkdGg9IjI1IiBoZWlnaHQ9IjYwIi8+PHJlY3QgeD0iODYwIiB5PSIyMCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjgwIi8+PHJlY3QgeD0iOTEwIiB5PSI1MCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjUwIi8+PHJlY3QgeD0iOTQwIiB5PSIzMCIgd2lkdGg9IjMwIiBoZWlnaHQ9IjcwIi8+PHJlY3QgeD0iOTgwIiB5PSI0MCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjYwIi8+PC9nPjxnIGZpbGw9IiMxNDFkMjYiPjxyZWN0IHg9IjI1IiB5PSI3MCIgd2lkdGg9IjEwIiBoZWlnaHQ9IjMwIi8+PHJlY3QgeD0iNjAiIHk9IjUwIiB3aWR0aD0iMTUiIGhlaWdodD0iNTAiLz48cmVjdCB4PSIxMDAiIHk9IjcwIiB3aWR0aD0iMTAiIGhlaWdodD0iMzAiLz48cmVjdCB4PSIxNDAiIHk9IjYwIiB3aWR0aD0iMTAiIGhlaWdodD0iNDAiLz48cmVjdCB4PSIyMDAiIHk9IjcwIiB3aWR0aD0iMTUiIGhlaWdodD0iMzAiLz48cmVjdCB4PSIyOTAiIHk9IjUwIiB3aWR0aD0iMTAiIGhlaWdodD0iNTAiLz48cmVjdCB4PSIzMzAiIHk9IjcwIiB3aWR0aD0iMTAiIGhlaWdodD0iMzAiLz48cmVjdCB4PSIzNzAiIHk9IjYwIiB3aWR0aD0iMTAiIGhlaWdodD0iNDAiLz48cmVjdCB4PSI0MzAiIHk9IjUwIiB3aWR0aD0iMTUiIGhlaWdodD0iNTAiLz48cmVjdCB4PSI0NjUiIHk9IjcwIiB3aWR0aD0iMTAiIGhlaWdodD0iMzAiLz48cmVjdCB4PSI1MTAiIHk9IjYwIiB3aWR0aD0iMTAiIGhlaWdodD0iNDAiLz48cmVjdCB4PSI1NTAiIHk9IjcwIiB3aWR0aD0iMTAiIGhlaWdodD0iMzAiLz48cmVjdCB4PSI1ODUiIHk9IjYwIiB3aWR0aD0iMTAiIGhlaWdodD0iNDAiLz48cmVjdCB4PSI2MzAiIHk9IjUwIiB3aWR0aD0iMTUiIGhlaWdodD0iNTAiLz48cmVjdCB4PSI2NjUiIHk9IjQwIiB3aWR0aD0iMTAiIGhlaWdodD0iNjAiLz48cmVjdCB4PSI3MDAiIHk9IjYwIiB3aWR0aD0iMTAiIGhlaWdodD0iNDAiLz48cmVjdCB4PSI3MzUiIHk9IjcwIiB3aWR0aD0iMTAiIGhlaWdodD0iMzAiLz48cmVjdCB4PSI3NzAiIHk9IjUwIiB3aWR0aD0iMTUiIGhlaWdodD0iNTAiLz48cmVjdCB4PSI4MDUiIHk9IjcwIiB3aWR0aD0iMTAiIGhlaWdodD0iMzAiLz48cmVjdCB4PSI4NDUiIHk9IjYwIiB3aWR0aD0iMTAiIGhlaWdodD0iNDAiLz48cmVjdCB4PSI4OTAiIHk9IjUwIiB3aWR0aD0iMTUiIGhlaWdodD0iNTAiLz48cmVjdCB4PSI5MjUiIHk9IjcwIiB3aWR0aD0iMTAiIGhlaWdodD0iMzAiLz48cmVjdCB4PSI5NjUiIHk9IjUwIiB3aWR0aD0iMTAiIGhlaWdodD0iNTAiLz48L2c+PGcgZmlsbD0iI2ZlZiI+PHJlY3QgeD0iMTUiIHk9IjYwIiB3aWR0aD0iNSIgaGVpZ2h0PSIxMCIvPjxyZWN0IHg9IjI1IiB5PSI3MCIgd2lkdGg9IjUiIGhlaWdodD0iNSIvPjxyZWN0IHg9IjQ1IiB5PSI0MCIgd2lkdGg9IjUiIGhlaWdodD0iMTAiLz48cmVjdCB4PSI2MCIgeT0iNTAiIHdpZHRoPSI1IiBoZWlnaHQ9IjEwIi8+PHJlY3QgeD0iMTUwIiB5PSIzMCIgd2lkdGg9IjUiIGhlaWdodD0iMTAiLz48cmVjdCB4PSIxOTAiIHk9IjYwIiB3aWR0aD0iNSIgaGVpZ2h0PSIxMCIvPjxyZWN0IHg9IjIzMCIgeT0iMjAiIHdpZHRoPSI1IiBoZWlnaHQ9IjEwIi8+PHJlY3QgeD0iMjkwIiB5PSI1MCIgd2lkdGg9IjUiIGhlaWdodD0iMTAiLz48cmVjdCB4PSIzODAiIHk9IjYwIiB3aWR0aD0iNSIgaGVpZ2h0PSIxMCIvPjxyZWN0IHg9IjQyMCIgeT0iMzAiIHdpZHRoPSI1IiBoZWlnaHQ9IjEwIi8+PHJlY3QgeD0iNDgwIiB5PSI0MCIgd2lkdGg9IjUiIGhlaWdodD0iMTAiLz48cmVjdCB4PSI1NjAiIHk9IjUwIiB3aWR0aD0iNSIgaGVpZ2h0PSIxMCIvPjxyZWN0IHg9IjYwMCIgeT0iMzAiIHdpZHRoPSI1IiBoZWlnaHQ9IjEwIi8+PHJlY3QgeD0iNjUwIiB5PSIyMCIgd2lkdGg9IjUiIGhlaWdodD0iMTAiLz48cmVjdCB4PSI3MjAiIHk9IjYwIiB3aWR0aD0iNSIgaGVpZ2h0PSIxMCIvPjxyZWN0IHg9Ijc5MCIgeT0iNzAiIHdpZHRoPSI1IiBoZWlnaHQ9IjEwIi8+PHJlY3QgeD0iODIwIiB5PSI1MCIgd2lkdGg9IjUiIGhlaWdodD0iMTAiLz48cmVjdCB4PSI4NjAiIHk9IjMwIiB3aWR0aD0iNSIgaGVpZ2h0PSIxMCIvPjxyZWN0IHg9IjkxMCIgeT0iNjAiIHdpZHRoPSI1IiBoZWlnaHQ9IjEwIi8+PHJlY3QgeD0iOTQwIiB5PSI0MCIgd2lkdGg9IjUiIGhlaWdodD0iMTAiLz48cmVjdCB4PSI5ODAiIHk9IjUwIiB3aWR0aD0iNSIgaGVpZ2h0PSIxMCIvPjwvZz48L3N2Zz4=');
       }
-      
+
       onAssetsLoaded() {
         // All assets are loaded, start animation
         this.loadingElement.style.display = 'none';
         this.startAnimation();
       }
-      
+
       setupEventListeners() {
         // Velocity slider
         this.velocitySlider.addEventListener('input', () => {
           this.updateVelocity();
         });
-        
+
         // Play/pause button
         this.playPauseButton.addEventListener('click', () => {
           this.toggleAnimation();
         });
-        
+
         // Reset button
         this.resetButton.addEventListener('click', () => {
           this.resetSimulation();
         });
-        
+
         // View toggles
         this.viewToggles.forEach(toggle => {
           toggle.addEventListener('click', () => {
             this.setCurrentView(toggle.dataset.view);
           });
         });
-        
+
         // Frame toggles
         this.frameToggles.forEach(toggle => {
           toggle.addEventListener('click', () => {
             this.setCurrentFrame(toggle.dataset.frame);
           });
         });
-        
+
         // Day/night toggle
         this.dayNightToggle.addEventListener('click', () => {
           this.toggleDayNight();
         });
-        
+
         // Place lightning button
         this.placeLightningButton.addEventListener('click', () => {
           this.addLightningStrike();
         });
-        
+
         // Send light signal button
         this.sendLightSignalButton.addEventListener('click', () => {
           this.addLightBeam();
         });
-        
+
         // Handle window resize
         window.addEventListener('resize', () => {
           clearTimeout(this.resizeTimeout);
@@ -771,64 +805,64 @@
             this.updateCanvasSize();
           }, 250);
         });
-        
+
         // Canvas mouse move for tooltips
         this.canvas.addEventListener('mousemove', (e) => {
           this.handleMouseMove(e);
         });
-        
+
         // Canvas click for interaction
         this.canvas.addEventListener('click', (e) => {
           this.handleCanvasClick(e);
         });
       }
-      
+
       updateCanvasSize() {
         // Get the container dimensions
         const container = this.canvas.parentElement;
         const rect = container.getBoundingClientRect();
-        
+
         // Update canvas size
         this.canvas.width = rect.width;
         this.canvas.height = rect.height;
-        
+
         // Update positions based on new canvas size
         this.updatePositions();
-        
+
         // Redraw
         if (!this.animating) {
           this.draw();
         }
       }
-      
+
       updatePositions() {
         // Update positions of elements based on canvas size
         const canvasWidth = this.canvas.width;
         const canvasHeight = this.canvas.height;
-        
+
         // Platform position
         this.platformY = canvasHeight * 0.8;
-        
+
         // Set positions of stationary and moving frames
         this.stationaryPosition = canvasWidth * 0.25;
         this.movingFrameBaseX = canvasWidth * 0.65;
       }
-      
+
       updateVelocity() {
         this.velocity = parseInt(this.velocitySlider.value);
         this.velocityValue.textContent = this.velocity;
-        
+
         // Calculate gamma factor
         const beta = this.velocity / 100;
         this.gamma = 1 / Math.sqrt(1 - (beta * beta));
-        
+
         // Update the effect of velocity on time/length
         this.updateExplanation();
       }
-      
+
       toggleAnimation() {
         this.animating = !this.animating;
-        
+
         if (this.animating) {
           this.playIcon.textContent = "⏸️";
           this.playText.textContent = "Pause";
@@ -839,7 +873,7 @@
           this.playText.textContent = "Play";
         }
       }
-      
+
       resetSimulation() {
         this.time = 0;
         this.lightBeams = [];
@@ -847,60 +881,60 @@
         this.events.forEach(event => {
           event.triggered = false;
         });
-        
+
         // Reset clocks
         this.stationaryClock.time = 0;
         this.movingClock.time = 0;
-        
+
         // Update displays
         this.updateTimeDisplay();
-        
+
         // Redraw
         if (!this.animating) {
           this.draw();
         }
       }
-      
+
       setCurrentView(view) {
         this.currentView = view;
-        
+
         // Update button styles
         this.viewToggles.forEach(toggle => {
           toggle.classList.toggle('active', toggle.dataset.view === view);
         });
-        
+
         // Update explanation based on view
         this.updateExplanation();
-        
+
         // Update phenomenon indicator
         this.updatePhenomenonIndicator();
       }
-      
+
       setCurrentFrame(frame) {
         this.currentFrame = frame;
-        
+
         // Update button styles
         this.frameToggles.forEach(toggle => {
           toggle.classList.toggle('active', toggle.dataset.frame === frame);
         });
-        
+
         // Update the visualization perspective
         if (!this.animating) {
           this.draw();
         }
       }
-      
+
       toggleDayNight() {
         this.isNightMode = !this.isNightMode;
         this.dayNightToggle.classList.toggle('night', this.isNightMode);
       }
-      
+
       updateExplanation() {
         const explanationDiv = document.querySelector('.explanation');
         const beta = this.velocity / 100;
         const gamma = 1 / Math.sqrt(1 - (beta * beta));
-        
-        switch(this.currentView) {
+
+        switch (this.currentView) {
           case 'time-dilation':
             explanationDiv.innerHTML = `
               <h3>⏱️ Time Dilation</h3>
@@ -913,7 +947,7 @@
             explanationDiv.innerHTML = `
               <h3>📏 Length Contraction</h3>
               <p>Objects in motion appear shorter along their direction of travel. From the platform observer's perspective, the moving train is compressed by a factor of gamma.</p>
-              <p>At ${this.velocity}% of light speed, the train appears to be ${(100/gamma).toFixed(1)}% of its proper length when measured from the platform.</p>
+              <p>At ${this.velocity}% of light speed, the train appears to be ${(100 / gamma).toFixed(1)}% of its proper length when measured from the platform.</p>
               <div class="formula">Length Contraction: L = L₀/γ where γ = ${gamma.toFixed(3)}</div>
             `;
             break;
@@ -927,11 +961,11 @@
             break;
         }
       }
-      
+
       updatePhenomenonIndicator() {
         let text = 'Time Dilation';
-        
-        switch(this.currentView) {
+
+        switch (this.currentView) {
           case 'time-dilation':
             text = 'Time Dilation';
             break;
@@ -942,30 +976,30 @@
             text = 'Relativity of Simultaneity';
             break;
         }
-        
+
         this.phenomenonIndicator.textContent = text;
       }
-      
+
       initializeEvents() {
         // Initialize events for simultaneity demonstration
         this.events = [
-          { 
+          {
             x: 0.2, // Position as percentage of canvas width
-            y: this.platformY - 30, 
+            y: this.platformY - 30,
             time: 0,
             triggered: false,
-            label: "Event A" 
+            label: "Event A"
           },
-          { 
+          {
             x: 0.8,
-            y: this.platformY - 30, 
-            time: 0, 
+            y: this.platformY - 30,
+            time: 0,
             triggered: false,
-            label: "Event B" 
+            label: "Event B"
           }
         ];
       }
-      
+
       initializeClocks() {
         // Initialize clocks for time dilation demonstration
         this.stationaryClock = {
@@ -974,7 +1008,7 @@
           y: 0,
           radius: 20
         };
-        
+
         this.movingClock = {
           time: 0,
           x: 0,
@@ -982,24 +1016,24 @@
           radius: 20
         };
       }
-      
+
       addLightningStrike() {
         // Add lightning particle effects at both event positions
         this.events.forEach(event => {
           const x = event.x * this.canvas.width;
           const y = event.y;
-          
+
           // Add lightning effect
           this.addLightningEffect(x, y);
-          
+
           // Mark event as triggered
           event.triggered = true;
-          
+
           // Add light beam from lightning
           this.addLightBeam(x, y, 5);
         });
       }
-      
+
       addLightningEffect(x, y) {
         // Add lightning particles
         for (let i = 0; i < 50; i++) {
@@ -1015,23 +1049,23 @@
           });
         }
       }
-      
+
       addLightBeam(x, y, radius = 8) {
         // Get starting positions
         const startX = x || this.stationaryClock.x;
         const startY = y || this.stationaryClock.y;
-        
+
         // Create light beam
         this.lightBeams.push({
           x: startX,
           y: startY,
           radius: radius,
           speed: 0.5, // Light speed in our simulation
-          trail: [{x: startX, y: startY}],
+          trail: [{ x: startX, y: startY }],
           color: '#f1c40f'
         });
       }
-      
+
       generateStarField() {
         // Generate stars for night mode
         const stars = [];
@@ -1045,77 +1079,77 @@
         }
         return stars;
       }
-      
+
       updateTimeDisplay() {
         // Update time displays with current values
         this.stationaryTimeElement.textContent = this.stationaryClock.time.toFixed(2) + 's';
         this.movingTimeElement.textContent = this.movingClock.time.toFixed(2) + 's';
       }
-      
+
       startAnimation() {
         // Start the animation loop
         this.lastTime = performance.now();
         requestAnimationFrame(this.animate.bind(this));
       }
-      
+
       animate(timestamp) {
         // Calculate time delta
         const deltaTime = (timestamp - this.lastTime) / 1000; // Convert to seconds
         this.lastTime = timestamp;
-        
+
         // Update time
         if (this.animating) {
           this.time += deltaTime;
-          
+
           // Update clock times
           this.stationaryClock.time += deltaTime;
-          
+
           // Apply time dilation to moving clock
           const beta = this.velocity / 100;
           const gamma = 1 / Math.sqrt(1 - (beta * beta));
           this.movingClock.time += deltaTime / gamma;
-          
+
           // Update time displays
           this.updateTimeDisplay();
-          
+
           // Update light beams
           this.updateLightBeams(deltaTime);
-          
+
           // Update particles
           this.updateParticles(deltaTime);
-          
+
           // Request next frame
           requestAnimationFrame(this.animate.bind(this));
         }
-        
+
         // Draw the current state
         this.draw();
       }
-      
+
       updateLightBeams(deltaTime) {
         const speedOfLight = 200; // Pixels per second
-        
+
         // Update each light beam
         this.lightBeams = this.lightBeams.filter(beam => {
           // Calculate velocity based on reference frame
           let velocity = speedOfLight;
-          
+
           // Move the beam
           beam.x += velocity * deltaTime;
-          
+
           // Add point to trail
-          beam.trail.push({x: beam.x, y: beam.y});
-          
+          beam.trail.push({ x: beam.x, y: beam.y });
+
           // Limit trail length
           if (beam.trail.length > 20) {
             beam.trail.shift();
           }
-          
+
           // Remove beam if it's off-screen
           return beam.x < this.canvas.width + 50;
         });
       }
-      
+
       updateParticles(deltaTime) {
         // Update particles (for effects like lightning)
         this.particles = this.particles.filter(particle => {
@@ -1123,94 +1157,94 @@
           particle.x += particle.vx;
           particle.y += particle.vy;
           particle.vy += 0.2; // Gravity
-          
+
           // Update life
           particle.life -= 1;
-          
+
           // Keep if still alive
           return particle.life > 0;
         });
       }
-      
+
       handleMouseMove(e) {
         // Get mouse position relative to canvas
         const rect = this.canvas.getBoundingClientRect();
         const mouseX = e.clientX - rect.left;
         const mouseY = e.clientY - rect.top;
-        
+
         // Check if mouse is over an interactive element
         let tooltipShown = false;
-        
+
         // Check for hovering over events
         this.events.forEach(event => {
           const eventX = event.x * this.canvas.width;
           const eventY = event.y;
           const distance = Math.sqrt((mouseX - eventX) ** 2 + (mouseY - eventY) ** 2);
-          
+
           if (distance < 20) {
             // Show tooltip
             this.showTooltip(e.clientX, e.clientY, `<h3>${event.label}</h3>In ${this.currentFrame === 'platform' ? 'platform' : 'train'} frame: ${event.triggered ? 'Triggered' : 'Not triggered'}`);
             tooltipShown = true;
           }
         });
-        
+
         // Hide tooltip if not over any interactive element
         if (!tooltipShown) {
           this.hideTooltip();
         }
       }
-      
+
       handleCanvasClick(e) {
         // Handle canvas click events
         const rect = this.canvas.getBoundingClientRect();
         const mouseX = e.clientX - rect.left;
         const mouseY = e.clientY - rect.top;
-        
+
         // Check for clicking on events
         this.events.forEach(event => {
           const eventX = event.x * this.canvas.width;
           const eventY = event.y;
           const distance = Math.sqrt((mouseX - eventX) ** 2 + (mouseY - eventY) ** 2);
-          
+
           if (distance < 20) {
             // Add lightning effect
             this.addLightningEffect(eventX, eventY);
-            
+
             // Mark as triggered
             event.triggered = true;
-            
+
             // Add light beam
             this.addLightBeam(eventX, eventY, 5);
           }
         });
       }
-      
+
       showTooltip(x, y, html) {
         clearTimeout(this.tooltipTimeout);
-        
+
         // Set content and position
         this.tooltip.innerHTML = html;
         this.tooltip.style.left = `${x + 15}px`;
         this.tooltip.style.top = `${y + 15}px`;
         this.tooltip.classList.add('visible');
       }
-      
+
       hideTooltip() {
         clearTimeout(this.tooltipTimeout);
         this.tooltipTimeout = setTimeout(() => {
           this.tooltip.classList.remove('visible');
         }, 200);
       }
-      
+
       draw() {
         // Clear canvas
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
+
         // Draw background
         this.drawBackground();
-        
+
         // Draw based on current view
-        switch(this.currentView) {
+        switch (this.currentView) {
           case 'time-dilation':
             this.drawTimeDilation();
             break;
@@ -1221,24 +1255,24 @@
             this.drawSimultaneity();
             break;
         }
-        
+
         // Draw light beams
         this.drawLightBeams();
-        
+
         // Draw particles
         this.drawParticles();
-        
+
         // Draw platform and tracks
         this.drawPlatform();
       }
-      
+
       drawBackground() {
         // Draw sky gradient based on day/night mode
         const ctx = this.ctx;
         const skyImage = this.isNightMode ? this.assets.skyNight : this.assets.skyDay;
-        
+
         ctx.drawImage(skyImage, 0, 0, this.canvas.width, this.canvas.height);
-        
+
         // Draw stars if in night mode
         if (this.isNightMode) {
           ctx.fillStyle = 'white';
@@ -1250,7 +1284,7 @@
           });
           ctx.globalAlpha = 1;
         }
-        
+
         // Draw sun or moon
         if (this.isNightMode) {
           // Draw moon
@@ -1258,7 +1292,7 @@
           ctx.beginPath();
           ctx.arc(this.canvas.width * 0.8, this.canvas.height * 0.15, 30, 0, Math.PI * 2);
           ctx.fill();
-          
+
           // Draw moon craters
           ctx.fillStyle = 'rgba(200, 200, 200, 0.2)';
           ctx.beginPath();
@@ -1276,173 +1310,173 @@
           sunGradient.addColorStop(0, 'rgba(255, 255, 190, 1)');
           sunGradient.addColorStop(0.7, 'rgba(255, 150, 50, 1)');
           sunGradient.addColorStop(1, 'rgba(255, 150, 50, 0)');
-          
+
           ctx.fillStyle = sunGradient;
           ctx.beginPath();
           ctx.arc(this.canvas.width * 0.2, this.canvas.height * 0.2, 50, 0, Math.PI * 2);
           ctx.fill();
         }
-        
+
         // Draw mountains in the distance with parallax
         const mountainOffset = (this.time * 5) % this.canvas.width;
         ctx.drawImage(
-          this.assets.mountains, 
-          -mountainOffset, this.canvas.height * 0.5 - 100, 
+          this.assets.mountains,
+          -mountainOffset, this.canvas.height * 0.5 - 100,
           this.canvas.width, 200
         );
         ctx.drawImage(
-          this.assets.mountains, 
-          this.canvas.width - mountainOffset, this.canvas.height * 0.5 - 100, 
+          this.assets.mountains,
+          this.canvas.width - mountainOffset, this.canvas.height * 0.5 - 100,
           this.canvas.width, 200
         );
-        
+
         // Draw cityscape with parallax
         const cityOffset = (this.time * 20) % this.canvas.width;
         ctx.drawImage(
-          this.assets.city, 
-          -cityOffset, this.canvas.height * 0.5, 
+          this.assets.city,
+          -cityOffset, this.canvas.height * 0.5,
           this.canvas.width, 100
         );
         ctx.drawImage(
-          this.assets.city, 
-          this.canvas.width - cityOffset, this.canvas.height * 0.5, 
+          this.assets.city,
+          this.canvas.width - cityOffset, this.canvas.height * 0.5,
           this.canvas.width, 100
         );
       }
-      
+
       drawPlatform() {
         // Draw railroad tracks
         const ctx = this.ctx;
         const trackY = this.platformY + 40;
-        
+
         // Draw tracks
         ctx.strokeStyle = '#555';
         ctx.lineWidth = 3;
-        
+
         // First rail
         ctx.beginPath();
         ctx.moveTo(0, trackY);
         ctx.lineTo(this.canvas.width, trackY);
         ctx.stroke();
-        
+
         // Second rail
         ctx.beginPath();
         ctx.moveTo(0, trackY + 15);
         ctx.lineTo(this.canvas.width, trackY + 15);
         ctx.stroke();
-        
+
         // Draw railroad ties
         ctx.fillStyle = '#5D4037';
         for (let x = 0; x < this.canvas.width; x += 30) {
           ctx.fillRect(x - 5, trackY - 5, 20, 25);
         }
-        
+
         // Draw platform
         const platformOffset = (this.time * 30) % this.canvas.width;
         ctx.drawImage(
-          this.assets.platformImage, 
-          -platformOffset, this.platformY, 
+          this.assets.platformImage,
+          -platformOffset, this.platformY,
           this.canvas.width, 40
         );
         ctx.drawImage(
-          this.assets.platformImage, 
-          this.canvas.width - platformOffset, this.platformY, 
+          this.assets.platformImage,
+          this.canvas.width - platformOffset, this.platformY,
           this.canvas.width, 40
         );
       }
-      
+
       drawTimeDilation() {
         const ctx = this.ctx;
         const trainLength = 300;
         const trainHeight = 80;
-        
+
         // Calculate gamma factor
         const beta = this.velocity / 100;
         const gamma = 1 / Math.sqrt(1 - (beta * beta));
-        
+
         // Calculate train position with motion
         const trainX = this.movingFrameBaseX + Math.sin(this.time) * 5;
         const trainY = this.platformY - trainHeight;
-        
+
         // Update clock positions
         this.stationaryClock.x = this.stationaryPosition;
         this.stationaryClock.y = this.platformY - 100;
         this.movingClock.x = trainX + trainLength / 2;
         this.movingClock.y = trainY + trainHeight / 2;
-        
+
         // Draw train
         ctx.drawImage(
           this.assets.trainImage,
           trainX, trainY,
           trainLength, trainHeight
         );
-        
+
         // Draw stationary observer
         this.drawObserver(this.stationaryPosition, this.platformY - 60, '#3498db');
-        
+
         // Draw clocks
         this.drawClock(this.stationaryClock.x, this.stationaryClock.y, this.stationaryClock.radius, this.stationaryClock.time, '#3498db');
         this.drawClock(this.movingClock.x, this.movingClock.y, this.movingClock.radius, this.movingClock.time, '#e74c3c');
-        
+
         // Draw time dilation effect visualization
         this.drawTimeDilationEffect(this.movingClock.x, this.movingClock.y + 50, gamma);
       }
-      
+
       drawTimeDilationEffect(x, y, gamma) {
         const ctx = this.ctx;
         const width = 100;
-        
+
         // Draw time dilation wave
         ctx.strokeStyle = '#e74c3c';
         ctx.lineWidth = 2;
-        
+
         ctx.beginPath();
         for (let i = 0; i < width; i++) {
           const normalWave = Math.sin(this.time * 5 + i / 5) * 10;
           const dilatedWave = Math.sin(this.time * 5 / gamma + i / 5) * 10;
-          
+
           if (i === 0) {
-            ctx.moveTo(x - width/2, y + normalWave);
-            ctx.moveTo(x - width/2, y + 40 + dilatedWave);
+            ctx.moveTo(x - width / 2, y + normalWave);
+            ctx.moveTo(x - width / 2, y + 40 + dilatedWave);
           } else {
-            ctx.lineTo(x - width/2 + i, y + normalWave);
-            ctx.lineTo(x - width/2 + i, y + 40 + dilatedWave);
+            ctx.lineTo(x - width / 2 + i, y + normalWave);
+            ctx.lineTo(x - width / 2 + i, y + 40 + dilatedWave);
           }
         }
         ctx.stroke();
-        
+
         // Labels
         ctx.fillStyle = '#333';
         ctx.font = '12px Arial';
-        ctx.fillText('Platform time', x - width/2 - 80, y);
-        ctx.fillText('Train time (dilated)', x - width/2 - 80, y + 40);
+        ctx.fillText('Platform time', x - width / 2 - 80, y);
+        ctx.fillText('Train time (dilated)', x - width / 2 - 80, y + 40);
       }
-      
+
       drawLengthContraction() {
         const ctx = this.ctx;
         const trainLength = 300;
         const trainHeight = 80;
-        
+
         // Calculate gamma factor
         const beta = this.velocity / 100;
         const gamma = 1 / Math.sqrt(1 - (beta * beta));
-        
+
         // Calculate contracted length
         const contractedLength = trainLength / gamma;
-        
+
         // Draw stationary train (full length)
         ctx.drawImage(
           this.assets.trainImage,
           this.stationaryPosition - trainLength / 2, this.platformY - trainHeight,
           trainLength, trainHeight
         );
-        
+
         // Draw moving train (contracted)
         ctx.save();
         ctx.translate(this.movingFrameBaseX, this.platformY - trainHeight);
         if (this.currentFrame === 'platform') {
           // Show contraction from platform perspective
-          ctx.scale(1/gamma, 1);
+          ctx.scale(1 / gamma, 1);
         }
         ctx.drawImage(
           this.assets.trainImage,
@@ -1450,21 +1484,21 @@
           trainLength, trainHeight
         );
         ctx.restore();
-        
+
         // Draw observers
         this.drawObserver(this.stationaryPosition, this.platformY - 60, '#3498db');
-        
+
         // Labels
         ctx.fillStyle = '#333';
         ctx.font = '14px Arial';
         ctx.fillText('Proper Length: ' + trainLength.toFixed(0) + ' units', this.stationaryPosition - 70, this.platformY - trainHeight - 20);
-        
+
         if (this.currentFrame === 'platform') {
           ctx.fillText('Contracted: ' + contractedLength.toFixed(1) + ' units', this.movingFrameBaseX - 70, this.platformY - trainHeight - 20);
         } else {
           ctx.fillText('Proper Length: ' + trainLength.toFixed(0) + ' units', this.movingFrameBaseX - 70, this.platformY - trainHeight - 20);
         }
-        
+
         // Draw measuring arrow for proper length
         this.drawMeasuringArrow(
           this.stationaryPosition - trainLength / 2,
@@ -1473,7 +1507,7 @@
           this.platformY - trainHeight - 5,
           '#3498db'
         );
-        
+
         // Draw measuring arrow for contracted length
         if (this.currentFrame === 'platform') {
           this.drawMeasuringArrow(
@@ -1493,36 +1527,36 @@
           );
         }
       }
-      
+
       drawSimultaneity() {
         const ctx = this.ctx;
         const trainLength = 300;
         const trainHeight = 80;
-        
+
         // Calculate gamma factor
         const beta = this.velocity / 100;
         const gamma = 1 / Math.sqrt(1 - (beta * beta));
-        
+
         // Draw train
         const trainX = this.movingFrameBaseX;
         const trainY = this.platformY - trainHeight;
-        
+
         ctx.drawImage(
           this.assets.trainImage,
           trainX - trainLength / 2, trainY,
           trainLength, trainHeight
         );
-        
+
         // Update clock positions
         this.stationaryClock.x = this.stationaryPosition;
         this.stationaryClock.y = this.platformY - 100;
         this.movingClock.x = trainX;
         this.movingClock.y = trainY + trainHeight / 2;
-        
+
         // Draw observers
         this.drawObserver(this.stationaryPosition, this.platformY - 60, '#3498db');
         this.drawObserver(trainX, trainY + trainHeight / 2 - 15, '#e74c3c');
-        
+
         // Draw events (lightning strikes)
         this.events.forEach(event => {
           const eventX = event.x * this.canvas.width;
@@ -1530,7 +1564,7 @@
           ctx.beginPath();
           ctx.arc(eventX, event.y, 10, 0, Math.PI * 2);
           ctx.fill();
-          
+
           if (event.triggered) {
             // Draw lightning effect
             ctx.strokeStyle = '#f1c40f';
@@ -1548,29 +1582,29 @@
             }
           }
         });
-        
+
         // If both events are triggered, show simultaneity effect
         if (this.events[0].triggered && this.events[1].triggered) {
           // Calculate time difference in moving frame
           const distance = (this.events[1].x - this.events[0].x) * this.canvas.width;
           const timeDiff = beta * distance / 300; // Simplified calculation for visualization
-          
+
           ctx.fillStyle = '#333';
           ctx.font = '14px Arial';
-          
+
           if (this.currentFrame === 'platform') {
-            ctx.fillText('Platform frame: Events are simultaneous', 
-                       this.canvas.width / 2 - 150, this.platformY - 150);
+            ctx.fillText('Platform frame: Events are simultaneous',
+              this.canvas.width / 2 - 150, this.platformY - 150);
           } else {
-            ctx.fillText(`Train frame: Event ${beta > 0 ? 'A' : 'B'} happens ${Math.abs(timeDiff).toFixed(2)}s before Event ${beta > 0 ? 'B' : 'A'}`, 
-                       this.canvas.width / 2 - 150, this.platformY - 150);
+            ctx.fillText(`Train frame: Event ${beta > 0 ? 'A' : 'B'} happens ${Math.abs(timeDiff).toFixed(2)}s before Event ${beta > 0 ? 'B' : 'A'}`,
+              this.canvas.width / 2 - 150, this.platformY - 150);
           }
         }
       }
-      
+
       drawLightBeams() {
         const ctx = this.ctx;
-        
+
         // Draw each light beam
         this.lightBeams.forEach(beam => {
           // Draw beam trail
@@ -1580,16 +1614,16 @@
             ctx.lineCap = 'round';
             ctx.beginPath();
             ctx.moveTo(beam.trail[0].x, beam.trail[0].y);
-            
+
             for (let i = 1; i < beam.trail.length; i++) {
               ctx.lineTo(beam.trail[i].x, beam.trail[i].y);
             }
             ctx.stroke();
-            
+
             // Reset line cap
             ctx.lineCap = 'butt';
           }
-          
+
           // Draw beam head
           const gradient = ctx.createRadialGradient(
             beam.x, beam.y, 0,
@@ -1598,17 +1632,17 @@
           gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
           gradient.addColorStop(0.3, beam.color);
           gradient.addColorStop(1, 'rgba(255, 215, 0, 0)');
-          
+
           ctx.fillStyle = gradient;
           ctx.beginPath();
           ctx.arc(beam.x, beam.y, beam.radius * 2, 0, Math.PI * 2);
           ctx.fill();
         });
       }
-      
+
       drawParticles() {
         const ctx = this.ctx;
-        
+
         // Draw each particle
         this.particles.forEach(particle => {
           ctx.fillStyle = particle.color;
@@ -1617,17 +1651,17 @@
           ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
           ctx.fill();
         });
-        
+
         // Reset global alpha
         ctx.globalAlpha = 1;
       }
-      
+
       drawClock(x, y, radius, time, color) {
         const ctx = this.ctx;
         const hours = (time / 3600) % 12;
         const minutes = (time / 60) % 60;
         const seconds = time % 60;
-        
+
         // Draw clock face
         ctx.fillStyle = 'white';
         ctx.strokeStyle = color;
@@ -1636,12 +1670,12 @@
         ctx.arc(x, y, radius, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
-        
+
         // Draw hour markers
         for (let i = 0; i < 12; i++) {
           const angle = i * Math.PI / 6;
           const markerLength = i % 3 === 0 ? 5 : 3;
-          
+
           ctx.strokeStyle = '#666';
           ctx.lineWidth = i % 3 === 0 ? 2 : 1;
           ctx.beginPath();
@@ -1655,7 +1689,7 @@
           );
           ctx.stroke();
         }
-        
+
         // Draw hour hand
         ctx.strokeStyle = '#333';
         ctx.lineWidth = 3;
@@ -1666,7 +1700,7 @@
           y + radius * 0.5 * Math.sin((hours * 30 - 90) * Math.PI / 180)
         );
         ctx.stroke();
-        
+
         // Draw minute hand
         ctx.strokeStyle = '#555';
         ctx.lineWidth = 2;
@@ -1677,7 +1711,7 @@
           y + radius * 0.7 * Math.sin((minutes * 6 - 90) * Math.PI / 180)
         );
         ctx.stroke();
-        
+
         // Draw second hand
         ctx.strokeStyle = color;
         ctx.lineWidth = 1;
@@ -1688,30 +1722,30 @@
           y + radius * 0.9 * Math.sin((seconds * 6 - 90) * Math.PI / 180)
         );
         ctx.stroke();
-        
+
         // Draw center dot
         ctx.fillStyle = color;
         ctx.beginPath();
         ctx.arc(x, y, 2, 0, Math.PI * 2);
         ctx.fill();
       }
-      
+
       drawObserver(x, y, color) {
         const ctx = this.ctx;
-        
+
         // Draw observer
         ctx.fillStyle = color;
-        
+
         // Body
         ctx.beginPath();
         ctx.arc(x, y, 10, 0, Math.PI * 2);
         ctx.fill();
-        
+
         // Head
         ctx.beginPath();
         ctx.arc(x, y - 15, 7, 0, Math.PI * 2);
         ctx.fill();
-        
+
         // Eyes
         ctx.fillStyle = 'white';
         ctx.beginPath();
@@ -1719,11 +1753,11 @@
         ctx.arc(x + 2, y - 16, 2, 0, Math.PI * 2);
         ctx.fill();
       }
-      
+
       drawMeasuringArrow(x1, y1, x2, y2, color) {
         const ctx = this.ctx;
         const headSize = 8;
-        
+
         // Draw the line
         ctx.strokeStyle = color;
         ctx.lineWidth = 2;
@@ -1731,7 +1765,7 @@
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
         ctx.stroke();
-        
+
         // Draw arrow heads
         // Left arrow
         ctx.beginPath();
@@ -1741,7 +1775,7 @@
         ctx.closePath();
         ctx.fillStyle = color;
         ctx.fill();
-        
+
         // Right arrow
         ctx.beginPath();
         ctx.moveTo(x2, y2);
@@ -1752,11 +1786,12 @@
         ctx.fill();
       }
     }
-    
+
     // Initialize the visualization when DOM is loaded
     document.addEventListener('DOMContentLoaded', () => {
       const visualization = new RelativityVisualization();
     });
   </script>
 </body>
+
 </html>

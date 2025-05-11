@@ -1,10 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>World War II Troop Movements (1939-1945)</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&family=Special+Elite&display=swap" rel="stylesheet">
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-1DB24KTNYY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-1DB24KTNYY');
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;700&family=Special+Elite&display=swap"
+    rel="stylesheet">
   <style>
     :root {
       --allied-color: rgba(65, 107, 178, 0.9);
@@ -171,8 +182,13 @@
     }
 
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
     }
 
     .country {
@@ -237,8 +253,15 @@
     }
 
     @keyframes pulse {
-      0% { opacity: 0.7; r: 5; }
-      100% { opacity: 0; r: 20; }
+      0% {
+        opacity: 0.7;
+        r: 5;
+      }
+
+      100% {
+        opacity: 0;
+        r: 20;
+      }
     }
 
     .front-line {
@@ -734,8 +757,13 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
     }
 
     .notification {
@@ -769,27 +797,27 @@
       .container {
         padding: 10px;
       }
-      
+
       h1 {
         font-size: 1.8rem;
       }
-      
+
       .map-container {
         height: 450px;
       }
-      
+
       .info-panel {
         width: 220px;
       }
-      
+
       .event-title {
         font-size: 1rem;
       }
-      
+
       .timeline-container {
         padding: 10px;
       }
-      
+
       .event-marker {
         width: 12px;
         height: 12px;
@@ -800,7 +828,7 @@
       .map-container {
         height: 350px;
       }
-      
+
       .info-panel {
         position: fixed;
         top: auto;
@@ -812,56 +840,57 @@
         border-radius: 15px 15px 0 0;
         transform: translateY(100%);
       }
-      
+
       .info-panel.active {
         transform: translateY(0);
       }
-      
+
       .theaters-control {
         top: auto;
         bottom: 15px;
       }
-      
+
       .legend {
         bottom: 115px;
       }
-      
+
       .zoom-controls {
         bottom: 70px;
       }
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <header>
       <h1>World War II Troop Movements (1939-1945)</h1>
       <p class="subtitle">A visualization of major military operations and territorial changes</p>
     </header>
-    
+
     <div class="map-container">
       <div class="loading-overlay">
         <div class="spinner"></div>
         <p class="loading-message">Loading World War II data...</p>
       </div>
-      
+
       <div class="theaters-control">
         <button class="theater-button active" data-theater="global">Global</button>
         <button class="theater-button" data-theater="europe">Europe</button>
         <button class="theater-button" data-theater="pacific">Pacific</button>
         <button class="theater-button" data-theater="africa">Africa</button>
       </div>
-      
+
       <div class="world-map-container">
         <svg id="world-map" viewBox="0 0 960 500" preserveAspectRatio="xMidYMid meet"></svg>
       </div>
-      
+
       <div class="zoom-controls">
         <button class="zoom-btn" id="zoom-in">+</button>
         <button class="zoom-btn" id="zoom-out">−</button>
         <button class="zoom-btn" id="zoom-reset">⟲</button>
       </div>
-      
+
       <div class="legend">
         <div class="legend-title">Legend</div>
         <div class="legend-item">
@@ -885,7 +914,7 @@
           <span class="legend-label">Axis Territory</span>
         </div>
       </div>
-      
+
       <div class="info-panel">
         <div class="info-panel-header">
           <div class="current-event-date" id="current-event-date"></div>
@@ -896,15 +925,15 @@
         <div class="event-stats" id="event-stats"></div>
         <div class="battle-detail" id="battle-detail"></div>
       </div>
-      
+
       <div class="tooltip"></div>
     </div>
-    
+
     <div class="timeline-container">
       <div class="war-phases" id="war-phases">
         <!-- War phases will be added dynamically -->
       </div>
-      
+
       <div class="timeline">
         <div class="timeline-track"></div>
         <div class="year-markers" id="year-markers">
@@ -916,44 +945,47 @@
         </div>
         <!-- Event markers will be added dynamically -->
       </div>
-      
+
       <div class="controls">
         <button class="control-button" id="play-pause-btn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 5V19L19 12L8 5Z" fill="currentColor"/>
+            <path d="M8 5V19L19 12L8 5Z" fill="currentColor" />
           </svg>
           Play
         </button>
         <button class="control-button" id="previous-btn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15 6L9 12L15 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M15 6L9 12L15 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
           </svg>
           Previous
         </button>
         <button class="control-button" id="next-btn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
           </svg>
           Next
         </button>
         <button class="control-button" id="reset-btn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12Z" stroke="currentColor" stroke-width="2"/>
-            <path d="M16 12L8 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M12 8L8 12L12 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path
+              d="M3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12Z"
+              stroke="currentColor" stroke-width="2" />
+            <path d="M16 12L8 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M12 8L8 12L12 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
           </svg>
           Reset
         </button>
       </div>
     </div>
-    
+
     <div class="notification" id="notification"></div>
   </div>
 
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://unpkg.com/topojson@3"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       // ===== Visualization Configuration =====
       const config = {
         animationDuration: 1500,
@@ -980,7 +1012,7 @@
       const width = 960;
       const height = 500;
       const svg = d3.select('#world-map');
-      
+
       // Create zoom behavior
       const zoom = d3.zoom()
         .scaleExtent(config.zoomExtent)
@@ -989,26 +1021,26 @@
           state.mapTranslate = [event.transform.x, event.transform.y];
           svg.select('.world-map-group').attr('transform', event.transform);
         });
-      
+
       svg.call(zoom);
-      
+
       // Initial transform
       const initialTransform = d3.zoomIdentity
         .translate(0, 0)
         .scale(config.defaultZoom);
-      
+
       svg.call(zoom.transform, initialTransform);
 
       // Create map projection
       const projection = d3.geoMercator()
         .scale(150)
         .translate([width / 2, height / 1.5]);
-      
+
       const path = d3.geoPath().projection(projection);
-      
+
       // Initialize tooltip
       const tooltip = d3.select('.tooltip');
-      
+
       // ===== War Phases =====
       const warPhases = [
         { name: "Axis Expansion", start: new Date(1939, 8, 1), end: new Date(1941, 11, 7), color: "rgba(204, 59, 45, 0.15)" },
@@ -1601,7 +1633,7 @@
           mapFocus: { center: [135, 35], zoom: 5 }
         }
       ];
-      
+
       // ===== Map Creation =====
       // Create SVG groups
       const mapGroup = svg.append('g').attr('class', 'world-map-group');
@@ -1610,14 +1642,14 @@
       const movementsGroup = mapGroup.append('g').attr('class', 'movements-group');
       const troopsGroup = mapGroup.append('g').attr('class', 'troops-group');
       const battlesGroup = mapGroup.append('g').attr('class', 'battles-group');
-      
+
       // Load world map data
       Promise.all([
         d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
-      ]).then(function([world]) {
+      ]).then(function ([world]) {
         // Draw the base world map
         const countries = topojson.feature(world, world.objects.countries);
-        
+
         countriesGroup.selectAll('path')
           .data(countries.features)
           .enter()
@@ -1625,39 +1657,39 @@
           .attr('class', 'country')
           .attr('d', path)
           .attr('id', d => `country-${d.id}`)
-          .on('mouseover', function(event, d) {
+          .on('mouseover', function (event, d) {
             showTooltip(getCountryName(d.id), event.pageX, event.pageY);
           })
-          .on('mouseout', function() {
+          .on('mouseout', function () {
             hideTooltip();
           });
-        
+
         // Initialize timeline with events and controls
         createTimeline();
-        
+
         // Initialize control buttons
         initControls();
-        
+
         // Initialize theater controls
         initTheaterControls();
-        
+
         // Initialize zoom controls
         initZoomControls();
-        
+
         // Initialize info panel
         initInfoPanel();
-        
+
         // Hide loading overlay with a fade effect
         d3.select('.loading-overlay')
           .transition()
           .duration(800)
           .style('opacity', 0)
-          .on('end', function() {
+          .on('end', function () {
             this.style.display = 'none';
-            
+
             // Start with the first event
             updateMapToEvent(0, true);
-            
+
             // Show welcome notification
             showNotification('Explore WWII troop movements from 1939-1945. Click Play to begin animation.');
           });
@@ -1665,41 +1697,41 @@
         console.error('Error loading map data:', error);
         alert('Failed to load map data. Please refresh and try again.');
       });
-      
+
       // ===== Timeline Creation =====
       function createTimeline() {
         const timeline = d3.select('.timeline');
         const timelineWidth = timeline.node().getBoundingClientRect().width;
-        
+
         // Time scale for the timeline
         const timeScale = d3.scaleTime()
           .domain([new Date(1939, 8, 1), new Date(1945, 7, 15)])
           .range([20, timelineWidth - 20]);
-        
+
         // Add year markers
         const yearMarkers = d3.select('#year-markers');
-        
+
         for (let year = 1939; year <= 1945; year++) {
           const yearPosition = timeScale(new Date(year, 0, 1));
-          
+
           yearMarkers.append('div')
             .attr('class', 'year-marker')
             .style('left', yearPosition + 'px');
-            
+
           yearMarkers.append('div')
             .attr('class', 'year-label')
             .style('left', yearPosition + 'px')
             .text(year);
         }
-        
+
         // Add war phases
         const phasesContainer = d3.select('#war-phases');
-        
+
         warPhases.forEach(phase => {
           const phaseStart = timeScale(phase.start);
           const phaseEnd = timeScale(phase.end);
           const phaseWidth = phaseEnd - phaseStart;
-          
+
           phasesContainer.append('div')
             .attr('class', 'phase')
             .style('left', phaseStart + 'px')
@@ -1707,16 +1739,16 @@
             .style('background-color', phase.color)
             .text(phase.name);
         });
-        
+
         // Add event markers
         events.forEach((event, i) => {
           const markerPosition = timeScale(event.date);
-          
+
           const markerClasses = ['event-marker'];
           if (event.type === 'axis') markerClasses.push('axis-event');
           if (event.type === 'allied') markerClasses.push('allied-event');
           if (event.significance === 'major') markerClasses.push('major-event');
-          
+
           const marker = timeline.append('div')
             .attr('class', markerClasses.join(' '))
             .attr('id', `event-marker-${i}`)
@@ -1725,154 +1757,154 @@
               currentEventIndex = i;
               updateMapToEvent(i, true);
               updateTimeIndicator();
-              
+
               if (isPlaying) {
                 togglePlayPause();
               }
             });
-            
+
           marker.append('div')
             .attr('class', 'timeline-tooltip')
             .html(`${formatDate(event.date, true)}<br>${event.title}`);
         });
-        
+
         // Add time indicator
         const timeIndicator = d3.select('#time-indicator');
         const currentDate = d3.select('#current-date');
-        
+
         // Initial position
         timeIndicator.style('left', timeScale(events[0].date) + 'px');
         currentDate.text(formatDate(events[0].date));
-        
+
         // Initialize timeline progress bar
         d3.select('#timeline-progress')
           .style('width', '0px');
       }
-      
+
       // ===== Controls Initialization =====
       function initControls() {
         const playPauseBtn = document.getElementById('play-pause-btn');
         const previousBtn = document.getElementById('previous-btn');
         const nextBtn = document.getElementById('next-btn');
         const resetBtn = document.getElementById('reset-btn');
-        
+
         playPauseBtn.addEventListener('click', togglePlayPause);
         previousBtn.addEventListener('click', goToPreviousEvent);
         nextBtn.addEventListener('click', goToNextEvent);
         resetBtn.addEventListener('click', resetVisualization);
-        
+
         function updateButtonStates() {
           previousBtn.disabled = state.currentEventIndex === 0;
           nextBtn.disabled = state.currentEventIndex === events.length - 1;
         }
-        
+
         // Initial button states
         updateButtonStates();
-        
+
         // Export update function to global state
         state.updateButtonStates = updateButtonStates;
       }
-      
+
       function initTheaterControls() {
         const theaterButtons = document.querySelectorAll('.theater-button');
-        
+
         theaterButtons.forEach(button => {
-          button.addEventListener('click', function() {
+          button.addEventListener('click', function () {
             const theater = this.getAttribute('data-theater');
-            
+
             // Update active class
             theaterButtons.forEach(btn => btn.classList.remove('active'));
             this.classList.add('active');
-            
+
             // Update state
             state.activeTheater = theater;
-            
+
             // Focus map on theater
             focusMapOnTheater(theater);
-            
+
             // Update current event (without animation)
             updateMapToEvent(state.currentEventIndex, false);
           });
         });
       }
-      
+
       function initZoomControls() {
         const zoomInBtn = document.getElementById('zoom-in');
         const zoomOutBtn = document.getElementById('zoom-out');
         const zoomResetBtn = document.getElementById('zoom-reset');
-        
-        zoomInBtn.addEventListener('click', function() {
+
+        zoomInBtn.addEventListener('click', function () {
           const newZoom = Math.min(state.zoomLevel * 1.5, config.zoomExtent[1]);
           applyZoom(newZoom, state.mapTranslate);
         });
-        
-        zoomOutBtn.addEventListener('click', function() {
+
+        zoomOutBtn.addEventListener('click', function () {
           const newZoom = Math.max(state.zoomLevel / 1.5, config.zoomExtent[0]);
           applyZoom(newZoom, state.mapTranslate);
         });
-        
-        zoomResetBtn.addEventListener('click', function() {
+
+        zoomResetBtn.addEventListener('click', function () {
           applyZoom(config.defaultZoom, [0, 0]);
         });
       }
-      
+
       function initInfoPanel() {
         const infoPanel = document.querySelector('.info-panel');
         const closeBtn = infoPanel.querySelector('.close-btn');
-        
-        closeBtn.addEventListener('click', function() {
+
+        closeBtn.addEventListener('click', function () {
           infoPanel.classList.remove('active');
         });
       }
-      
+
       // ===== Map Update Functions =====
       function updateMapToEvent(eventIndex, animated = true) {
         // Clear any existing animation timers
         clearTimeout(state.animationTimer);
-        
+
         // Get current event
         const event = events[eventIndex];
         state.currentEventIndex = eventIndex;
-        
+
         // Update button states
         if (state.updateButtonStates) {
           state.updateButtonStates();
         }
-        
+
         // Update timeline marker highlights
         updateEventMarkers();
-        
+
         // Update date display
         document.getElementById('current-date').textContent = formatDate(event.date);
-        
+
         // Update info panel
         updateInfoPanel(event);
-        
+
         // If this event is in current theater or global view, focus on it
         if (state.activeTheater === 'global' || event.theaters.includes(state.activeTheater)) {
           if (event.mapFocus) {
             focusMapOnCoordinates(event.mapFocus.center, event.mapFocus.zoom);
           }
         }
-        
+
         // Update country statuses based on date
         updateCountryStatus(event.date);
-        
+
         // Clear existing battle markers and front lines
         frontLinesGroup.selectAll('*').remove();
         battlesGroup.selectAll('*').remove();
-        
+
         // If we're animating, clear and animate troop movements
         if (animated) {
           movementsGroup.selectAll('*').remove();
           troopsGroup.selectAll('*').remove();
-          
+
           // Add and animate front lines
           animateFrontLines(event);
-          
+
           // Animate troop movements
           animateTroopMovements(event);
-          
+
           // Show battles with delay
           setTimeout(() => {
             showBattles(event, true);
@@ -1881,49 +1913,49 @@
           // Just show movements without animation
           movementsGroup.selectAll('*').remove();
           troopsGroup.selectAll('*').remove();
-          
+
           showFrontLines(event);
           showTroopMovements(event);
           showBattles(event, false);
         }
-        
+
         // Update time indicator on timeline
         updateTimeIndicator();
       }
-      
+
       function updateEventMarkers() {
         // Remove active class from all markers
         d3.selectAll('.event-marker').classed('active', false);
-        
+
         // Add active class to current marker
         d3.select(`#event-marker-${state.currentEventIndex}`).classed('active', true);
       }
-      
+
       function updateTimeIndicator() {
         const timeline = d3.select('.timeline');
         const timelineWidth = timeline.node().getBoundingClientRect().width;
-        
+
         // Time scale for the timeline
         const timeScale = d3.scaleTime()
           .domain([new Date(1939, 8, 1), new Date(1945, 7, 15)])
           .range([20, timelineWidth - 20]);
-        
+
         const currentEvent = events[state.currentEventIndex];
         const markerPosition = timeScale(currentEvent.date);
-        
+
         // Update time indicator position
         d3.select('#time-indicator')
           .transition()
           .duration(500)
           .style('left', markerPosition + 'px');
-        
+
         // Update progress bar width
         d3.select('#timeline-progress')
           .transition()
           .duration(500)
           .style('width', markerPosition + 'px');
       }
-      
+
       function updateInfoPanel(event) {
         const infoPanel = document.querySelector('.info-panel');
         const dateElement = document.getElementById('current-event-date');
@@ -1931,12 +1963,12 @@
         const descriptionElement = document.getElementById('event-description');
         const statsElement = document.getElementById('event-stats');
         const battleDetailElement = document.getElementById('battle-detail');
-        
+
         // Update content
         dateElement.textContent = formatDate(event.date);
         titleElement.textContent = event.title;
         descriptionElement.textContent = event.description;
-        
+
         // Update stats
         let statsHTML = '';
         if (event.stats) {
@@ -1948,7 +1980,7 @@
           }
         }
         statsElement.innerHTML = statsHTML;
-        
+
         // Update battle details
         let battleHTML = '';
         if (event.battles && event.battles.length > 0) {
@@ -1963,37 +1995,37 @@
           `;
         }
         battleDetailElement.innerHTML = battleHTML;
-        
+
         // Show the panel
         infoPanel.classList.add('active');
       }
-      
+
       function updateCountryStatus(currentDate) {
         // Reset all countries to default
         svg.selectAll('.country')
           .attr('class', 'country');
-        
+
         // Determine country control at this date
         // This would be a complex function based on historical data
         // For now, we'll use a simplified approach
-        
+
         // Axis core countries
         const axisCore = [276, 380, 392]; // Germany, Italy, Japan
-        
+
         // Allied core countries
         const alliedCore = [826, 840, 124, 643]; // UK, US, Canada, Russia (used for USSR)
-        
+
         // Update based on date ranges
         svg.selectAll('.country')
-          .attr('class', function(d) {
+          .attr('class', function (d) {
             const id = d.id;
             const baseClass = 'country';
-            
+
             // Core Axis countries
             if (axisCore.includes(id)) {
               return `${baseClass} axis`;
             }
-            
+
             // Core Allied countries
             if (alliedCore.includes(id)) {
               // USSR was neutral until June 22, 1941
@@ -2006,35 +2038,35 @@
               }
               return `${baseClass} allied`;
             }
-            
+
             // Occupied countries based on date
-            
+
             // Poland (occupied from Sept 1939)
             if (id === 616 && currentDate >= new Date(1939, 8, 15)) {
               return `${baseClass} occupied`;
             }
-            
+
             // France (occupied from June 1940)
             if (id === 250 && currentDate >= new Date(1940, 5, 25)) {
               return `${baseClass} occupied`;
             }
-            
+
             // Denmark, Norway, Belgium, Netherlands, Luxembourg (occupied from May 1940)
             if ([208, 578, 56, 528, 442].includes(id) && currentDate >= new Date(1940, 4, 15)) {
               return `${baseClass} occupied`;
             }
-            
+
             // Yugoslavia, Greece (occupied from April 1941)
             if ([300, 891].includes(id) && currentDate >= new Date(1941, 3, 30)) {
               return `${baseClass} occupied`;
             }
-            
+
             // Liberation phases would be added here
-            
+
             return baseClass;
           });
       }
-      
+
       // ===== Animation Functions =====
       function animateTroopMovements(event) {
         event.movements.forEach(movement => {
@@ -2042,7 +2074,7 @@
             .x(d => projection(d)[0])
             .y(d => projection(d)[1])
             .curve(d3.curveBasis);
-          
+
           // Create the path for movement line
           const movementPath = movementsGroup.append('path')
             .datum(movement.path)
@@ -2050,10 +2082,10 @@
             .attr('d', lineGenerator)
             .style('stroke-width', Math.min(Math.max(movement.intensity, 1), 3) * 2)
             .style('opacity', 0);
-          
+
           // Calculate path length for animation
           const pathLength = movementPath.node().getTotalLength();
-          
+
           // Animate the path appearance
           movementPath
             .style('stroke-dasharray', pathLength)
@@ -2063,19 +2095,19 @@
             .duration(config.animationDuration)
             .ease(d3.easeLinear)
             .style('stroke-dashoffset', 0)
-            .on('end', function() {
+            .on('end', function () {
               // Add troop markers along the path
               const numMarkers = Math.min(5, Math.max(1, movement.path.length - 1));
               const troopPath = movement.path.slice(); // Copy to avoid modifying original
-              
+
               for (let i = 1; i <= numMarkers; i++) {
                 const t = i / (numMarkers + 1);
                 const point = d3.select(this).node().getPointAtLength(pathLength * t);
-                
+
                 // Calculate angle of the path at this point for arrow direction
                 const pointBefore = d3.select(this).node().getPointAtLength(pathLength * t - 10);
                 const angle = Math.atan2(point.y - pointBefore.y, point.x - pointBefore.x) * 180 / Math.PI;
-                
+
                 // Add troop marker
                 troopsGroup.append('line')
                   .attr('class', `troop-marker ${movement.type}-troops`)
@@ -2087,15 +2119,15 @@
                   .style('transform', `rotate(${angle}deg)`)
                   .style('transform-origin', `${point.x}px ${point.y}px`);
               }
-              
+
               // Add arrow at the end of the path
               const endPoint = movement.path[movement.path.length - 1];
               const projectedEnd = projection(endPoint);
-              
+
               // Calculate angle for the arrow
               const preEndPoint = d3.select(this).node().getPointAtLength(pathLength - 10);
               const arrowAngle = Math.atan2(projectedEnd[1] - preEndPoint.y, projectedEnd[0] - preEndPoint.x) * 180 / Math.PI;
-              
+
               movementsGroup.append('path')
                 .attr('d', `M${projectedEnd[0]},${projectedEnd[1]} l-12,-6 l0,12 z`)
                 .attr('class', `${movement.type}-line`)
@@ -2107,16 +2139,16 @@
                 .duration(300)
                 .style('opacity', 0.9);
             });
-          
+
           // Add tooltip behavior
           movementPath
-            .on('mouseover', function(event) {
+            .on('mouseover', function (event) {
               const speedMap = {
                 'Slow': 'Slow advance',
                 'Medium': 'Moderate pace',
                 'Fast': 'Rapid advance'
               };
-              
+
               showTooltip(`
                 <strong>${movement.name}</strong><br>
                 Forces: ${movement.units}<br>
@@ -2126,14 +2158,14 @@
             .on('mouseout', hideTooltip);
         });
       }
-      
+
       function showTroopMovements(event) {
         event.movements.forEach(movement => {
           const lineGenerator = d3.line()
             .x(d => projection(d)[0])
             .y(d => projection(d)[1])
             .curve(d3.curveBasis);
-          
+
           // Create the path for movement line
           const movementPath = movementsGroup.append('path')
             .datum(movement.path)
@@ -2141,21 +2173,21 @@
             .attr('d', lineGenerator)
             .style('stroke-width', Math.min(Math.max(movement.intensity, 1), 3) * 2)
             .style('opacity', 0.8);
-          
+
           // Calculate path length for positioning troop markers
           const pathLength = movementPath.node().getTotalLength();
-          
+
           // Add troop markers along the path
           const numMarkers = Math.min(5, Math.max(1, movement.path.length - 1));
-          
+
           for (let i = 1; i <= numMarkers; i++) {
             const t = i / (numMarkers + 1);
             const point = movementPath.node().getPointAtLength(pathLength * t);
-            
+
             // Calculate angle of the path at this point for arrow direction
             const pointBefore = movementPath.node().getPointAtLength(pathLength * t - 10);
             const angle = Math.atan2(point.y - pointBefore.y, point.x - pointBefore.x) * 180 / Math.PI;
-            
+
             // Add troop marker
             troopsGroup.append('line')
               .attr('class', `troop-marker ${movement.type}-troops`)
@@ -2167,15 +2199,15 @@
               .style('transform', `rotate(${angle}deg)`)
               .style('transform-origin', `${point.x}px ${point.y}px`);
           }
-          
+
           // Add arrow at the end of the path
           const endPoint = movement.path[movement.path.length - 1];
           const projectedEnd = projection(endPoint);
-          
+
           // Calculate angle for the arrow
           const preEndPoint = movementPath.node().getPointAtLength(pathLength - 10);
           const arrowAngle = Math.atan2(projectedEnd[1] - preEndPoint.y, projectedEnd[0] - preEndPoint.x) * 180 / Math.PI;
-          
+
           movementsGroup.append('path')
             .attr('d', `M${projectedEnd[0]},${projectedEnd[1]} l-12,-6 l0,12 z`)
             .attr('class', `${movement.type}-line`)
@@ -2183,16 +2215,16 @@
             .style('transform', `rotate(${arrowAngle}deg)`)
             .style('transform-origin', `${projectedEnd[0]}px ${projectedEnd[1]}px`)
             .style('opacity', 0.9);
-          
+
           // Add tooltip behavior
           movementPath
-            .on('mouseover', function(event) {
+            .on('mouseover', function (event) {
               const speedMap = {
                 'Slow': 'Slow advance',
                 'Medium': 'Moderate pace',
                 'Fast': 'Rapid advance'
               };
-              
+
               showTooltip(`
                 <strong>${movement.name}</strong><br>
                 Forces: ${movement.units}<br>
@@ -2202,24 +2234,24 @@
             .on('mouseout', hideTooltip);
         });
       }
-      
+
       function animateFrontLines(event) {
         if (!event.frontLines || event.frontLines.length === 0) return;
-        
+
         event.frontLines.forEach(frontLine => {
           const lineGenerator = d3.line()
             .x(d => projection(d)[0])
             .y(d => projection(d)[1])
             .curve(d3.curveBasis);
-          
+
           const frontLinePath = frontLinesGroup.append('path')
             .datum(frontLine.path)
             .attr('class', `front-line ${frontLine.type}-front`)
             .attr('d', lineGenerator)
             .style('opacity', 0);
-          
+
           const pathLength = frontLinePath.node().getTotalLength();
-          
+
           frontLinePath
             .style('stroke-dasharray', pathLength)
             .style('stroke-dashoffset', pathLength)
@@ -2231,16 +2263,16 @@
             .style('stroke-dashoffset', 0);
         });
       }
-      
+
       function showFrontLines(event) {
         if (!event.frontLines || event.frontLines.length === 0) return;
-        
+
         event.frontLines.forEach(frontLine => {
           const lineGenerator = d3.line()
             .x(d => projection(d)[0])
             .y(d => projection(d)[1])
             .curve(d3.curveBasis);
-          
+
           frontLinesGroup.append('path')
             .datum(frontLine.path)
             .attr('class', `front-line ${frontLine.type}-front`)
@@ -2248,42 +2280,42 @@
             .style('opacity', 0.8);
         });
       }
-      
+
       function showBattles(event, animated = true) {
         if (!event.battles || event.battles.length === 0) return;
-        
+
         event.battles.forEach(battle => {
           const coords = projection(battle.coords);
           if (!coords) return; // Skip if outside projection
-          
+
           // Add battle marker group
           const battleGroup = battlesGroup.append('g')
             .attr('class', 'battle-marker')
             .attr('transform', `translate(${coords[0]}, ${coords[1]})`)
             .style('opacity', animated ? 0 : 1);
-          
+
           // Add battle point (circle)
           const size = Math.min(Math.max(battle.significance || 1, 1), 3) * 4;
-          
+
           const battlePoint = battleGroup.append('circle')
             .attr('class', 'battle-point')
             .attr('r', size);
-          
+
           // Add pulse effect
           const battlePulse = battleGroup.append('circle')
             .attr('class', 'battle-pulse')
             .attr('r', 5);
-          
+
           if (animated) {
             // Animate battleGroup fade in
             battleGroup.transition()
               .duration(500)
               .style('opacity', 1)
-              .on('end', function() {
+              .on('end', function () {
                 // Start pulse animation after fade in
                 battlePulse.call(pulse);
               });
-              
+
             // Animate battle point appearance
             battlePoint
               .attr('r', 0)
@@ -2300,10 +2332,10 @@
             // Start pulse right away for non-animated version
             battlePulse.call(pulse);
           }
-          
+
           // Battle tooltip
           battleGroup
-            .on('mouseover', function(event) {
+            .on('mouseover', function (event) {
               showTooltip(`
                 <strong>${battle.name}</strong><br>
                 ${battle.date}<br>
@@ -2313,7 +2345,7 @@
             })
             .on('mouseout', hideTooltip);
         });
-        
+
         // Pulse animation function
         function pulse(selection) {
           selection
@@ -2321,7 +2353,7 @@
             .duration(1500)
             .attr('r', 20)
             .style('opacity', 0)
-            .on('end', function() {
+            .on('end', function () {
               d3.select(this)
                 .attr('r', 5)
                 .style('opacity', 0.7)
@@ -2329,12 +2361,12 @@
             });
         }
       }
-      
+
       // ===== Control Functions =====
       function togglePlayPause() {
         state.isPlaying = !state.isPlaying;
         const btn = document.getElementById('play-pause-btn');
-        
+
         if (state.isPlaying) {
           btn.innerHTML = `
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -2354,13 +2386,13 @@
           clearTimeout(state.animationTimer);
         }
       }
-      
+
       function playNextEvent() {
         updateMapToEvent(state.currentEventIndex, true);
-        
+
         state.animationTimer = setTimeout(() => {
           state.currentEventIndex = (state.currentEventIndex + 1) % events.length;
-          
+
           if (state.currentEventIndex === 0) {
             // Reached the end, stop playing
             togglePlayPause();
@@ -2370,40 +2402,40 @@
           }
         }, config.animationDuration + config.pauseBetweenEvents);
       }
-      
+
       function goToPreviousEvent() {
         if (state.currentEventIndex > 0) {
           state.currentEventIndex--;
           updateMapToEvent(state.currentEventIndex, true);
         }
       }
-      
+
       function goToNextEvent() {
         if (state.currentEventIndex < events.length - 1) {
           state.currentEventIndex++;
           updateMapToEvent(state.currentEventIndex, true);
         }
       }
-      
+
       function resetVisualization() {
         // Stop playing if it's currently playing
         if (state.isPlaying) {
           togglePlayPause();
         }
-        
+
         // Reset to first event
         state.currentEventIndex = 0;
         updateMapToEvent(0, true);
-        
+
         // Reset map view
         resetMapView();
-        
+
         showNotification('Timeline reset to the beginning of World War II.');
       }
-      
+
       // ===== Map Navigation Functions =====
       function focusMapOnTheater(theater) {
-        switch(theater) {
+        switch (theater) {
           case 'europe':
             focusMapOnCoordinates([15, 50], 3);
             break;
@@ -2419,45 +2451,45 @@
             break;
         }
       }
-      
+
       function focusMapOnCoordinates(coordinates, zoomLevel) {
         const [x, y] = coordinates;
         const [px, py] = projection([x, y]);
-        
+
         if (!px || !py) return; // Skip if outside projection
-        
+
         const width = svg.attr('width') || svg.node().getBoundingClientRect().width;
         const height = svg.attr('height') || svg.node().getBoundingClientRect().height;
-        
+
         const tx = width / 2 - px * zoomLevel;
         const ty = height / 2 - py * zoomLevel;
-        
+
         applyZoom(zoomLevel, [tx, ty]);
       }
-      
+
       function applyZoom(zoomLevel, translate) {
         // Update state
         state.zoomLevel = zoomLevel;
         state.mapTranslate = translate;
-        
+
         // Apply transform to map
         const transform = d3.zoomIdentity
           .translate(translate[0], translate[1])
           .scale(zoomLevel);
-        
+
         svg.transition()
           .duration(750)
           .call(zoom.transform, transform);
       }
-      
+
       function resetMapView() {
         applyZoom(config.defaultZoom, [0, 0]);
       }
-      
+
       // ===== Helper Functions =====
       function showTooltip(content, x, y) {
         clearTimeout(state.tooltipTimer);
-        
+
         tooltip.html(content)
           .style('left', (x + 15) + 'px')
           .style('top', (y - 15) + 'px')
@@ -2465,7 +2497,7 @@
           .duration(200)
           .style('opacity', 1);
       }
-      
+
       function hideTooltip() {
         state.tooltipTimer = setTimeout(() => {
           tooltip.transition()
@@ -2473,32 +2505,32 @@
             .style('opacity', 0);
         }, 100);
       }
-      
+
       function showNotification(message) {
         const notification = document.getElementById('notification');
-        
+
         // Clear any existing timeout
         if (state.notificationTimer) {
           clearTimeout(state.notificationTimer);
         }
-        
+
         // Set content and show notification
         notification.textContent = message;
         notification.classList.add('active');
-        
+
         // Hide after 5 seconds
         state.notificationTimer = setTimeout(() => {
           notification.classList.remove('active');
         }, 5000);
       }
-      
+
       function formatDate(date, short = false) {
-        const options = short 
+        const options = short
           ? { year: 'numeric', month: 'short' }
           : { year: 'numeric', month: 'long', day: 'numeric' };
         return date.toLocaleDateString('en-US', options);
       }
-      
+
       function getCountryName(id) {
         const countryMap = {
           276: "Germany",
@@ -2543,10 +2575,11 @@
           51: "Armenia",
           268: "Georgia"
         };
-        
+
         return countryMap[id] || "Unknown Country";
       }
     });
   </script>
 </body>
+
 </html>

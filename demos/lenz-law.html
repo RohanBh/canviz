@@ -1,9 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lenz's Law: Electromagnetic Induction Visualized</title>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-1DB24KTNYY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-1DB24KTNYY');
+  </script>
   <style>
     :root {
       --primary: #3498db;
@@ -17,13 +27,13 @@
       --shadow: rgba(0, 0, 0, 0.1);
       --glow: rgba(52, 152, 219, 0.4);
     }
-    
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
-    
+
     body {
       font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
       background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
@@ -32,7 +42,7 @@
       padding: 20px;
       line-height: 1.6;
     }
-    
+
     .container {
       max-width: 1000px;
       margin: 0 auto;
@@ -41,7 +51,7 @@
       overflow: hidden;
       box-shadow: 0 10px 30px var(--shadow);
     }
-    
+
     header {
       background: linear-gradient(to right, var(--dark), #34495e);
       color: white;
@@ -49,7 +59,7 @@
       position: relative;
       overflow: hidden;
     }
-    
+
     header h1 {
       font-size: 2rem;
       margin-bottom: 8px;
@@ -57,7 +67,7 @@
       position: relative;
       z-index: 2;
     }
-    
+
     header p {
       font-weight: 300;
       font-size: 1.1rem;
@@ -66,7 +76,7 @@
       position: relative;
       z-index: 2;
     }
-    
+
     header::before {
       content: "";
       position: absolute;
@@ -79,11 +89,11 @@
       border-radius: 100%;
       z-index: 1;
     }
-    
+
     .simulation-container {
       padding: 20px;
     }
-    
+
     .visualization-area {
       width: 100%;
       height: 500px;
@@ -93,7 +103,7 @@
       border-radius: 8px;
       box-shadow: inset 0 1px 3px var(--shadow);
     }
-    
+
     .canvas-container {
       position: absolute;
       width: 100%;
@@ -101,27 +111,27 @@
       top: 0;
       left: 0;
     }
-    
+
     canvas {
       position: absolute;
       top: 0;
       left: 0;
     }
-    
+
     .controls-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 20px;
       margin-top: 20px;
     }
-    
+
     .controls-panel {
       padding: 20px;
       background: white;
       border-radius: 8px;
       box-shadow: 0 3px 10px var(--shadow);
     }
-    
+
     .controls-panel h3 {
       margin-bottom: 15px;
       font-size: 1.1rem;
@@ -130,7 +140,7 @@
       align-items: center;
       gap: 8px;
     }
-    
+
     .controls-panel h3::before {
       content: "";
       display: block;
@@ -139,13 +149,13 @@
       background: var(--primary);
       border-radius: 4px;
     }
-    
+
     .buttons-group {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
     }
-    
+
     button {
       padding: 10px 16px;
       background: var(--primary);
@@ -160,38 +170,38 @@
       gap: 8px;
       box-shadow: 0 2px 5px var(--shadow);
     }
-    
+
     button:hover {
       background: #2980b9;
       transform: translateY(-2px);
       box-shadow: 0 4px 8px var(--shadow);
     }
-    
+
     button:active {
       transform: translateY(0);
     }
-    
+
     button.secondary {
       background: var(--light);
       color: var(--dark);
     }
-    
+
     button.secondary:hover {
       background: #dfe6e9;
     }
-    
+
     button.accent {
       background: var(--accent);
     }
-    
+
     button.accent:hover {
       background: #8e44ad;
     }
-    
+
     .slider-container {
       margin-top: 15px;
     }
-    
+
     .slider-label {
       display: flex;
       justify-content: space-between;
@@ -199,7 +209,7 @@
       font-size: 0.9rem;
       color: var(--neutral);
     }
-    
+
     .slider {
       width: 100%;
       -webkit-appearance: none;
@@ -208,7 +218,7 @@
       background: #dfe6e9;
       outline: none;
     }
-    
+
     .slider::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
@@ -220,11 +230,11 @@
       transition: all 0.2s;
       box-shadow: 0 2px 4px var(--shadow);
     }
-    
+
     .slider::-webkit-slider-thumb:hover {
       transform: scale(1.2);
     }
-    
+
     .slider::-moz-range-thumb {
       width: 18px;
       height: 18px;
@@ -235,11 +245,11 @@
       border: none;
       box-shadow: 0 2px 4px var(--shadow);
     }
-    
+
     .slider::-moz-range-thumb:hover {
       transform: scale(1.2);
     }
-    
+
     .info-panel {
       background: var(--light);
       border-radius: 8px;
@@ -250,24 +260,24 @@
       transition: all 0.3s ease;
       box-shadow: 0 3px 10px var(--shadow);
     }
-    
+
     .info-panel.highlight {
       background: linear-gradient(to right, #e6f7ff, #e6f0ff);
       box-shadow: 0 4px 15px var(--glow);
     }
-    
+
     .info-content {
       position: relative;
       z-index: 2;
     }
-    
+
     .info-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 10px;
     }
-    
+
     .info-title {
       font-size: 1.1rem;
       font-weight: 600;
@@ -276,14 +286,14 @@
       align-items: center;
       gap: 8px;
     }
-    
+
     .info-title span.indicator {
       display: inline-block;
       width: 10px;
       height: 10px;
       border-radius: 50%;
     }
-    
+
     .info-tag {
       font-size: 0.8rem;
       padding: 4px 8px;
@@ -292,12 +302,12 @@
       border-radius: 20px;
       font-weight: 500;
     }
-    
+
     .info-description {
       margin-bottom: 15px;
       color: var(--neutral);
     }
-    
+
     .info-explanation {
       padding: 15px;
       background: rgba(255, 255, 255, 0.7);
@@ -305,14 +315,14 @@
       border-left: 4px solid var(--primary);
       margin-bottom: 15px;
     }
-    
+
     .key-points {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 15px;
       margin-top: 15px;
     }
-    
+
     .key-point {
       background: white;
       padding: 15px;
@@ -323,12 +333,12 @@
       gap: 8px;
       transition: all 0.3s ease;
     }
-    
+
     .key-point:hover {
       transform: translateY(-3px);
       box-shadow: 0 5px 10px var(--shadow);
     }
-    
+
     .key-point-title {
       font-weight: 600;
       color: var(--dark);
@@ -337,7 +347,7 @@
       align-items: center;
       gap: 8px;
     }
-    
+
     .key-point-title .icon {
       width: 20px;
       height: 20px;
@@ -349,22 +359,22 @@
       border-radius: 50%;
       font-size: 0.8rem;
     }
-    
+
     .key-point-description {
       font-size: 0.9rem;
       color: var(--neutral);
     }
-    
+
     .draggable {
       cursor: grab;
       user-select: none;
       touch-action: none;
     }
-    
+
     .draggable:active {
       cursor: grabbing;
     }
-    
+
     .tooltip {
       position: absolute;
       background: rgba(0, 0, 0, 0.8);
@@ -379,7 +389,7 @@
       z-index: 100;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
-    
+
     .tooltip::after {
       content: "";
       position: absolute;
@@ -392,7 +402,7 @@
       border-right: 6px solid transparent;
       border-top: 6px solid rgba(0, 0, 0, 0.8);
     }
-    
+
     .hotspot {
       position: absolute;
       width: 24px;
@@ -411,18 +421,18 @@
       box-shadow: 0 2px 5px var(--shadow);
       z-index: 10;
     }
-    
+
     .hotspot:hover {
       transform: scale(1.2);
       box-shadow: 0 0 0 4px var(--glow);
     }
-    
+
     .view-options {
       display: flex;
       gap: 10px;
       margin-top: 15px;
     }
-    
+
     .view-option {
       padding: 6px 12px;
       background: white;
@@ -432,17 +442,17 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-    
+
     .view-option:hover {
       background: #f5f7fa;
     }
-    
+
     .view-option.active {
       background: var(--primary);
       color: white;
       border-color: var(--primary);
     }
-    
+
     .timeline {
       margin-top: 15px;
       height: 6px;
@@ -451,7 +461,7 @@
       position: relative;
       overflow: hidden;
     }
-    
+
     .timeline-progress {
       height: 100%;
       background: var(--primary);
@@ -459,7 +469,7 @@
       border-radius: 3px;
       transition: width 0.3s ease;
     }
-    
+
     .loading-container {
       position: absolute;
       top: 0;
@@ -475,7 +485,7 @@
       opacity: 1;
       transition: opacity 0.5s ease;
     }
-    
+
     .loading-spinner {
       width: 50px;
       height: 50px;
@@ -485,40 +495,53 @@
       animation: spin 1s linear infinite;
       margin-bottom: 20px;
     }
-    
+
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
     }
-    
+
     .pulse {
       animation: pulse 2s infinite;
     }
-    
+
     @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+
+      100% {
+        transform: scale(1);
+      }
     }
-    
+
     /* Responsive adjustments */
     @media (max-width: 768px) {
       .container {
         margin: 0;
       }
-      
+
       header {
         padding: 20px;
       }
-      
+
       header h1 {
         font-size: 1.6rem;
       }
-      
+
       .visualization-area {
         height: 400px;
       }
-      
+
       .controls-container {
         grid-template-columns: 1fr;
       }
@@ -534,7 +557,7 @@
       pointer-events: none;
       z-index: 5;
     }
-    
+
     .force-arrow {
       position: absolute;
       height: 4px;
@@ -542,7 +565,7 @@
       transform-origin: left center;
       z-index: 6;
     }
-    
+
     .force-arrow::after {
       content: '';
       position: absolute;
@@ -552,7 +575,7 @@
       border-top: 8px solid transparent;
       border-bottom: 8px solid transparent;
     }
-    
+
     .data-display {
       position: absolute;
       background: rgba(255, 255, 255, 0.9);
@@ -562,34 +585,42 @@
       font-size: 0.9rem;
       z-index: 7;
     }
-    
+
     .data-row {
       display: flex;
       justify-content: space-between;
       margin-bottom: 5px;
     }
-    
+
     .data-label {
       font-weight: 600;
       margin-right: 10px;
       color: var(--dark);
     }
-    
+
     .data-value {
       color: var(--primary);
       font-weight: 600;
     }
-    
+
     .highlight-pulse {
       animation: highlightPulse 1s infinite;
     }
-    
+
     @keyframes highlightPulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.5; }
-      100% { opacity: 1; }
+      0% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+
+      100% {
+        opacity: 1;
+      }
     }
-    
+
     .compass {
       position: absolute;
       width: 40px;
@@ -603,7 +634,7 @@
       overflow: hidden;
       z-index: 7;
     }
-    
+
     .compass-needle {
       position: absolute;
       width: 4px;
@@ -612,7 +643,7 @@
       transform-origin: center center;
       transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    
+
     .visualizer-switch {
       position: absolute;
       bottom: 20px;
@@ -624,7 +655,7 @@
       padding: 5px;
       box-shadow: 0 2px 10px var(--shadow);
     }
-    
+
     .visualizer-option {
       padding: 8px 15px;
       border-radius: 20px;
@@ -632,20 +663,22 @@
       font-size: 0.9rem;
       transition: all 0.2s;
     }
-    
+
     .visualizer-option.active {
       background: var(--primary);
       color: white;
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <header>
       <h1>Lenz's Law: Electromagnetic Induction</h1>
-      <p>When a change in magnetic field occurs, the induced current creates a magnetic field that opposes the change.</p>
+      <p>When a change in magnetic field occurs, the induced current creates a magnetic field that opposes the change.
+      </p>
     </header>
-    
+
     <div class="simulation-container">
       <div class="visualization-area">
         <div class="canvas-container">
@@ -654,13 +687,13 @@
           <canvas id="particlesCanvas"></canvas>
           <canvas id="uiCanvas"></canvas>
         </div>
-        
+
         <div class="visualizer-switch">
           <div class="visualizer-option active" data-view="standard">Standard</div>
           <div class="visualizer-option" data-view="field">Field Lines</div>
           <div class="visualizer-option" data-view="electrons">Electrons</div>
         </div>
-        
+
         <div class="data-display" id="dataDisplay" style="top: 20px; right: 20px;">
           <div class="data-row">
             <span class="data-label">Motion:</span>
@@ -675,13 +708,13 @@
             <span class="data-value" id="currentValue">0.00 A</span>
           </div>
         </div>
-        
+
         <div id="loadingContainer" class="loading-container">
           <div class="loading-spinner"></div>
           <p>Preparing visualization...</p>
         </div>
       </div>
-      
+
       <div class="controls-container">
         <div class="controls-panel">
           <h3>Simulation Controls</h3>
@@ -698,7 +731,7 @@
             <input type="range" min="5" max="30" value="10" class="slider" id="coilTurnsSlider">
           </div>
         </div>
-        
+
         <div class="info-panel" id="infoPanel">
           <div class="info-content">
             <div class="info-header">
@@ -708,13 +741,15 @@
               </div>
               <div class="info-tag" id="infoTag">Interactive</div>
             </div>
-            
+
             <div class="info-explanation" id="mainExplanation">
-              Lenz's Law states that an induced current flows in a direction such that the magnetic field it creates opposes the change in the field that induced the current.
+              Lenz's Law states that an induced current flows in a direction such that the magnetic field it creates
+              opposes the change in the field that induced the current.
               <br><br>
-              <strong>Try it:</strong> Drag the magnet toward or away from the coil to observe how the induced current creates a magnetic field that opposes your motion.
+              <strong>Try it:</strong> Drag the magnet toward or away from the coil to observe how the induced current
+              creates a magnetic field that opposes your motion.
             </div>
-            
+
             <div class="key-points">
               <div class="key-point">
                 <div class="key-point-title">
@@ -725,7 +760,7 @@
                   Moving a magnet near a coil changes the magnetic flux through the coil.
                 </div>
               </div>
-              
+
               <div class="key-point">
                 <div class="key-point-title">
                   <span class="icon">2</span>
@@ -735,7 +770,7 @@
                   This changing flux induces a current in the coil (Faraday's Law).
                 </div>
               </div>
-              
+
               <div class="key-point">
                 <div class="key-point-title">
                   <span class="icon">3</span>
@@ -753,21 +788,21 @@
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       // Canvas setup
       const backgroundCanvas = document.getElementById('backgroundCanvas');
       const magneticFieldCanvas = document.getElementById('magneticFieldCanvas');
       const particlesCanvas = document.getElementById('particlesCanvas');
       const uiCanvas = document.getElementById('uiCanvas');
-      
+
       const backgroundCtx = backgroundCanvas.getContext('2d');
       const fieldCtx = magneticFieldCanvas.getContext('2d');
       const particlesCtx = particlesCanvas.getContext('2d');
       const uiCtx = uiCanvas.getContext('2d');
-      
+
       const visualizationArea = document.querySelector('.visualization-area');
       const loadingContainer = document.getElementById('loadingContainer');
-      
+
       // Elements
       const resetBtn = document.getElementById('resetBtn');
       const demoBtn = document.getElementById('demoBtn');
@@ -782,7 +817,7 @@
       const coilTurnsSlider = document.getElementById('coilTurnsSlider');
       const coilTurnsValue = document.getElementById('coilTurnsValue');
       const visualizerOptions = document.querySelectorAll('.visualizer-option');
-      
+
       // Simulation state
       let width, height, centerX, centerY;
       let magnetPos = { x: 0, y: 0 };
@@ -801,7 +836,7 @@
       let fieldParticles = [];
       let coilTurns = 10;
       let viewMode = 'standard';
-      
+
       // Physics constants
       const MAGNET_WIDTH = 60;
       const MAGNET_HEIGHT = 120;
@@ -814,27 +849,27 @@
       const CURRENT_DECAY = 0.95;
       const FLUX_SENSITIVITY = 0.2;
       let magnetStrength = 1.0;
-      
+
       // Initialize visualization
       function init() {
         // Resize canvas to fit container
         resize();
-        
+
         // Initialize positions
         resetPositions();
-        
+
         // Create electrons for animation
         createElectrons();
-        
+
         // Create field particles
         createFieldParticles();
-        
+
         // Add event listeners
         addEventListeners();
-        
+
         // Start render loop
         requestAnimationFrame(render);
-        
+
         // Hide loading screen after short delay
         setTimeout(() => {
           loadingContainer.style.opacity = '0';
@@ -844,13 +879,13 @@
           }, 500);
         }, 1000);
       }
-      
+
       function resize() {
         width = visualizationArea.clientWidth;
         height = visualizationArea.clientHeight;
         centerX = width / 2;
         centerY = height / 2;
-        
+
         backgroundCanvas.width = width;
         backgroundCanvas.height = height;
         magneticFieldCanvas.width = width;
@@ -860,7 +895,7 @@
         uiCanvas.width = width;
         uiCanvas.height = height;
       }
-      
+
       function resetPositions() {
         magnetPos = { x: width * 0.25, y: centerY };
         coilPos = { x: width * 0.7, y: centerY };
@@ -869,7 +904,7 @@
         inducedCurrent = 0;
         magneticFlux = 0;
       }
-      
+
       function createElectrons() {
         electrons = [];
         for (let i = 0; i < ELECTRON_COUNT; i++) {
@@ -883,7 +918,7 @@
           });
         }
       }
-      
+
       function createFieldParticles() {
         fieldParticles = [];
         for (let i = 0; i < FIELD_PARTICLE_COUNT; i++) {
@@ -901,68 +936,68 @@
           });
         }
       }
-      
+
       // ================================
       // Drawing functions
       // ================================
-      
+
       function render() {
         // Clear all canvases
         backgroundCtx.clearRect(0, 0, width, height);
         fieldCtx.clearRect(0, 0, width, height);
         particlesCtx.clearRect(0, 0, width, height);
         uiCtx.clearRect(0, 0, width, height);
-        
+
         // Update physics
         updatePhysics();
-        
+
         // Update auto-demo if running
         if (demoRunning) {
           updateDemo();
         }
-        
+
         // Draw static background elements
         drawBackground();
-        
+
         // Draw magnetic field based on view mode
         if (viewMode === 'field') {
           drawFieldLines();
         } else {
           drawMagneticField();
         }
-        
+
         // Draw electrons if in electron view mode
         if (viewMode === 'electrons') {
           drawElectrons();
         }
-        
+
         // Draw magnet and coil
         drawMagnet();
         drawCoil();
-        
+
         // Draw UI elements
         drawUI();
-        
+
         // Update data display
         updateDataDisplay();
-        
+
         requestAnimationFrame(render);
       }
-      
+
       function updatePhysics() {
         if (isDragging || demoRunning) {
           // Calculate velocity
           magnetVelocity = magnetPos.x - prevMagnetX;
           prevMagnetX = magnetPos.x;
-          
+
           // Calculate distance and effect
           const distance = Math.abs(magnetPos.x - coilPos.x);
           const normalizedDistance = Math.max(0, Math.min(1, 1 - (distance / (width * 0.6))));
-          
+
           // Calculate magnetic flux change
           const fluxChange = magnetVelocity * normalizedDistance * FLUX_SENSITIVITY;
           magneticFlux = normalizedDistance * magnetStrength;
-          
+
           // Induced current is proportional to rate of change of flux
           if (Math.abs(fluxChange) > 0.001) {
             // Note the negative sign - Lenz's Law says current creates field that opposes change
@@ -972,75 +1007,75 @@
             // Current decay when no flux change
             inducedCurrent *= CURRENT_DECAY;
           }
-          
+
           // Constrain current to reasonable values
           inducedCurrent = Math.max(-MAX_INDUCED_CURRENT, Math.min(MAX_INDUCED_CURRENT, inducedCurrent));
         } else {
           // Apply damping to velocity when not dragging
           magnetVelocity *= DRAG_DAMPENING;
-          
+
           // Current decay
           inducedCurrent *= CURRENT_DECAY;
-          
+
           // If very small, zero it out to prevent eternal tiny currents
           if (Math.abs(inducedCurrent) < 0.01) inducedCurrent = 0;
           if (Math.abs(magnetVelocity) < 0.01) magnetVelocity = 0;
         }
-        
+
         // Update electrons
         updateElectrons();
-        
+
         // Update field particles
         updateFieldParticles();
       }
-      
+
       function updateElectrons() {
         for (let i = 0; i < electrons.length; i++) {
           const electron = electrons[i];
-          
+
           // Update electron speed based on induced current
           electron.speed = inducedCurrent * 0.02;
-          
+
           // Update electron position
           electron.angle += electron.speed;
-          
+
           // Keep angle in 0-2π range
           electron.angle = electron.angle % (Math.PI * 2);
           if (electron.angle < 0) electron.angle += Math.PI * 2;
         }
       }
-      
+
       function updateFieldParticles() {
         const magnetFieldStrength = magnetStrength;
         const inducedFieldStrength = Math.abs(inducedCurrent) * 0.5;
-        
+
         for (let i = 0; i < fieldParticles.length; i++) {
           const particle = fieldParticles[i];
-          
+
           // Reset to base position
           particle.x = particle.baseX;
           particle.y = particle.baseY;
-          
+
           // Distance to magnet and coil
           const dxMagnet = particle.x - magnetPos.x;
           const dyMagnet = particle.y - magnetPos.y;
           const distMagnet = Math.sqrt(dxMagnet * dxMagnet + dyMagnet * dyMagnet);
-          
+
           const dxCoil = particle.x - coilPos.x;
           const dyCoil = particle.y - coilPos.y;
           const distCoil = Math.sqrt(dxCoil * dxCoil + dyCoil * dyCoil);
-          
+
           // Influence from magnet
           if (distMagnet < 300) {
             const force = (1 - distMagnet / 300) * magnetFieldStrength;
             // Perpendicular to radius vector for magnetic field
             const perpX = -dyMagnet / distMagnet;
             const perpY = dxMagnet / distMagnet;
-            
+
             particle.x += perpX * force * 5;
             particle.y += perpY * force * 5;
           }
-          
+
           // Influence from coil's induced field
           if (distCoil < 250 && Math.abs(inducedCurrent) > 0.1) {
             const force = (1 - distCoil / 250) * inducedFieldStrength;
@@ -1049,18 +1084,18 @@
             // Perpendicular to radius vector for magnetic field
             const perpX = -dyCoil / distCoil * direction;
             const perpY = dxCoil / distCoil * direction;
-            
+
             particle.x += perpX * force * 20;
             particle.y += perpY * force * 20;
           }
         }
       }
-      
+
       function drawBackground() {
         // Draw grid for reference
         backgroundCtx.strokeStyle = 'rgba(200, 200, 200, 0.2)';
         backgroundCtx.lineWidth = 1;
-        
+
         // Vertical grid lines
         for (let x = 0; x < width; x += 50) {
           backgroundCtx.beginPath();
@@ -1068,7 +1103,7 @@
           backgroundCtx.lineTo(x, height);
           backgroundCtx.stroke();
         }
-        
+
         // Horizontal grid lines
         for (let y = 0; y < height; y += 50) {
           backgroundCtx.beginPath();
@@ -1076,34 +1111,34 @@
           backgroundCtx.lineTo(width, y);
           backgroundCtx.stroke();
         }
-        
+
         // Draw instructions
         if (!demoRunning && !stepExplainMode) {
           backgroundCtx.font = '16px Segoe UI, sans-serif';
           backgroundCtx.fillStyle = 'rgba(44, 62, 80, 0.7)';
           backgroundCtx.textAlign = 'center';
-          backgroundCtx.fillText('Drag the magnet toward or away from the coil', width/2, 30);
+          backgroundCtx.fillText('Drag the magnet toward or away from the coil', width / 2, 30);
         }
       }
-      
+
       function drawMagneticField() {
         fieldCtx.globalCompositeOperation = 'lighter';
-        
+
         // Draw field particles
         for (let i = 0; i < fieldParticles.length; i++) {
           const particle = fieldParticles[i];
-          
+
           // Calculate color based on position relative to magnet and coil
           const dxMagnet = particle.x - magnetPos.x;
           const dyMagnet = particle.y - magnetPos.y;
           const distMagnet = Math.sqrt(dxMagnet * dxMagnet + dyMagnet * dyMagnet);
-          
+
           const dxCoil = particle.x - coilPos.x;
           const dyCoil = particle.y - coilPos.y;
           const distCoil = Math.sqrt(dxCoil * dxCoil + dyCoil * dyCoil);
-          
+
           let r = 0, g = 0, b = 0, a = 0;
-          
+
           // Magnet field (red/blue gradient)
           if (distMagnet < 300) {
             const magnetInfluence = (1 - distMagnet / 300) * 0.7;
@@ -1119,7 +1154,7 @@
             }
             a = magnetInfluence * particle.opacity;
           }
-          
+
           // Coil field (purple gradient) if there's induced current
           if (distCoil < 250 && Math.abs(inducedCurrent) > 0.1) {
             const coilInfluence = (1 - distCoil / 250) * Math.abs(inducedCurrent) / MAX_INDUCED_CURRENT * 0.8;
@@ -1128,7 +1163,7 @@
             b += 182 * coilInfluence;
             a = Math.max(a, coilInfluence * particle.opacity);
           }
-          
+
           if (a > 0.01) {
             fieldCtx.beginPath();
             fieldCtx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
@@ -1136,143 +1171,143 @@
             fieldCtx.fill();
           }
         }
-        
+
         fieldCtx.globalCompositeOperation = 'source-over';
       }
-      
+
       function drawFieldLines() {
         // Draw magnet field lines
         fieldCtx.strokeStyle = 'rgba(44, 62, 80, 0.4)';
         fieldCtx.lineWidth = 1.5;
-        
+
         // Number of field lines to draw
         const lineCount = 12;
         const lineSpacing = MAGNET_HEIGHT / lineCount;
-        
+
         // Draw from north pole to south pole
         for (let i = 0; i < lineCount; i++) {
-          const startY = magnetPos.y - MAGNET_HEIGHT/2 + lineSpacing * (i + 0.5);
-          
+          const startY = magnetPos.y - MAGNET_HEIGHT / 2 + lineSpacing * (i + 0.5);
+
           fieldCtx.beginPath();
-          fieldCtx.moveTo(magnetPos.x + MAGNET_WIDTH/2, startY);
-          
+          fieldCtx.moveTo(magnetPos.x + MAGNET_WIDTH / 2, startY);
+
           // Calculate control points for bezier
           // Make lines more curved further from center
           const distFromCenter = Math.abs(startY - magnetPos.y);
           const curvature = 70 + distFromCenter * 1.5;
-          
+
           fieldCtx.bezierCurveTo(
-            magnetPos.x + MAGNET_WIDTH/2 + curvature, startY, 
-            magnetPos.x - MAGNET_WIDTH/2 - curvature, magnetPos.y + (magnetPos.y - startY), 
-            magnetPos.x - MAGNET_WIDTH/2, magnetPos.y + (magnetPos.y - startY)
+            magnetPos.x + MAGNET_WIDTH / 2 + curvature, startY,
+            magnetPos.x - MAGNET_WIDTH / 2 - curvature, magnetPos.y + (magnetPos.y - startY),
+            magnetPos.x - MAGNET_WIDTH / 2, magnetPos.y + (magnetPos.y - startY)
           );
-          
+
           fieldCtx.stroke();
-          
+
           // Draw arrow to indicate direction
           const arrowX = magnetPos.x;
           const arrowY = magnetPos.y + (magnetPos.y - startY) * 0.5;
           const arrowAngle = Math.atan2(magnetPos.y - startY, 0);
-          
+
           drawArrow(fieldCtx, arrowX, arrowY, 10, arrowAngle, 'rgba(44, 62, 80, 0.6)');
         }
-        
+
         // Draw induced field if current exists
         if (Math.abs(inducedCurrent) > 0.1) {
           const ringCount = 3;
           const currentDirection = inducedCurrent > 0 ? 1 : -1;
           const fieldColor = inducedCurrent > 0 ? 'rgba(155, 89, 182, 0.6)' : 'rgba(155, 89, 182, 0.6)';
           fieldCtx.strokeStyle = fieldColor;
-          
+
           for (let i = 1; i <= ringCount; i++) {
             const radius = COIL_RADIUS + i * 30;
-            
+
             fieldCtx.beginPath();
             fieldCtx.ellipse(coilPos.x, coilPos.y, radius, radius * 0.3, 0, 0, Math.PI * 2);
             fieldCtx.stroke();
-            
+
             // Draw direction arrows
             for (let j = 0; j < 4; j++) {
-              const angle = j * Math.PI/2;
+              const angle = j * Math.PI / 2;
               const arrowX = coilPos.x + Math.cos(angle) * radius;
               const arrowY = coilPos.y + Math.sin(angle) * radius * 0.3;
-              
+
               // Direction perpendicular to radius, adjusted by current direction
-              const arrowAngle = angle + Math.PI/2 * currentDirection;
-              
+              const arrowAngle = angle + Math.PI / 2 * currentDirection;
+
               drawArrow(fieldCtx, arrowX, arrowY, 8, arrowAngle, fieldColor);
             }
           }
         }
       }
-      
+
       function drawArrow(ctx, x, y, size, angle, color) {
         ctx.save();
         ctx.translate(x, y);
         ctx.rotate(angle);
-        
+
         ctx.fillStyle = color;
         ctx.beginPath();
         ctx.moveTo(size, 0);
-        ctx.lineTo(-size/2, size/2);
-        ctx.lineTo(-size/2, -size/2);
+        ctx.lineTo(-size / 2, size / 2);
+        ctx.lineTo(-size / 2, -size / 2);
         ctx.closePath();
         ctx.fill();
-        
+
         ctx.restore();
       }
-      
+
       function drawElectrons() {
         particlesCtx.save();
         particlesCtx.translate(coilPos.x, coilPos.y);
-        
+
         // Draw electrons
         for (let i = 0; i < electrons.length; i++) {
           const electron = electrons[i];
-          
+
           // Calculate position
           const x = Math.cos(electron.angle) * electron.radius;
           const y = Math.sin(electron.angle) * electron.radius * 0.3;
-          
+
           // Determine glow intensity based on current
           const glowIntensity = Math.min(1, 0.2 + Math.abs(inducedCurrent) / MAX_INDUCED_CURRENT);
-          
+
           // Draw electron glow
           const gradient = particlesCtx.createRadialGradient(x, y, 1, x, y, electron.size * 2);
           gradient.addColorStop(0, `rgba(52, 152, 219, ${electron.opacity * glowIntensity})`);
           gradient.addColorStop(1, 'rgba(52, 152, 219, 0)');
-          
+
           particlesCtx.beginPath();
           particlesCtx.arc(x, y, electron.size * 2, 0, Math.PI * 2);
           particlesCtx.fillStyle = gradient;
           particlesCtx.fill();
-          
+
           // Draw electron core
           particlesCtx.beginPath();
           particlesCtx.arc(x, y, electron.size, 0, Math.PI * 2);
           particlesCtx.fillStyle = `rgba(52, 152, 219, ${electron.opacity * glowIntensity * 1.5})`;
           particlesCtx.fill();
         }
-        
+
         // Draw current direction indicator if current exists
         if (Math.abs(inducedCurrent) > 0.2) {
           const arrowCount = 6;
           const currentDirection = inducedCurrent > 0 ? 1 : -1;
-          
+
           particlesCtx.strokeStyle = 'rgba(52, 152, 219, 0.8)';
           particlesCtx.lineWidth = 2;
-          
+
           for (let i = 0; i < arrowCount; i++) {
             const angle = (i / arrowCount) * Math.PI * 2;
             const x = Math.cos(angle) * COIL_RADIUS;
             const y = Math.sin(angle) * COIL_RADIUS * 0.3;
-            
+
             // Arrow direction perpendicular to radius, adjusted by current direction
-            const arrowAngle = angle + Math.PI/2 * currentDirection;
-            
+            const arrowAngle = angle + Math.PI / 2 * currentDirection;
+
             drawArrow(particlesCtx, x, y, 10, arrowAngle, 'rgba(52, 152, 219, 0.8)');
           }
-          
+
           // Add current flow label
           particlesCtx.fillStyle = 'rgba(52, 152, 219, 0.9)';
           particlesCtx.font = '14px Segoe UI, sans-serif';
@@ -1282,97 +1317,97 @@
             0, -COIL_RADIUS - 15
           );
         }
-        
+
         particlesCtx.restore();
       }
-      
+
       function drawMagnet() {
         // Draw magnet shadow
         uiCtx.fillStyle = 'rgba(0, 0, 0, 0.2)';
         uiCtx.beginPath();
         uiCtx.ellipse(
-          magnetPos.x, magnetPos.y + MAGNET_HEIGHT/2 + 5, 
-          MAGNET_WIDTH/2, MAGNET_HEIGHT/8, 0, 0, Math.PI * 2
+          magnetPos.x, magnetPos.y + MAGNET_HEIGHT / 2 + 5,
+          MAGNET_WIDTH / 2, MAGNET_HEIGHT / 8, 0, 0, Math.PI * 2
         );
         uiCtx.fill();
-        
+
         // Draw magnet body
         const gradient = uiCtx.createLinearGradient(
-          magnetPos.x - MAGNET_WIDTH/2, magnetPos.y,
-          magnetPos.x + MAGNET_WIDTH/2, magnetPos.y
+          magnetPos.x - MAGNET_WIDTH / 2, magnetPos.y,
+          magnetPos.x + MAGNET_WIDTH / 2, magnetPos.y
         );
         gradient.addColorStop(0, '#d5d5d5');
         gradient.addColorStop(0.5, '#f5f5f5');
         gradient.addColorStop(1, '#d5d5d5');
-        
+
         uiCtx.fillStyle = gradient;
         uiCtx.fillRect(
-          magnetPos.x - MAGNET_WIDTH/2, magnetPos.y - MAGNET_HEIGHT/2,
+          magnetPos.x - MAGNET_WIDTH / 2, magnetPos.y - MAGNET_HEIGHT / 2,
           MAGNET_WIDTH, MAGNET_HEIGHT
         );
-        
+
         // Draw north pole (red)
         const northGradient = uiCtx.createLinearGradient(
-          magnetPos.x - MAGNET_WIDTH/2, magnetPos.y - MAGNET_HEIGHT/2,
-          magnetPos.x + MAGNET_WIDTH/2, magnetPos.y - MAGNET_HEIGHT/2
+          magnetPos.x - MAGNET_WIDTH / 2, magnetPos.y - MAGNET_HEIGHT / 2,
+          magnetPos.x + MAGNET_WIDTH / 2, magnetPos.y - MAGNET_HEIGHT / 2
         );
         northGradient.addColorStop(0, '#c0392b');
         northGradient.addColorStop(0.5, '#e74c3c');
         northGradient.addColorStop(1, '#c0392b');
-        
+
         uiCtx.fillStyle = northGradient;
         uiCtx.fillRect(
-          magnetPos.x - MAGNET_WIDTH/2, magnetPos.y - MAGNET_HEIGHT/2,
-          MAGNET_WIDTH, MAGNET_HEIGHT/2
+          magnetPos.x - MAGNET_WIDTH / 2, magnetPos.y - MAGNET_HEIGHT / 2,
+          MAGNET_WIDTH, MAGNET_HEIGHT / 2
         );
-        
+
         // Draw south pole (blue)
         const southGradient = uiCtx.createLinearGradient(
-          magnetPos.x - MAGNET_WIDTH/2, magnetPos.y,
-          magnetPos.x + MAGNET_WIDTH/2, magnetPos.y
+          magnetPos.x - MAGNET_WIDTH / 2, magnetPos.y,
+          magnetPos.x + MAGNET_WIDTH / 2, magnetPos.y
         );
         southGradient.addColorStop(0, '#2980b9');
         southGradient.addColorStop(0.5, '#3498db');
         southGradient.addColorStop(1, '#2980b9');
-        
+
         uiCtx.fillStyle = southGradient;
         uiCtx.fillRect(
-          magnetPos.x - MAGNET_WIDTH/2, magnetPos.y,
-          MAGNET_WIDTH, MAGNET_HEIGHT/2
+          magnetPos.x - MAGNET_WIDTH / 2, magnetPos.y,
+          MAGNET_WIDTH, MAGNET_HEIGHT / 2
         );
-        
+
         // Add highlight edge
         uiCtx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
         uiCtx.lineWidth = 2;
         uiCtx.strokeRect(
-          magnetPos.x - MAGNET_WIDTH/2, magnetPos.y - MAGNET_HEIGHT/2,
+          magnetPos.x - MAGNET_WIDTH / 2, magnetPos.y - MAGNET_HEIGHT / 2,
           MAGNET_WIDTH, MAGNET_HEIGHT
         );
-        
+
         // Draw N and S labels
         uiCtx.fillStyle = 'white';
         uiCtx.font = 'bold 24px Segoe UI, sans-serif';
         uiCtx.textAlign = 'center';
         uiCtx.textBaseline = 'middle';
-        uiCtx.fillText('N', magnetPos.x, magnetPos.y - MAGNET_HEIGHT/4);
-        uiCtx.fillText('S', magnetPos.x, magnetPos.y + MAGNET_HEIGHT/4);
-        
+        uiCtx.fillText('N', magnetPos.x, magnetPos.y - MAGNET_HEIGHT / 4);
+        uiCtx.fillText('S', magnetPos.x, magnetPos.y + MAGNET_HEIGHT / 4);
+
         // Draw magnet label
         uiCtx.fillStyle = '#2c3e50';
         uiCtx.font = '14px Segoe UI, sans-serif';
         uiCtx.textAlign = 'center';
         uiCtx.textBaseline = 'middle';
-        uiCtx.fillText('Permanent Magnet', magnetPos.x, magnetPos.y - MAGNET_HEIGHT/2 - 15);
-        
+        uiCtx.fillText('Permanent Magnet', magnetPos.x, magnetPos.y - MAGNET_HEIGHT / 2 - 15);
+
         // Draw force arrow if there's significant induced current
         if (Math.abs(inducedCurrent) > 0.3 && Math.abs(magnetVelocity) > 0.2) {
           // Draw opposing force arrow
           const forceDirection = magnetVelocity > 0 ? -1 : 1;
           const forceStrength = Math.min(1, Math.abs(inducedCurrent) / 2) * 40;
-          
+
           uiCtx.save();
-          uiCtx.translate(magnetPos.x + forceDirection * (MAGNET_WIDTH/2 + 10), magnetPos.y);
-          
+          uiCtx.translate(magnetPos.x + forceDirection * (MAGNET_WIDTH / 2 + 10), magnetPos.y);
+
           // Arrow shaft
           uiCtx.lineWidth = 4;
           uiCtx.strokeStyle = '#9b59b6';
@@ -1380,7 +1415,7 @@
           uiCtx.moveTo(0, 0);
           uiCtx.lineTo(forceDirection * forceStrength, 0);
           uiCtx.stroke();
-          
+
           // Arrow head
           uiCtx.fillStyle = '#9b59b6';
           uiCtx.beginPath();
@@ -1389,125 +1424,125 @@
           uiCtx.lineTo(forceDirection * (forceStrength - 12), 8);
           uiCtx.closePath();
           uiCtx.fill();
-          
+
           // Label
           uiCtx.fillStyle = '#9b59b6';
           uiCtx.font = '14px Segoe UI, sans-serif';
           uiCtx.textAlign = forceDirection > 0 ? 'left' : 'right';
           uiCtx.textBaseline = 'middle';
           uiCtx.fillText('Opposing Force', forceDirection * (forceStrength + 15), 0);
-          
+
           uiCtx.restore();
-          
+
           // Add explanation text for opposing force
           if (Math.abs(inducedCurrent) > 0.5) {
-            const text = magnetVelocity > 0 
+            const text = magnetVelocity > 0
               ? "Moving toward coil → Induced field repels magnet"
               : "Moving away from coil → Induced field attracts magnet";
-            
+
             uiCtx.fillStyle = 'rgba(155, 89, 182, 0.9)';
             uiCtx.font = '14px Segoe UI, sans-serif';
             uiCtx.textAlign = 'center';
             uiCtx.textBaseline = 'middle';
-            uiCtx.fillText(text, width/2, height - 30);
-            
+            uiCtx.fillText(text, width / 2, height - 30);
+
             // Add emphasis text
             uiCtx.font = 'bold 16px Segoe UI, sans-serif';
-            uiCtx.fillText("Opposing the Change!", width/2, height - 55);
+            uiCtx.fillText("Opposing the Change!", width / 2, height - 55);
           }
         }
       }
-      
+
       function drawCoil() {
         // Draw coil support structure
         uiCtx.fillStyle = '#7f8c8d';
         uiCtx.fillRect(coilPos.x - 20, coilPos.y + COIL_RADIUS * 0.3 + 5, 40, 15);
         uiCtx.fillRect(coilPos.x - 30, coilPos.y + COIL_RADIUS * 0.3 + 20, 60, 10);
-        
+
         // Draw coil label
         uiCtx.fillStyle = '#2c3e50';
         uiCtx.font = '14px Segoe UI, sans-serif';
         uiCtx.textAlign = 'center';
         uiCtx.textBaseline = 'middle';
         uiCtx.fillText(`Coil (${coilTurns} turns)`, coilPos.x, coilPos.y - COIL_RADIUS * 0.3 - 20);
-        
+
         // Create shadow
         uiCtx.fillStyle = 'rgba(0, 0, 0, 0.1)';
         uiCtx.beginPath();
         uiCtx.ellipse(
-          coilPos.x, coilPos.y + COIL_RADIUS * 0.3 + 3, 
+          coilPos.x, coilPos.y + COIL_RADIUS * 0.3 + 3,
           COIL_RADIUS, COIL_RADIUS * 0.1, 0, 0, Math.PI * 2
         );
         uiCtx.fill();
-        
+
         // Draw coil frame
         uiCtx.strokeStyle = '#7f8c8d';
         uiCtx.lineWidth = 6;
         uiCtx.beginPath();
         uiCtx.ellipse(coilPos.x, coilPos.y, COIL_RADIUS, COIL_RADIUS * 0.3, 0, 0, Math.PI * 2);
         uiCtx.stroke();
-        
+
         // Draw coil windings
         const windingGap = 6;
         const windingCount = coilTurns;
         const halfCount = Math.floor(windingCount / 2);
-        
+
         for (let i = -halfCount; i <= halfCount; i++) {
           uiCtx.strokeStyle = i % 2 === 0 ? '#bdc3c7' : '#95a5a6';
           uiCtx.lineWidth = COIL_THICKNESS;
           uiCtx.beginPath();
           uiCtx.ellipse(
-            coilPos.x, coilPos.y + i * windingGap, 
-            COIL_RADIUS, COIL_RADIUS * 0.3, 
+            coilPos.x, coilPos.y + i * windingGap,
+            COIL_RADIUS, COIL_RADIUS * 0.3,
             0, 0, Math.PI * 2
           );
           uiCtx.stroke();
         }
-        
+
         // Draw coil front cross-section with transparency
         uiCtx.fillStyle = 'rgba(236, 240, 241, 0.5)';
         uiCtx.beginPath();
         uiCtx.ellipse(
-          coilPos.x, coilPos.y, 
-          COIL_RADIUS, COIL_RADIUS * 0.3, 
+          coilPos.x, coilPos.y,
+          COIL_RADIUS, COIL_RADIUS * 0.3,
           0, 0, Math.PI * 2
         );
         uiCtx.fill();
-        
+
         // Draw induced current indicators if current exists
         if (Math.abs(inducedCurrent) > 0.1) {
           const currentStrength = Math.abs(inducedCurrent) / MAX_INDUCED_CURRENT;
           const currentDirection = inducedCurrent > 0 ? 1 : -1;
           const currentColor = 'rgba(52, 152, 219, ' + currentStrength * 0.9 + ')';
-          
+
           // Current flow representation (animated dots along the coil)
           uiCtx.save();
           uiCtx.translate(coilPos.x, coilPos.y);
-          
+
           const time = performance.now() / 1000;
           const dotCount = 20;
-          
+
           uiCtx.lineWidth = 3;
           uiCtx.strokeStyle = currentColor;
-          
+
           for (let i = 0; i < dotCount; i++) {
             // Position dots along the ellipse
             const dotPhase = ((i / dotCount) + (time * currentDirection) * currentStrength) % 1;
             const angle = dotPhase * Math.PI * 2;
-            
+
             const x = Math.cos(angle) * COIL_RADIUS;
             const y = Math.sin(angle) * COIL_RADIUS * 0.3;
-            
+
             // Draw current dot
             uiCtx.beginPath();
             uiCtx.arc(x, y, 4, 0, Math.PI * 2);
             uiCtx.fill();
           }
-          
+
           uiCtx.restore();
         }
       }
-      
+
       function drawUI() {
         // Draw demo or step mode UI if active
         if (demoRunning) {
@@ -1516,19 +1551,19 @@
           drawStepExplainUI();
         }
       }
-      
+
       function drawDemoUI() {
         // Draw demo progress
         uiCtx.fillStyle = 'rgba(0, 0, 0, 0.7)';
         uiCtx.fillRect(20, height - 40, width - 40, 25);
-        
+
         uiCtx.fillStyle = 'rgba(52, 152, 219, 0.9)';
         uiCtx.fillRect(20, height - 40, (width - 40) * demoProgress, 25);
-        
+
         // Demo phase labels
         const phases = ['Moving Towards Coil', 'Pausing', 'Moving Away', 'Returning'];
         let currentPhase = 0;
-        
+
         if (demoProgress < 0.35) {
           currentPhase = 0;
         } else if (demoProgress < 0.5) {
@@ -1538,16 +1573,16 @@
         } else {
           currentPhase = 3;
         }
-        
+
         uiCtx.fillStyle = 'white';
         uiCtx.font = '14px Segoe UI, sans-serif';
         uiCtx.textAlign = 'center';
         uiCtx.textBaseline = 'middle';
-        uiCtx.fillText('DEMO: ' + phases[currentPhase], width/2, height - 27);
-        
+        uiCtx.fillText('DEMO: ' + phases[currentPhase], width / 2, height - 27);
+
         // Demo explanation
         let demoExplanation = '';
-        
+
         if (currentPhase === 0) {
           demoExplanation = 'As the magnet moves TOWARD the coil, the increasing magnetic flux induces a current that creates an OPPOSING magnetic field.';
         } else if (currentPhase === 1) {
@@ -1557,45 +1592,45 @@
         } else {
           demoExplanation = 'The induced field tries to PREVENT the change by pulling the magnet back toward the coil.';
         }
-        
+
         // Draw explanation box
         const textWidth = width * 0.8;
         const textHeight = 60;
-        const textX = width/2 - textWidth/2;
+        const textX = width / 2 - textWidth / 2;
         const textY = 60;
-        
+
         uiCtx.fillStyle = 'rgba(52, 152, 219, 0.9)';
         uiCtx.fillRect(textX, textY, textWidth, textHeight);
-        
+
         // Add glowing border during important moments
         if ((currentPhase === 0 || currentPhase === 2) && Math.abs(inducedCurrent) > 0.5) {
           uiCtx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
           uiCtx.lineWidth = 2;
           uiCtx.strokeRect(textX, textY, textWidth, textHeight);
         }
-        
+
         uiCtx.fillStyle = 'white';
         uiCtx.font = '16px Segoe UI, sans-serif';
         uiCtx.textAlign = 'center';
         uiCtx.textBaseline = 'middle';
-        wrapText(uiCtx, demoExplanation, width/2, textY + textHeight/2, textWidth - 20, 20);
-        
+        wrapText(uiCtx, demoExplanation, width / 2, textY + textHeight / 2, textWidth - 20, 20);
+
         // Draw "Cancel Demo" button
         uiCtx.fillStyle = 'rgba(231, 76, 60, 0.9)';
         uiCtx.fillRect(width - 120, 10, 100, 30);
-        
+
         uiCtx.fillStyle = 'white';
         uiCtx.font = '14px Segoe UI, sans-serif';
         uiCtx.textAlign = 'center';
         uiCtx.textBaseline = 'middle';
         uiCtx.fillText('Cancel Demo', width - 70, 25);
       }
-      
+
       function drawStepExplainUI() {
         // Draw semi-transparent overlay
         uiCtx.fillStyle = 'rgba(0, 0, 0, 0.7)';
         uiCtx.fillRect(0, 0, width, height);
-        
+
         // Step content
         const steps = [
           {
@@ -1624,81 +1659,81 @@
             highlight: "complete"
           }
         ];
-        
+
         const currentStepData = steps[currentStep];
-        
+
         // Draw content box
         const boxWidth = width * 0.7;
         const boxHeight = 200;
-        const boxX = width/2 - boxWidth/2;
-        const boxY = height/2 - boxHeight/2;
-        
+        const boxX = width / 2 - boxWidth / 2;
+        const boxY = height / 2 - boxHeight / 2;
+
         // Box background
         uiCtx.fillStyle = 'rgba(255, 255, 255, 0.95)';
         uiCtx.fillRect(boxX, boxY, boxWidth, boxHeight);
-        
+
         // Box header
         uiCtx.fillStyle = 'rgba(52, 152, 219, 0.9)';
         uiCtx.fillRect(boxX, boxY, boxWidth, 40);
-        
+
         uiCtx.fillStyle = 'white';
         uiCtx.font = 'bold 18px Segoe UI, sans-serif';
         uiCtx.textAlign = 'center';
         uiCtx.textBaseline = 'middle';
-        uiCtx.fillText(currentStepData.title, boxX + boxWidth/2, boxY + 20);
-        
+        uiCtx.fillText(currentStepData.title, boxX + boxWidth / 2, boxY + 20);
+
         // Box content
         uiCtx.fillStyle = '#2c3e50';
         uiCtx.font = '16px Segoe UI, sans-serif';
         uiCtx.textAlign = 'center';
         uiCtx.textBaseline = 'middle';
-        wrapText(uiCtx, currentStepData.content, boxX + boxWidth/2, boxY + 100, boxWidth - 60, 24);
-        
+        wrapText(uiCtx, currentStepData.content, boxX + boxWidth / 2, boxY + 100, boxWidth - 60, 24);
+
         // Draw navigation controls
         uiCtx.fillStyle = 'rgba(0, 0, 0, 0.1)';
         uiCtx.fillRect(boxX, boxY + boxHeight - 50, boxWidth, 50);
-        
+
         // Back button
         if (currentStep > 0) {
           uiCtx.fillStyle = '#7f8c8d';
           uiCtx.fillRect(boxX + 20, boxY + boxHeight - 40, 100, 30);
-          
+
           uiCtx.fillStyle = 'white';
           uiCtx.font = '14px Segoe UI, sans-serif';
           uiCtx.textAlign = 'center';
           uiCtx.textBaseline = 'middle';
           uiCtx.fillText('← Previous', boxX + 70, boxY + boxHeight - 25);
         }
-        
+
         // Next/Finish button
         uiCtx.fillStyle = currentStep < steps.length - 1 ? '#3498db' : '#2ecc71';
         uiCtx.fillRect(boxX + boxWidth - 120, boxY + boxHeight - 40, 100, 30);
-        
+
         uiCtx.fillStyle = 'white';
         uiCtx.font = '14px Segoe UI, sans-serif';
         uiCtx.textAlign = 'center';
         uiCtx.textBaseline = 'middle';
         uiCtx.fillText(
           currentStep < steps.length - 1 ? 'Next →' : 'Finish',
-          boxX + boxWidth - 70, 
+          boxX + boxWidth - 70,
           boxY + boxHeight - 25
         );
-        
+
         // Step indicators
         const indicatorWidth = 12;
         const indicatorGap = 10;
         const indicatorsWidth = steps.length * indicatorWidth + (steps.length - 1) * indicatorGap;
-        const indicatorsStartX = boxX + boxWidth/2 - indicatorsWidth/2;
-        
+        const indicatorsStartX = boxX + boxWidth / 2 - indicatorsWidth / 2;
+
         for (let i = 0; i < steps.length; i++) {
           uiCtx.beginPath();
           uiCtx.arc(
-            indicatorsStartX + i * (indicatorWidth + indicatorGap) + indicatorWidth/2,
+            indicatorsStartX + i * (indicatorWidth + indicatorGap) + indicatorWidth / 2,
             boxY + boxHeight - 70,
-            indicatorWidth/2,
+            indicatorWidth / 2,
             0, Math.PI * 2
           );
-          
+
           if (i === currentStep) {
             uiCtx.fillStyle = '#3498db';
           } else if (i < currentStep) {
@@ -1706,10 +1741,10 @@
           } else {
             uiCtx.fillStyle = '#bdc3c7';
           }
-          
+
           uiCtx.fill();
         }
-        
+
         // Highlight the relevant part based on the current step
         if (currentStepData.highlight === "magnet") {
           // Highlight the magnet
@@ -1718,9 +1753,9 @@
           uiCtx.setLineDash([10, 5]);
           uiCtx.beginPath();
           uiCtx.rect(
-            magnetPos.x - MAGNET_WIDTH/2 - 10, 
-            magnetPos.y - MAGNET_HEIGHT/2 - 10, 
-            MAGNET_WIDTH + 20, 
+            magnetPos.x - MAGNET_WIDTH / 2 - 10,
+            magnetPos.y - MAGNET_HEIGHT / 2 - 10,
+            MAGNET_WIDTH + 20,
             MAGNET_HEIGHT + 20
           );
           uiCtx.stroke();
@@ -1730,63 +1765,63 @@
           uiCtx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
           uiCtx.lineWidth = 2;
           uiCtx.setLineDash([5, 5]);
-          
+
           const lineCount = 7;
           const lineSpacing = MAGNET_WIDTH / (lineCount + 1);
-          
+
           for (let i = 0; i < lineCount; i++) {
-            const startX = magnetPos.x - MAGNET_WIDTH/2 + lineSpacing * (i + 1);
-            
+            const startX = magnetPos.x - MAGNET_WIDTH / 2 + lineSpacing * (i + 1);
+
             uiCtx.beginPath();
-            uiCtx.moveTo(startX, magnetPos.y - MAGNET_HEIGHT/2);
-            
+            uiCtx.moveTo(startX, magnetPos.y - MAGNET_HEIGHT / 2);
+
             // Control points for bezier curve
             uiCtx.bezierCurveTo(
-              startX, magnetPos.y - MAGNET_HEIGHT/2 - 20,
+              startX, magnetPos.y - MAGNET_HEIGHT / 2 - 20,
               coilPos.x, coilPos.y - COIL_RADIUS * 0.3 - 20,
               coilPos.x, coilPos.y - COIL_RADIUS * 0.3
             );
-            
+
             uiCtx.stroke();
           }
-          
+
           uiCtx.setLineDash([]);
-          
+
           // Draw flux label
           uiCtx.fillStyle = 'rgba(255, 255, 255, 0.9)';
           uiCtx.font = 'bold 16px Segoe UI, sans-serif';
           uiCtx.textAlign = 'center';
           uiCtx.textBaseline = 'middle';
-          uiCtx.fillText('Magnetic Flux', (magnetPos.x + coilPos.x) / 2, magnetPos.y - MAGNET_HEIGHT/2 - 40);
+          uiCtx.fillText('Magnetic Flux', (magnetPos.x + coilPos.x) / 2, magnetPos.y - MAGNET_HEIGHT / 2 - 40);
         } else if (currentStepData.highlight === "current") {
           // Highlight the coil with current
           uiCtx.strokeStyle = 'rgba(52, 152, 219, 0.8)';
           uiCtx.lineWidth = 4;
           uiCtx.setLineDash([]);
-          
+
           uiCtx.beginPath();
           uiCtx.ellipse(
-            coilPos.x, coilPos.y, 
-            COIL_RADIUS + 10, COIL_RADIUS * 0.3 + 5, 
+            coilPos.x, coilPos.y,
+            COIL_RADIUS + 10, COIL_RADIUS * 0.3 + 5,
             0, 0, Math.PI * 2
           );
           uiCtx.stroke();
-          
+
           // Animate electrons around the coil
           const electronCount = 15;
           const time = performance.now() / 1000;
-          
+
           for (let i = 0; i < electronCount; i++) {
             const angle = ((i / electronCount) + time * 0.2) % 1 * Math.PI * 2;
             const x = coilPos.x + Math.cos(angle) * COIL_RADIUS;
             const y = coilPos.y + Math.sin(angle) * COIL_RADIUS * 0.3;
-            
+
             uiCtx.beginPath();
             uiCtx.arc(x, y, 5, 0, Math.PI * 2);
             uiCtx.fillStyle = 'rgba(52, 152, 219, 0.8)';
             uiCtx.fill();
           }
-          
+
           // Draw current label
           uiCtx.fillStyle = 'rgba(52, 152, 219, 0.9)';
           uiCtx.font = 'bold 16px Segoe UI, sans-serif';
@@ -1797,22 +1832,22 @@
           // Draw opposing force arrow
           uiCtx.strokeStyle = 'rgba(155, 89, 182, 0.9)';
           uiCtx.lineWidth = 4;
-          
+
           // Drawing arrow from coil to magnet
           uiCtx.beginPath();
           uiCtx.moveTo(coilPos.x - COIL_RADIUS, coilPos.y);
-          uiCtx.lineTo(magnetPos.x + MAGNET_WIDTH/2 + 20, magnetPos.y);
+          uiCtx.lineTo(magnetPos.x + MAGNET_WIDTH / 2 + 20, magnetPos.y);
           uiCtx.stroke();
-          
+
           // Arrow head
           uiCtx.fillStyle = 'rgba(155, 89, 182, 0.9)';
           uiCtx.beginPath();
-          uiCtx.moveTo(magnetPos.x + MAGNET_WIDTH/2 + 20, magnetPos.y);
-          uiCtx.lineTo(magnetPos.x + MAGNET_WIDTH/2 + 10, magnetPos.y - 10);
-          uiCtx.lineTo(magnetPos.x + MAGNET_WIDTH/2 + 10, magnetPos.y + 10);
+          uiCtx.moveTo(magnetPos.x + MAGNET_WIDTH / 2 + 20, magnetPos.y);
+          uiCtx.lineTo(magnetPos.x + MAGNET_WIDTH / 2 + 10, magnetPos.y - 10);
+          uiCtx.lineTo(magnetPos.x + MAGNET_WIDTH / 2 + 10, magnetPos.y + 10);
           uiCtx.closePath();
           uiCtx.fill();
-          
+
           // Draw opposing field label
           uiCtx.fillStyle = 'rgba(155, 89, 182, 0.9)';
           uiCtx.font = 'bold 16px Segoe UI, sans-serif';
@@ -1824,11 +1859,11 @@
           // Draw arrows indicating the field interactions
           const arrowCount = 5;
           const arrowLength = 30;
-          
+
           for (let i = 0; i < arrowCount; i++) {
-            const x = magnetPos.x + MAGNET_WIDTH/2 + 20 + i * 20;
+            const x = magnetPos.x + MAGNET_WIDTH / 2 + 20 + i * 20;
             const yOffset = Math.sin(performance.now() / 500 + i) * 5;
-            
+
             // Arrow from magnet to coil (original field)
             uiCtx.strokeStyle = 'rgba(231, 76, 60, 0.8)';
             uiCtx.lineWidth = 2;
@@ -1836,7 +1871,7 @@
             uiCtx.moveTo(x, magnetPos.y + yOffset);
             uiCtx.lineTo(x + arrowLength, magnetPos.y + yOffset);
             uiCtx.stroke();
-            
+
             // Arrow head
             uiCtx.fillStyle = 'rgba(231, 76, 60, 0.8)';
             uiCtx.beginPath();
@@ -1845,17 +1880,17 @@
             uiCtx.lineTo(x + arrowLength - 10, magnetPos.y + yOffset + 5);
             uiCtx.closePath();
             uiCtx.fill();
-            
+
             // Arrow from coil to magnet (opposing field)
             const reverseX = coilPos.x - COIL_RADIUS - 20 - i * 20;
-            
+
             uiCtx.strokeStyle = 'rgba(155, 89, 182, 0.8)';
             uiCtx.lineWidth = 2;
             uiCtx.beginPath();
             uiCtx.moveTo(reverseX, magnetPos.y - yOffset);
             uiCtx.lineTo(reverseX - arrowLength, magnetPos.y - yOffset);
             uiCtx.stroke();
-            
+
             // Arrow head
             uiCtx.fillStyle = 'rgba(155, 89, 182, 0.8)';
             uiCtx.beginPath();
@@ -1865,14 +1900,14 @@
             uiCtx.closePath();
             uiCtx.fill();
           }
-          
+
           // Draw labels
           uiCtx.fillStyle = 'rgba(231, 76, 60, 0.9)';
           uiCtx.font = 'bold 14px Segoe UI, sans-serif';
           uiCtx.textAlign = 'center';
           uiCtx.textBaseline = 'middle';
-          uiCtx.fillText('Changing Field', magnetPos.x + MAGNET_WIDTH/2 + 50, magnetPos.y - 20);
-          
+          uiCtx.fillText('Changing Field', magnetPos.x + MAGNET_WIDTH / 2 + 50, magnetPos.y - 20);
+
           uiCtx.fillStyle = 'rgba(155, 89, 182, 0.9)';
           uiCtx.font = 'bold 14px Segoe UI, sans-serif';
           uiCtx.textAlign = 'center';
@@ -1880,7 +1915,7 @@
           uiCtx.fillText('Opposing Field', coilPos.x - COIL_RADIUS - 50, magnetPos.y + 20);
         }
       }
-      
+
       function updateDataDisplay() {
         // Update motion
         if (Math.abs(magnetVelocity) > 0.5) {
@@ -1895,15 +1930,15 @@
           motionValue.textContent = "None";
           motionValue.style.color = "#7f8c8d";
         }
-        
+
         // Update flux
         const fluxNormalized = magneticFlux.toFixed(2);
         fluxValue.textContent = fluxNormalized + " Wb";
-        
+
         // Update current
         const currentNormalized = inducedCurrent.toFixed(2);
         currentValue.textContent = currentNormalized + " A";
-        
+
         if (inducedCurrent > 0.1) {
           currentValue.style.color = "#e74c3c";  // Red for positive current
         } else if (inducedCurrent < -0.1) {
@@ -1911,62 +1946,62 @@
         } else {
           currentValue.style.color = "#7f8c8d";  // Gray for no significant current
         }
-        
+
         // Update explanation text based on what's happening
         if (!demoRunning && !stepExplainMode) {
           updateExplanationText();
         }
       }
-      
+
       function updateExplanationText() {
         if (Math.abs(magnetVelocity) > 0.5) {
           infoTag.textContent = "Active";
           infoTag.style.backgroundColor = "#2ecc71";
-          
+
           if (magnetVelocity > 0) {
             mainExplanation.innerHTML = "<strong>You're moving the magnet toward the coil.</strong> This increases the magnetic flux through the coil, inducing a current that creates a magnetic field opposing the increase in flux. The induced field repels the magnet, making it harder to push forward.";
           } else {
             mainExplanation.innerHTML = "<strong>You're moving the magnet away from the coil.</strong> This decreases the magnetic flux through the coil, inducing a current that creates a magnetic field opposing the decrease in flux. The induced field attracts the magnet, creating a drag effect.";
           }
-          
+
           infoPanel.classList.add('highlight');
         } else if (Math.abs(inducedCurrent) > 0.1) {
           infoTag.textContent = "Observing";
           infoTag.style.backgroundColor = "#3498db";
-          
+
           mainExplanation.innerHTML = "The induced current is creating a magnetic field that opposes the change in flux. As the current decays, this opposition weakens.";
           infoPanel.classList.add('highlight');
         } else {
           infoTag.textContent = "Interactive";
           infoTag.style.backgroundColor = "#7f8c8d";
-          
+
           mainExplanation.innerHTML = "Lenz's Law states that an induced current flows in a direction such that the magnetic field it creates opposes the change in the field that induced the current.<br><br><strong>Try it:</strong> Drag the magnet toward or away from the coil to observe how the induced current creates a magnetic field that opposes your motion.";
           infoPanel.classList.remove('highlight');
         }
       }
-      
+
       function updateDemo() {
         // Update demo progress
         demoProgress += 0.005;
-        
+
         if (demoProgress >= 1) {
           demoRunning = false;
           demoProgress = 0;
           return;
         }
-        
+
         // Calculate magnet position based on demo phase
         if (demoProgress < 0.35) {
           // Phase 1: Move toward coil
           const startX = width * 0.25;
-          const endX = coilPos.x - COIL_RADIUS - MAGNET_WIDTH/2 - 20;
+          const endX = coilPos.x - COIL_RADIUS - MAGNET_WIDTH / 2 - 20;
           magnetPos.x = startX + (endX - startX) * (demoProgress / 0.35);
         } else if (demoProgress < 0.5) {
           // Phase 2: Pause near coil
-          magnetPos.x = coilPos.x - COIL_RADIUS - MAGNET_WIDTH/2 - 20;
+          magnetPos.x = coilPos.x - COIL_RADIUS - MAGNET_WIDTH / 2 - 20;
         } else if (demoProgress < 0.85) {
           // Phase 3: Move away from coil
-          const startX = coilPos.x - COIL_RADIUS - MAGNET_WIDTH/2 - 20;
+          const startX = coilPos.x - COIL_RADIUS - MAGNET_WIDTH / 2 - 20;
           const endX = width * 0.25;
           magnetPos.x = startX + (endX - startX) * ((demoProgress - 0.5) / 0.35);
         } else {
@@ -1974,21 +2009,21 @@
           magnetPos.x = width * 0.25;
         }
       }
-      
+
       // ================================
       // Utility functions
       // ================================
-      
+
       function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
         const words = text.split(' ');
         let line = '';
         let lineCount = 0;
-        
+
         for (let n = 0; n < words.length; n++) {
           const testLine = line + words[n] + ' ';
           const metrics = ctx.measureText(testLine);
           const testWidth = metrics.width;
-          
+
           if (testWidth > maxWidth && n > 0) {
             ctx.fillText(line, x, y - lineHeight * (lineCount - 0.5));
             line = words[n] + ' ';
@@ -1997,59 +2032,59 @@
             line = testLine;
           }
         }
-        
+
         ctx.fillText(line, x, y - lineHeight * (lineCount - 0.5));
       }
-      
+
       // ================================
       // Event handlers
       // ================================
-      
+
       function addEventListeners() {
         // Magnet dragging
         uiCanvas.addEventListener('mousedown', startDrag);
         uiCanvas.addEventListener('touchstart', startDrag, { passive: false });
-        
+
         // Demo button
         demoBtn.addEventListener('click', startDemo);
-        
+
         // Reset button
         resetBtn.addEventListener('click', resetVisualization);
-        
+
         // Explain button
         explainBtn.addEventListener('click', startStepExplain);
-        
+
         // Coil turns slider
         coilTurnsSlider.addEventListener('input', updateCoilTurns);
-        
+
         // View mode selector
         visualizerOptions.forEach(option => {
           option.addEventListener('click', changeViewMode);
         });
-        
+
         // Window resize
         window.addEventListener('resize', handleResize);
       }
-      
+
       function handleResize() {
         // Store current positions as percentages
         const magnetPercent = magnetPos.x / width;
-        
+
         // Resize canvas
         resize();
-        
+
         // Update positions
         magnetPos.x = magnetPercent * width;
         coilPos.x = width * 0.7;
         coilPos.y = centerY;
       }
-      
+
       function startDrag(e) {
         e.preventDefault();
-        
+
         // Get initial position
         let clientX, clientY;
-        
+
         if (e.type === 'touchstart') {
           clientX = e.touches[0].clientX;
           clientY = e.touches[0].clientY;
@@ -2057,19 +2092,19 @@
           clientX = e.clientX;
           clientY = e.clientY;
         }
-        
+
         const rect = visualizationArea.getBoundingClientRect();
         const x = clientX - rect.left;
         const y = clientY - rect.top;
-        
+
         // Check if click is near magnet
         const dx = x - magnetPos.x;
         const dy = y - magnetPos.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        
+
         if (distance < Math.max(MAGNET_WIDTH, MAGNET_HEIGHT) / 2 + 20) {
           isDragging = true;
-          
+
           // If demo or step explain is running, cancel it
           if (demoRunning) {
             demoRunning = false;
@@ -2077,7 +2112,7 @@
           if (stepExplainMode) {
             stepExplainMode = false;
           }
-          
+
           document.addEventListener('mousemove', drag);
           document.addEventListener('touchmove', drag, { passive: false });
           document.addEventListener('mouseup', endDrag);
@@ -2091,18 +2126,18 @@
           // Get box dimensions
           const boxWidth = width * 0.7;
           const boxHeight = 200;
-          const boxX = width/2 - boxWidth/2;
-          const boxY = height/2 - boxHeight/2;
-          
+          const boxX = width / 2 - boxWidth / 2;
+          const boxY = height / 2 - boxHeight / 2;
+
           // Check if clicked on previous button
-          if (currentStep > 0 && 
-              x > boxX + 20 && x < boxX + 120 && 
-              y > boxY + boxHeight - 40 && y < boxY + boxHeight - 10) {
+          if (currentStep > 0 &&
+            x > boxX + 20 && x < boxX + 120 &&
+            y > boxY + boxHeight - 40 && y < boxY + boxHeight - 10) {
             currentStep--;
           }
           // Check if clicked on next/finish button
-          else if (x > boxX + boxWidth - 120 && x < boxX + boxWidth - 20 && 
-                  y > boxY + boxHeight - 40 && y < boxY + boxHeight - 10) {
+          else if (x > boxX + boxWidth - 120 && x < boxX + boxWidth - 20 &&
+            y > boxY + boxHeight - 40 && y < boxY + boxHeight - 10) {
             if (currentStep < 4) {
               currentStep++;
             } else {
@@ -2113,34 +2148,34 @@
           // Check if clicked on demo cancel button
           const demoButtonRect = demoBtn.getBoundingClientRect();
           if (clientX >= demoButtonRect.left && clientX <= demoButtonRect.right &&
-              clientY >= demoButtonRect.top && clientY <= demoButtonRect.bottom) {
+            clientY >= demoButtonRect.top && clientY <= demoButtonRect.bottom) {
             startDemo();
           }
         }
       }
-      
+
       function drag(e) {
         if (!isDragging) return;
-        
+
         e.preventDefault();
-        
+
         let clientX;
         if (e.type === 'touchmove') {
           clientX = e.touches[0].clientX;
         } else {
           clientX = e.clientX;
         }
-        
+
         const rect = visualizationArea.getBoundingClientRect();
         const x = clientX - rect.left;
-        
+
         // Constrain magnet position within bounds
         magnetPos.x = Math.max(
-          MAGNET_WIDTH / 2 + 20, 
-          Math.min(coilPos.x - COIL_RADIUS - MAGNET_WIDTH/2 - 10, x)
+          MAGNET_WIDTH / 2 + 20,
+          Math.min(coilPos.x - COIL_RADIUS - MAGNET_WIDTH / 2 - 10, x)
         );
       }
-      
+
       function endDrag() {
         isDragging = false;
         document.removeEventListener('mousemove', drag);
@@ -2148,44 +2183,45 @@
         document.removeEventListener('mouseup', endDrag);
         document.removeEventListener('touchend', endDrag);
       }
-      
+
       function startDemo() {
         demoRunning = true;
         demoProgress = 0;
         stepExplainMode = false;
       }
-      
+
       function resetVisualization() {
         demoRunning = false;
         stepExplainMode = false;
         resetPositions();
       }
-      
+
       function startStepExplain() {
         stepExplainMode = true;
         demoRunning = false;
         currentStep = 0;
       }
-      
+
       function updateCoilTurns() {
         coilTurns = parseInt(coilTurnsSlider.value);
         coilTurnsValue.textContent = coilTurns;
       }
-      
+
       function changeViewMode(e) {
         // Update active class
         visualizerOptions.forEach(option => {
           option.classList.remove('active');
         });
         e.target.classList.add('active');
-        
+
         // Set view mode
         viewMode = e.target.dataset.view;
       }
-      
+
       // Initialize the visualization
       init();
     });
   </script>
 </body>
+
 </html>

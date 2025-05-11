@@ -1,12 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parallel File Append Operations</title>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1DB24KTNYY"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-1DB24KTNYY');
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-        
+
         :root {
             --process1-color: #4361ee;
             --process1-light: rgba(67, 97, 238, 0.15);
@@ -25,13 +35,13 @@
             --borders: #e9ecef;
             --tooltip-bg: rgba(43, 45, 66, 0.95);
         }
-        
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-        
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--background);
@@ -41,32 +51,32 @@
             margin: 0;
             overflow-x: hidden;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
         }
-        
+
         header {
             margin-bottom: 2rem;
             text-align: center;
         }
-        
+
         h1 {
             font-weight: 700;
             font-size: 2.5rem;
             margin-bottom: 1rem;
             color: var(--dark-text);
         }
-        
+
         .subtitle {
             font-size: 1.1rem;
             color: var(--mid-text);
             max-width: 800px;
             margin: 0 auto 1.5rem;
         }
-        
+
         .visualization-container {
             position: relative;
             background: var(--layer-bg);
@@ -74,20 +84,20 @@
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
             overflow: hidden;
         }
-        
+
         .canvas-container {
             position: relative;
             width: 100%;
             height: 600px;
             overflow: hidden;
         }
-        
+
         canvas {
             display: block;
             width: 100%;
             height: 100%;
         }
-        
+
         .controls {
             display: flex;
             justify-content: center;
@@ -96,7 +106,7 @@
             background-color: var(--layer-bg);
             border-top: 1px solid var(--borders);
         }
-        
+
         button {
             background: var(--layer-bg);
             border: 1px solid var(--borders);
@@ -111,35 +121,35 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         button:hover {
             background-color: var(--borders);
         }
-        
+
         button:active {
             transform: translateY(1px);
         }
-        
+
         button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-        
+
         button svg {
             width: 18px;
             height: 18px;
         }
-        
+
         button.primary {
             background: var(--process1-color);
             border-color: var(--process1-color);
             color: white;
         }
-        
+
         button.primary:hover {
             background: #3854d1;
         }
-        
+
         .legend {
             display: flex;
             justify-content: center;
@@ -148,20 +158,20 @@
             margin: 1rem auto;
             max-width: 800px;
         }
-        
+
         .legend-item {
             display: flex;
             align-items: center;
             gap: 0.5rem;
             font-size: 0.9rem;
         }
-        
+
         .legend-color {
             width: 12px;
             height: 12px;
             border-radius: 3px;
         }
-        
+
         .timeline {
             background: var(--borders);
             height: 4px;
@@ -169,14 +179,14 @@
             border-radius: 2px;
             position: relative;
         }
-        
+
         .timeline-progress {
             background: var(--process1-color);
             height: 100%;
             border-radius: 2px;
             transition: width 0.3s ease;
         }
-        
+
         .timeline-markers {
             position: absolute;
             top: 0;
@@ -186,7 +196,7 @@
             display: flex;
             pointer-events: none;
         }
-        
+
         .timeline-marker {
             position: absolute;
             width: 8px;
@@ -198,30 +208,30 @@
             transform: translateX(-50%);
             transition: transform 0.2s ease;
         }
-        
+
         .timeline-marker.active {
             transform: translateX(-50%) scale(1.5);
         }
-        
+
         .step-info {
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 0.5rem;
         }
-        
+
         .step-count {
             font-size: 0.85rem;
             font-weight: 500;
             color: var(--mid-text);
         }
-        
+
         .step-title {
             font-size: 1.2rem;
             font-weight: 600;
             margin: 0;
         }
-        
+
         .step-description {
             background: var(--layer-bg);
             border-radius: 8px;
@@ -231,7 +241,7 @@
             font-size: 0.95rem;
             transition: all 0.3s ease;
         }
-        
+
         .hotspot {
             position: absolute;
             width: 24px;
@@ -249,17 +259,17 @@
             pointer-events: none;
             z-index: 10;
         }
-        
+
         .hotspot.active {
             opacity: 1;
             pointer-events: auto;
         }
-        
+
         .hotspot:hover {
             transform: scale(1.1);
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         }
-        
+
         .hotspot::after {
             content: "i";
             font-family: serif;
@@ -268,7 +278,7 @@
             font-size: 14px;
             color: var(--highlight-color);
         }
-        
+
         .tooltip {
             position: absolute;
             background: var(--tooltip-bg);
@@ -283,23 +293,23 @@
             z-index: 100;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
         }
-        
+
         .tooltip.active {
             opacity: 1;
         }
-        
+
         .tooltip h4 {
             margin: 0 0 0.5rem;
             font-weight: 600;
             font-size: 0.9rem;
         }
-        
+
         .tooltip p {
             margin: 0;
             font-weight: 400;
             line-height: 1.4;
         }
-        
+
         .code {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.85em;
@@ -307,26 +317,42 @@
             background: rgba(0, 0, 0, 0.1);
             border-radius: 3px;
         }
-        
+
         .highlight-pulse {
             animation: pulse 1.5s infinite;
         }
-        
+
         @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 1; }
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
-        
+
         .fade-in {
             animation: fadeIn 0.5s forwards;
         }
-        
+
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
-        
+
         .loading {
             position: absolute;
             top: 0;
@@ -339,7 +365,7 @@
             justify-content: center;
             z-index: 100;
         }
-        
+
         .spinner {
             width: 40px;
             height: 40px;
@@ -348,11 +374,13 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-        
+
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
-        
+
         .particle-container {
             position: absolute;
             top: 0;
@@ -362,7 +390,7 @@
             pointer-events: none;
             z-index: 5;
         }
-        
+
         .callout {
             position: absolute;
             background: var(--layer-bg);
@@ -377,11 +405,11 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             max-width: 250px;
         }
-        
+
         .callout.active {
             opacity: 1;
         }
-        
+
         .detail-view {
             position: absolute;
             bottom: 20px;
@@ -396,17 +424,17 @@
             z-index: 20;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
-        
+
         .detail-view.active {
             opacity: 1;
         }
-        
+
         .detail-view h4 {
             margin: 0 0 0.5rem;
             font-size: 0.95rem;
             font-weight: 600;
         }
-        
+
         .detail-view .code-block {
             background: #f5f5f5;
             padding: 0.5rem;
@@ -417,13 +445,13 @@
             overflow: auto;
             white-space: pre;
         }
-        
+
         .jump-controls {
             display: flex;
             justify-content: space-between;
             margin-top: 1rem;
         }
-        
+
         .jump-btn {
             background: none;
             border: none;
@@ -435,33 +463,33 @@
             align-items: center;
             gap: 0.25rem;
         }
-        
+
         .jump-btn:hover {
             text-decoration: underline;
         }
-        
+
         @media (max-width: 768px) {
             .container {
                 padding: 1rem;
             }
-            
+
             h1 {
                 font-size: 1.8rem;
             }
-            
+
             .canvas-container {
                 height: 450px;
             }
-            
+
             .controls {
                 flex-wrap: wrap;
             }
-            
+
             button {
                 padding: 0.5rem 1rem;
                 font-size: 0.9rem;
             }
-            
+
             .detail-view {
                 bottom: 10px;
                 right: 10px;
@@ -470,13 +498,15 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
             <h1>Parallel File Append Operation</h1>
-            <p class="subtitle">A deep dive into what happens at the OS, kernel, and hardware level when two processes simultaneously append to a file descriptor.</p>
+            <p class="subtitle">A deep dive into what happens at the OS, kernel, and hardware level when two processes
+                simultaneously append to a file descriptor.</p>
         </header>
-        
+
         <div class="legend">
             <div class="legend-item">
                 <div class="legend-color" style="background-color: var(--process1-color);"></div>
@@ -495,18 +525,18 @@
                 <span>Hardware I/O</span>
             </div>
         </div>
-        
+
         <div class="visualization-container">
             <div class="step-info">
                 <span class="step-count" id="stepCounter">Step 1/15</span>
                 <h2 class="step-title" id="stepTitle">Initial State</h2>
             </div>
-            
+
             <div class="timeline">
                 <div class="timeline-progress" id="timelineProgress"></div>
                 <div class="timeline-markers" id="timelineMarkers"></div>
             </div>
-            
+
             <div class="canvas-container">
                 <canvas id="visualizationCanvas"></canvas>
                 <div class="particle-container" id="particleContainer"></div>
@@ -519,12 +549,18 @@
                     <p>Transfers data from user space to kernel space, initiating the I/O operation.</p>
                     <div class="jump-controls">
                         <button class="jump-btn" id="prevJumpBtn">
-                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2"
+                                fill="none">
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
                             Previous
                         </button>
                         <button class="jump-btn" id="nextJumpBtn">
                             Next
-                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2"
+                                fill="none">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
                         </button>
                     </div>
                 </div>
@@ -532,39 +568,54 @@
                     <div class="spinner"></div>
                 </div>
             </div>
-            
+
             <div class="controls">
                 <button id="prevBtn" disabled>
-                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
                     Previous
                 </button>
                 <button id="playPauseBtn" class="primary">
-                    <svg id="playIcon" viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                    <svg id="pauseIcon" viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" style="display: none;"><line x1="6" y1="4" x2="6" y2="20"></line><line x1="18" y1="4" x2="18" y2="20"></line></svg>
+                    <svg id="playIcon" viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2"
+                        fill="none">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    <svg id="pauseIcon" viewBox="0 0 24 24" width="24" height="24" stroke="currentColor"
+                        stroke-width="2" fill="none" style="display: none;">
+                        <line x1="6" y1="4" x2="6" y2="20"></line>
+                        <line x1="18" y1="4" x2="18" y2="20"></line>
+                    </svg>
                     Play
                 </button>
                 <button id="nextBtn">
                     Next
-                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
                 </button>
                 <button id="resetBtn">
-                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                        <path d="M3 3v5h5"></path>
+                    </svg>
                     Reset
                 </button>
             </div>
         </div>
-        
+
         <div class="step-description" id="stepDescription">
-            Two separate processes are running in parallel, each preparing to append data to the same file. Each process has its own memory space and runs independently.
+            Two separate processes are running in parallel, each preparing to append data to the same file. Each process
+            has its own memory space and runs independently.
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Canvas and context setup
             const canvas = document.getElementById('visualizationCanvas');
             const ctx = canvas.getContext('2d');
-            
+
             // DOM elements
             const particleContainer = document.getElementById('particleContainer');
             const tooltip = document.getElementById('tooltip');
@@ -577,7 +628,7 @@
             const stepDescription = document.getElementById('stepDescription');
             const timelineProgress = document.getElementById('timelineProgress');
             const timelineMarkers = document.getElementById('timelineMarkers');
-            
+
             // Control buttons
             const playPauseBtn = document.getElementById('playPauseBtn');
             const playIcon = document.getElementById('playIcon');
@@ -587,7 +638,7 @@
             const resetBtn = document.getElementById('resetBtn');
             const prevJumpBtn = document.getElementById('prevJumpBtn');
             const nextJumpBtn = document.getElementById('nextJumpBtn');
-            
+
             // Constants
             const COLORS = {
                 process1: getComputedStyle(document.documentElement).getPropertyValue('--process1-color').trim(),
@@ -606,10 +657,10 @@
                 background: getComputedStyle(document.documentElement).getPropertyValue('--background').trim(),
                 layerBg: getComputedStyle(document.documentElement).getPropertyValue('--layer-bg').trim()
             };
-            
+
             const ANIMATION_DURATION = 800; // ms
             const AUTO_ADVANCE_DELAY = 3000; // ms
-            
+
             // State
             let currentStep = 0;
             let isPlaying = false;
@@ -622,7 +673,7 @@
             let particles = [];
             let canvasWidth, canvasHeight;
             let dpr = window.devicePixelRatio || 1;
-            
+
             // Layer definitions
             const layers = [
                 { id: 'process1', name: 'Process 1', type: 'process', y: 0.12, color: COLORS.process1, lightColor: COLORS.process1Light },
@@ -633,7 +684,7 @@
                 { id: 'cache', name: 'Hardware - Buffer Cache', type: 'hardware', y: 0.75, color: COLORS.hardware, lightColor: COLORS.hardwareLight },
                 { id: 'disk', name: 'Hardware - Storage Device', type: 'hardware', y: 0.87, color: COLORS.hardware, lightColor: COLORS.hardwareLight }
             ];
-            
+
             // Animation steps with detailed state information
             const steps = [
                 {
@@ -652,17 +703,17 @@
                         dataPackets: []
                     },
                     hotspots: [
-                        { 
-                            x: 0.2, 
-                            y: layers[0].y, 
-                            title: 'User Process', 
-                            content: 'A process is an instance of a running program. It has its own memory space and resources. This process wants to append "Hello" to a file.' 
+                        {
+                            x: 0.2,
+                            y: layers[0].y,
+                            title: 'User Process',
+                            content: 'A process is an instance of a running program. It has its own memory space and resources. This process wants to append "Hello" to a file.'
                         },
-                        { 
-                            x: 0.8, 
-                            y: layers[6].y, 
-                            title: 'File on Disk', 
-                            content: 'Files are stored on persistent storage devices. When processes write data, it must eventually reach the physical storage.' 
+                        {
+                            x: 0.8,
+                            y: layers[6].y,
+                            title: 'File on Disk',
+                            content: 'Files are stored on persistent storage devices. When processes write data, it must eventually reach the physical storage.'
                         }
                     ],
                     callouts: [
@@ -695,11 +746,11 @@
                         dataPackets: []
                     },
                     hotspots: [
-                        { 
-                            x: 0.2, 
-                            y: layers[2].y, 
-                            title: 'System Call Interface', 
-                            content: 'The system call interface is the boundary between user space and kernel space. When a process makes a system call, execution transitions from user mode to kernel mode with elevated privileges.' 
+                        {
+                            x: 0.2,
+                            y: layers[2].y,
+                            title: 'System Call Interface',
+                            content: 'The system call interface is the boundary between user space and kernel space. When a process makes a system call, execution transitions from user mode to kernel mode with elevated privileges.'
                         }
                     ],
                     callouts: [
@@ -732,17 +783,17 @@
                         dataPackets: []
                     },
                     hotspots: [
-                        { 
-                            x: 0.2, 
-                            y: layers[2].y, 
-                            title: 'Context Switch', 
-                            content: 'A context switch occurs when the CPU switches from executing in user mode to kernel mode. This includes saving the current CPU state and loading the kernel state.' 
+                        {
+                            x: 0.2,
+                            y: layers[2].y,
+                            title: 'Context Switch',
+                            content: 'A context switch occurs when the CPU switches from executing in user mode to kernel mode. This includes saving the current CPU state and loading the kernel state.'
                         },
-                        { 
-                            x: 0.25, 
-                            y: layers[3].y, 
-                            title: 'Virtual File System (VFS)', 
-                            content: 'The VFS is an abstraction layer that provides a common interface for different file systems. It handles file operations regardless of the underlying file system type.' 
+                        {
+                            x: 0.25,
+                            y: layers[3].y,
+                            title: 'Virtual File System (VFS)',
+                            content: 'The VFS is an abstraction layer that provides a common interface for different file systems. It handles file operations regardless of the underlying file system type.'
                         }
                     ],
                     callouts: [
@@ -773,11 +824,11 @@
                         dataPackets: []
                     },
                     hotspots: [
-                        { 
-                            x: 0.35, 
-                            y: layers[3].y, 
-                            title: 'Concurrent Request Handling', 
-                            content: 'The VFS detects that multiple processes are trying to write to the same file. Without proper synchronization, this could lead to data corruption or race conditions.' 
+                        {
+                            x: 0.35,
+                            y: layers[3].y,
+                            title: 'Concurrent Request Handling',
+                            content: 'The VFS detects that multiple processes are trying to write to the same file. Without proper synchronization, this could lead to data corruption or race conditions.'
                         }
                     ],
                     callouts: [
@@ -809,11 +860,11 @@
                         dataPackets: []
                     },
                     hotspots: [
-                        { 
-                            x: 0.4, 
-                            y: layers[3].y, 
-                            title: 'Inode Locking', 
-                            content: 'The inode is a data structure that stores metadata about a file. Locking the inode prevents race conditions by ensuring that only one process can modify the file\'s metadata (like size) at a time.' 
+                        {
+                            x: 0.4,
+                            y: layers[3].y,
+                            title: 'Inode Locking',
+                            content: 'The inode is a data structure that stores metadata about a file. Locking the inode prevents race conditions by ensuring that only one process can modify the file\'s metadata (like size) at a time.'
                         }
                     ],
                     callouts: [
@@ -847,11 +898,11 @@
                         dataPackets: []
                     },
                     hotspots: [
-                        { 
-                            x: 0.35, 
-                            y: layers[4].y, 
-                            title: 'File System Driver', 
-                            content: 'The file system driver is responsible for translating VFS operations into actions specific to the actual file system (ext4, NTFS, etc.). For an append operation, it needs to determine the current file size.' 
+                        {
+                            x: 0.35,
+                            y: layers[4].y,
+                            title: 'File System Driver',
+                            content: 'The file system driver is responsible for translating VFS operations into actions specific to the actual file system (ext4, NTFS, etc.). For an append operation, it needs to determine the current file size.'
                         }
                     ],
                     callouts: [
@@ -887,11 +938,11 @@
                         ]
                     },
                     hotspots: [
-                        { 
-                            x: 0.45, 
-                            y: layers[5].y, 
-                            title: 'Buffer Cache', 
-                            content: 'The buffer cache is an in-memory cache of disk blocks. It improves performance by reducing the need for physical disk I/O operations and allowing for write coalescing.' 
+                        {
+                            x: 0.45,
+                            y: layers[5].y,
+                            title: 'Buffer Cache',
+                            content: 'The buffer cache is an in-memory cache of disk blocks. It improves performance by reducing the need for physical disk I/O operations and allowing for write coalescing.'
                         }
                     ],
                     callouts: [
@@ -925,11 +976,11 @@
                         ]
                     },
                     hotspots: [
-                        { 
-                            x: 0.2, 
-                            y: layers[0].y, 
-                            title: 'Write Completion', 
-                            content: 'From the process\'s perspective, the write is complete once the data is safely in the kernel\'s hands. The process doesn\'t wait for the data to be physically written to disk before continuing.' 
+                        {
+                            x: 0.2,
+                            y: layers[0].y,
+                            title: 'Write Completion',
+                            content: 'From the process\'s perspective, the write is complete once the data is safely in the kernel\'s hands. The process doesn\'t wait for the data to be physically written to disk before continuing.'
                         }
                     ],
                     callouts: [
@@ -965,11 +1016,11 @@
                         ]
                     },
                     hotspots: [
-                        { 
-                            x: 0.4, 
-                            y: layers[3].y, 
-                            title: 'Lock Handoff', 
-                            content: 'After Process 1 releases the lock, Process 2 can acquire it. The lock ensures that only one process modifies the file at a time, preventing race conditions.' 
+                        {
+                            x: 0.4,
+                            y: layers[3].y,
+                            title: 'Lock Handoff',
+                            content: 'After Process 1 releases the lock, Process 2 can acquire it. The lock ensures that only one process modifies the file at a time, preventing race conditions.'
                         }
                     ],
                     callouts: [
@@ -1006,11 +1057,11 @@
                         ]
                     },
                     hotspots: [
-                        { 
-                            x: 0.58, 
-                            y: layers[5].y + 0.03, 
-                            title: 'Data Ordering', 
-                            content: 'Process 2\'s data is positioned after Process 1\'s data in the buffer cache. This ordering is guaranteed by the lock mechanism, ensuring data is appended in the order that processes acquired the lock.' 
+                        {
+                            x: 0.58,
+                            y: layers[5].y + 0.03,
+                            title: 'Data Ordering',
+                            content: 'Process 2\'s data is positioned after Process 1\'s data in the buffer cache. This ordering is guaranteed by the lock mechanism, ensuring data is appended in the order that processes acquired the lock.'
                         }
                     ],
                     callouts: [
@@ -1045,11 +1096,11 @@
                         ]
                     },
                     hotspots: [
-                        { 
-                            x: 0.2, 
-                            y: layers[1].y, 
-                            title: 'Process 2 Completion', 
-                            content: 'Like Process 1, Process 2 can continue execution once its data is handed off to the kernel. Both processes have completed their write operations, but the data may still be in the buffer cache rather than on disk.' 
+                        {
+                            x: 0.2,
+                            y: layers[1].y,
+                            title: 'Process 2 Completion',
+                            content: 'Like Process 1, Process 2 can continue execution once its data is handed off to the kernel. Both processes have completed their write operations, but the data may still be in the buffer cache rather than on disk.'
                         }
                     ],
                     callouts: [
@@ -1084,11 +1135,11 @@
                         ]
                     },
                     hotspots: [
-                        { 
-                            x: 0.58, 
-                            y: layers[5].y, 
-                            title: 'Write-Back Caching', 
-                            content: 'Write-back caching improves performance by deferring disk I/O. Multiple writes can be coalesced into a single physical I/O operation, reducing disk activity. This happens after both processes have continued execution.' 
+                        {
+                            x: 0.58,
+                            y: layers[5].y,
+                            title: 'Write-Back Caching',
+                            content: 'Write-back caching improves performance by deferring disk I/O. Multiple writes can be coalesced into a single physical I/O operation, reducing disk activity. This happens after both processes have continued execution.'
                         }
                     ],
                     callouts: [
@@ -1120,11 +1171,11 @@
                         ]
                     },
                     hotspots: [
-                        { 
-                            x: 0.7, 
-                            y: layers[6].y, 
-                            title: 'Disk Controller Operations', 
-                            content: 'The disk controller manages the physical writing of data to storage media. It handles the low-level details such as sector addressing, error correction, and physical movement of components (for HDDs) or cell programming (for SSDs).' 
+                        {
+                            x: 0.7,
+                            y: layers[6].y,
+                            title: 'Disk Controller Operations',
+                            content: 'The disk controller manages the physical writing of data to storage media. It handles the low-level details such as sector addressing, error correction, and physical movement of components (for HDDs) or cell programming (for SSDs).'
                         }
                     ],
                     callouts: [
@@ -1154,11 +1205,11 @@
                         dataPackets: []
                     },
                     hotspots: [
-                        { 
-                            x: 0.8, 
-                            y: layers[6].y, 
-                            title: 'Final File State', 
-                            content: 'The file now contains the original content followed by "Hello" and then "World". This order is guaranteed by the kernel\'s locking mechanisms, even though the processes attempted to write simultaneously.' 
+                        {
+                            x: 0.8,
+                            y: layers[6].y,
+                            title: 'Final File State',
+                            content: 'The file now contains the original content followed by "Hello" and then "World". This order is guaranteed by the kernel\'s locking mechanisms, even though the processes attempted to write simultaneously.'
                         }
                     ],
                     callouts: [
@@ -1193,11 +1244,11 @@
                         dataPackets: []
                     },
                     hotspots: [
-                        { 
-                            x: 0.5, 
-                            y: 0.4, 
-                            title: 'Key Insights', 
-                            content: '1. The kernel uses locks to prevent race conditions<br>2. Writes go through buffer cache before disk<br>3. Processes can continue execution before disk I/O completes<br>4. Ordering is preserved even with concurrent operations' 
+                        {
+                            x: 0.5,
+                            y: 0.4,
+                            title: 'Key Insights',
+                            content: '1. The kernel uses locks to prevent race conditions<br>2. Writes go through buffer cache before disk<br>3. Processes can continue execution before disk I/O completes<br>4. Ordering is preserved even with concurrent operations'
                         }
                     ],
                     callouts: [
@@ -1210,27 +1261,27 @@
                     }
                 }
             ];
-            
+
             // Create timeline markers
             function createTimelineMarkers() {
                 timelineMarkers.innerHTML = '';
-                
+
                 steps.forEach((step, index) => {
                     const marker = document.createElement('div');
                     marker.className = 'timeline-marker';
                     marker.style.left = `${(index / (steps.length - 1)) * 100}%`;
                     marker.dataset.step = index;
-                    
+
                     marker.addEventListener('click', () => {
                         goToStep(index);
                     });
-                    
+
                     timelineMarkers.appendChild(marker);
                 });
-                
+
                 updateTimelineMarkers();
             }
-            
+
             function updateTimelineMarkers() {
                 const markers = timelineMarkers.querySelectorAll('.timeline-marker');
                 markers.forEach((marker, index) => {
@@ -1240,18 +1291,18 @@
                         marker.classList.remove('active');
                     }
                 });
-                
+
                 // Update progress bar
                 const progress = (currentStep / (steps.length - 1)) * 100;
                 timelineProgress.style.width = `${progress}%`;
             }
-            
+
             // Create hotspots
             function createHotspots() {
                 // Clear existing hotspots
                 hotspotsContainer.innerHTML = '';
                 hotspots = [];
-                
+
                 // Add new hotspots if they exist for this step
                 if (steps[currentStep].hotspots) {
                     steps[currentStep].hotspots.forEach((spot, index) => {
@@ -1260,18 +1311,18 @@
                         hotspot.id = `hotspot-${index}`;
                         hotspot.style.left = `${spot.x * 100}%`;
                         hotspot.style.top = `${spot.y * 100}%`;
-                        
+
                         hotspot.addEventListener('mouseenter', () => {
                             showTooltip(hotspot, spot.title, spot.content);
                         });
-                        
+
                         hotspot.addEventListener('mouseleave', () => {
                             hideTooltip();
                         });
-                        
+
                         hotspotsContainer.appendChild(hotspot);
                         hotspots.push(hotspot);
-                        
+
                         // Fade in the hotspot after a delay
                         setTimeout(() => {
                             hotspot.classList.add('active');
@@ -1279,13 +1330,13 @@
                     });
                 }
             }
-            
+
             // Create callouts
             function createCallouts() {
                 // Clear existing callouts
                 calloutsContainer.innerHTML = '';
                 callouts = [];
-                
+
                 // Add new callouts if they exist for this step
                 if (steps[currentStep].callouts) {
                     steps[currentStep].callouts.forEach((calloutData, index) => {
@@ -1295,10 +1346,10 @@
                         callout.style.left = `${calloutData.x * 100}%`;
                         callout.style.top = `${calloutData.y * 100}%`;
                         callout.style.transform = 'translate(-50%, -50%)';
-                        
+
                         calloutsContainer.appendChild(callout);
                         callouts.push(callout);
-                        
+
                         // Fade in the callout after a delay
                         setTimeout(() => {
                             callout.classList.add('active');
@@ -1306,31 +1357,31 @@
                     });
                 }
             }
-            
+
             // Update detail view
             function updateDetailView() {
                 const detailData = steps[currentStep].detailView;
-                
+
                 if (detailData) {
                     const detailTitle = document.createElement('h4');
                     detailTitle.textContent = detailData.title;
-                    
+
                     const codeBlock = document.createElement('div');
                     codeBlock.className = 'code-block';
                     codeBlock.textContent = detailData.code;
-                    
+
                     const description = document.createElement('p');
                     description.textContent = detailData.description;
-                    
+
                     detailView.innerHTML = '';
                     detailView.appendChild(detailTitle);
                     detailView.appendChild(codeBlock);
                     detailView.appendChild(description);
-                    
+
                     // Add jump buttons
                     const jumpControls = document.createElement('div');
                     jumpControls.className = 'jump-controls';
-                    
+
                     const prevButton = document.createElement('button');
                     prevButton.className = 'jump-btn';
                     prevButton.id = 'prevJumpBtn';
@@ -1339,7 +1390,7 @@
                         if (currentStep > 0) goToStep(currentStep - 1);
                     });
                     prevButton.disabled = currentStep === 0;
-                    
+
                     const nextButton = document.createElement('button');
                     nextButton.className = 'jump-btn';
                     nextButton.id = 'nextJumpBtn';
@@ -1348,29 +1399,29 @@
                         if (currentStep < steps.length - 1) goToStep(currentStep + 1);
                     });
                     nextButton.disabled = currentStep === steps.length - 1;
-                    
+
                     jumpControls.appendChild(prevButton);
                     jumpControls.appendChild(nextButton);
-                    
+
                     detailView.appendChild(jumpControls);
-                    
+
                     detailView.classList.add('active');
                 } else {
                     detailView.classList.remove('active');
                 }
             }
-            
+
             // Show tooltip
             function showTooltip(element, title, content) {
                 const rect = element.getBoundingClientRect();
                 const canvasRect = canvas.getBoundingClientRect();
-                
+
                 tooltip.innerHTML = `<h4>${title}</h4><p>${content}</p>`;
-                
+
                 // Position tooltip relative to hotspot
                 const tooltipX = rect.left - canvasRect.left + rect.width / 2;
                 let tooltipY = rect.top - canvasRect.top - 10;
-                
+
                 // Check if tooltip would go off the top
                 if (tooltipY - tooltip.offsetHeight < 0) {
                     tooltipY = rect.bottom - canvasRect.top + 10;
@@ -1378,17 +1429,17 @@
                 } else {
                     tooltip.style.transform = 'translate(-50%, -100%)';
                 }
-                
+
                 tooltip.style.left = `${tooltipX}px`;
                 tooltip.style.top = `${tooltipY}px`;
                 tooltip.classList.add('active');
             }
-            
+
             // Hide tooltip
             function hideTooltip() {
                 tooltip.classList.remove('active');
             }
-            
+
             // Create particle effect
             function createParticle(fromX, fromY, toX, toY, color) {
                 const particle = document.createElement('div');
@@ -1401,39 +1452,39 @@
                 particle.style.top = `${fromY * 100}%`;
                 particle.style.opacity = '0.8';
                 particle.style.pointerEvents = 'none';
-                
+
                 particleContainer.appendChild(particle);
-                
+
                 // Animate the particle
                 const startTime = performance.now();
                 const duration = 1000 + Math.random() * 500;
-                
+
                 function animateParticle(timestamp) {
                     const elapsed = timestamp - startTime;
                     const progress = Math.min(elapsed / duration, 1);
-                    
+
                     // Use bezier curve for more natural motion
                     const x = fromX + (toX - fromX) * progress;
                     const y = fromY + (toY - fromY) * progress - Math.sin(progress * Math.PI) * 0.05;
-                    
+
                     particle.style.left = `${x * 100}%`;
                     particle.style.top = `${y * 100}%`;
                     particle.style.opacity = 0.8 * (1 - progress);
-                    
+
                     if (progress < 1) {
                         requestAnimationFrame(animateParticle);
                     } else {
                         particleContainer.removeChild(particle);
                     }
                 }
-                
+
                 requestAnimationFrame(animateParticle);
             }
-            
+
             // Generate particles for data flow
             function generateParticles() {
                 const currentState = steps[currentStep].state;
-                
+
                 // Generate particles for arrows
                 if (currentState.arrows) {
                     currentState.arrows.forEach(arrow => {
@@ -1448,7 +1499,7 @@
                         }
                     });
                 }
-                
+
                 // Generate particles around active processes
                 if (currentState.processes) {
                     currentState.processes.forEach(process => {
@@ -1465,7 +1516,7 @@
                         }
                     });
                 }
-                
+
                 // Generate particles for highlighted activities
                 if (currentState.activities) {
                     currentState.activities.forEach(activity => {
@@ -1482,7 +1533,7 @@
                         }
                     });
                 }
-                
+
                 // Generate particles for highlighted file
                 if (currentState.file && currentState.file.highlight && Math.random() < 0.2) {
                     const file = currentState.file;
@@ -1497,35 +1548,35 @@
                     );
                 }
             }
-            
+
             // Resize handler
             function handleResize() {
                 const dpr = window.devicePixelRatio || 1;
                 const rect = canvas.getBoundingClientRect();
-                
+
                 canvasWidth = rect.width;
                 canvasHeight = rect.height;
-                
+
                 canvas.width = canvasWidth * dpr;
                 canvas.height = canvasHeight * dpr;
-                
+
                 ctx.scale(dpr, dpr);
-                
+
                 render();
             }
-            
+
             // Animation logic
             function startTransition() {
                 isTransitioning = true;
                 transitionProgress = 0;
-                
+
                 function animate() {
                     transitionProgress += 0.05;
-                    
+
                     if (transitionProgress >= 1) {
                         transitionProgress = 1;
                         isTransitioning = false;
-                        
+
                         if (isPlaying) {
                             // Set up automatic advance to next step
                             autoAdvanceTimer = setTimeout(() => {
@@ -1540,20 +1591,20 @@
                     } else {
                         animationFrameId = requestAnimationFrame(animate);
                     }
-                    
+
                     render();
                 }
-                
+
                 animationFrameId = requestAnimationFrame(animate);
             }
-            
+
             // Update play button state
             function updatePlayButton() {
                 playPauseBtn.innerText = isPlaying ? 'Pause' : 'Play';
                 playIcon.style.display = isPlaying ? 'none' : 'inline';
                 pauseIcon.style.display = isPlaying ? 'inline' : 'none';
             }
-            
+
             // Go to a specific step
             function goToStep(stepIndex) {
                 // Clear any existing timers
@@ -1561,38 +1612,38 @@
                     clearTimeout(autoAdvanceTimer);
                     autoAdvanceTimer = null;
                 }
-                
+
                 if (animationFrameId) {
                     cancelAnimationFrame(animationFrameId);
                     animationFrameId = null;
                 }
-                
+
                 currentStep = stepIndex;
-                
+
                 // Update UI
                 stepCounter.textContent = `Step ${currentStep + 1}/${steps.length}`;
                 stepTitle.textContent = steps[currentStep].title;
                 stepDescription.innerHTML = steps[currentStep].description;
                 updateTimelineMarkers();
-                
+
                 // Update button states
                 prevBtn.disabled = currentStep === 0;
                 nextBtn.disabled = currentStep === steps.length - 1;
-                
+
                 // Create interactive elements
                 createHotspots();
                 createCallouts();
                 updateDetailView();
-                
+
                 // Start transition animation
                 startTransition();
             }
-            
+
             // Draw a process circle
             function drawProcess(x, y, radius, color, lightColor, status, isActive) {
                 const centerX = x * canvasWidth;
                 const centerY = y * canvasHeight;
-                
+
                 // Draw glow for active processes
                 if (isActive) {
                     ctx.beginPath();
@@ -1603,7 +1654,7 @@
                     ctx.arc(centerX, centerY, radius * 2, 0, Math.PI * 2);
                     ctx.fill();
                 }
-                
+
                 // Draw main circle
                 ctx.beginPath();
                 ctx.fillStyle = color;
@@ -1611,7 +1662,7 @@
                 ctx.lineWidth = 2;
                 ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
                 ctx.fill();
-                
+
                 // Draw status text
                 if (status) {
                     ctx.fillStyle = '#ffffff';
@@ -1619,43 +1670,43 @@
                     ctx.textAlign = 'center';
                     ctx.fillText(status, centerX, centerY + 4);
                 }
-                
+
                 // Reset alignment
                 ctx.textAlign = 'left';
             }
-            
+
             // Draw an arrow
             function drawArrow(fromX, fromY, toX, toY, color, dashed = false) {
                 const headLength = 10;
                 const headWidth = 6;
-                
+
                 const startX = fromX * canvasWidth;
                 const startY = fromY * canvasHeight;
                 const endX = toX * canvasWidth;
                 const endY = toY * canvasHeight;
-                
+
                 // Calculate angle and components
                 const angle = Math.atan2(endY - startY, endX - startX);
                 const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
-                
+
                 // Draw the line
                 ctx.beginPath();
                 ctx.strokeStyle = color;
                 ctx.lineWidth = 2;
-                
+
                 if (dashed) {
                     ctx.setLineDash([5, 5]);
                 } else {
                     ctx.setLineDash([]);
                 }
-                
+
                 ctx.moveTo(startX, startY);
                 ctx.lineTo(endX - headLength * Math.cos(angle), endY - headLength * Math.sin(angle));
                 ctx.stroke();
-                
+
                 // Reset dash
                 ctx.setLineDash([]);
-                
+
                 // Draw the arrow head
                 ctx.beginPath();
                 ctx.fillStyle = color;
@@ -1671,122 +1722,122 @@
                 ctx.closePath();
                 ctx.fill();
             }
-            
+
             // Draw an activity box
             function drawActivity(x, y, color, content, highlight = false) {
                 const centerX = x * canvasWidth;
                 const centerY = y * canvasHeight;
-                
+
                 // Calculate box dimensions based on text
                 ctx.font = '12px Inter';
                 const textWidth = ctx.measureText(content).width;
                 const boxWidth = textWidth + 40;
                 const boxHeight = 36;
-                
+
                 // Draw box with rounded corners
                 const radius = 8;
-                
+
                 if (highlight) {
                     // Draw glow for highlighted activities
                     ctx.beginPath();
-                    const gradient = ctx.createRadialGradient(centerX, centerY, boxWidth/4, centerX, centerY, boxWidth/2);
+                    const gradient = ctx.createRadialGradient(centerX, centerY, boxWidth / 4, centerX, centerY, boxWidth / 2);
                     gradient.addColorStop(0, hexToRgba(color, 0.2));
                     gradient.addColorStop(1, hexToRgba(color, 0));
                     ctx.fillStyle = gradient;
-                    ctx.fillRect(centerX - boxWidth/2 - 10, centerY - boxHeight/2 - 10, boxWidth + 20, boxHeight + 20);
+                    ctx.fillRect(centerX - boxWidth / 2 - 10, centerY - boxHeight / 2 - 10, boxWidth + 20, boxHeight + 20);
                 }
-                
+
                 ctx.beginPath();
-                ctx.moveTo(centerX - boxWidth/2 + radius, centerY - boxHeight/2);
-                ctx.lineTo(centerX + boxWidth/2 - radius, centerY - boxHeight/2);
-                ctx.quadraticCurveTo(centerX + boxWidth/2, centerY - boxHeight/2, centerX + boxWidth/2, centerY - boxHeight/2 + radius);
-                ctx.lineTo(centerX + boxWidth/2, centerY + boxHeight/2 - radius);
-                ctx.quadraticCurveTo(centerX + boxWidth/2, centerY + boxHeight/2, centerX + boxWidth/2 - radius, centerY + boxHeight/2);
-                ctx.lineTo(centerX - boxWidth/2 + radius, centerY + boxHeight/2);
-                ctx.quadraticCurveTo(centerX - boxWidth/2, centerY + boxHeight/2, centerX - boxWidth/2, centerY + boxHeight/2 - radius);
-                ctx.lineTo(centerX - boxWidth/2, centerY - boxHeight/2 + radius);
-                ctx.quadraticCurveTo(centerX - boxWidth/2, centerY - boxHeight/2, centerX - boxWidth/2 + radius, centerY - boxHeight/2);
+                ctx.moveTo(centerX - boxWidth / 2 + radius, centerY - boxHeight / 2);
+                ctx.lineTo(centerX + boxWidth / 2 - radius, centerY - boxHeight / 2);
+                ctx.quadraticCurveTo(centerX + boxWidth / 2, centerY - boxHeight / 2, centerX + boxWidth / 2, centerY - boxHeight / 2 + radius);
+                ctx.lineTo(centerX + boxWidth / 2, centerY + boxHeight / 2 - radius);
+                ctx.quadraticCurveTo(centerX + boxWidth / 2, centerY + boxHeight / 2, centerX + boxWidth / 2 - radius, centerY + boxHeight / 2);
+                ctx.lineTo(centerX - boxWidth / 2 + radius, centerY + boxHeight / 2);
+                ctx.quadraticCurveTo(centerX - boxWidth / 2, centerY + boxHeight / 2, centerX - boxWidth / 2, centerY + boxHeight / 2 - radius);
+                ctx.lineTo(centerX - boxWidth / 2, centerY - boxHeight / 2 + radius);
+                ctx.quadraticCurveTo(centerX - boxWidth / 2, centerY - boxHeight / 2, centerX - boxWidth / 2 + radius, centerY - boxHeight / 2);
                 ctx.closePath();
-                
+
                 // Set colors and fill
                 ctx.fillStyle = hexToRgba(color, 0.15);
                 ctx.strokeStyle = color;
                 ctx.lineWidth = 1.5;
-                
+
                 ctx.fill();
                 ctx.stroke();
-                
+
                 // Draw text
                 ctx.fillStyle = COLORS.darkText;
                 ctx.font = '12px Inter';
                 ctx.textAlign = 'center';
                 ctx.fillText(content, centerX, centerY + 4);
-                
+
                 // Reset alignment
                 ctx.textAlign = 'left';
             }
-            
+
             // Draw a file
             function drawFile(x, y, content, highlight = false) {
                 const centerX = x * canvasWidth;
                 const centerY = y * canvasHeight;
-                
+
                 const fileWidth = 120;
                 const fileHeight = 60;
                 const foldWidth = 20;
                 const foldHeight = 15;
-                
+
                 // Draw glow effect for highlighted files
                 if (highlight) {
                     ctx.beginPath();
-                    const gradient = ctx.createRadialGradient(centerX, centerY, fileWidth/2, centerX, centerY, fileWidth);
+                    const gradient = ctx.createRadialGradient(centerX, centerY, fileWidth / 2, centerX, centerY, fileWidth);
                     gradient.addColorStop(0, hexToRgba(COLORS.hardware, 0.2));
                     gradient.addColorStop(1, hexToRgba(COLORS.hardware, 0));
                     ctx.fillStyle = gradient;
-                    ctx.fillRect(centerX - fileWidth/2 - 10, centerY - fileHeight/2 - 10, fileWidth + 20, fileHeight + 20);
+                    ctx.fillRect(centerX - fileWidth / 2 - 10, centerY - fileHeight / 2 - 10, fileWidth + 20, fileHeight + 20);
                 }
-                
+
                 // Draw file body
                 ctx.beginPath();
-                ctx.moveTo(centerX - fileWidth/2, centerY - fileHeight/2);
-                ctx.lineTo(centerX + fileWidth/2 - foldWidth, centerY - fileHeight/2);
-                ctx.lineTo(centerX + fileWidth/2, centerY - fileHeight/2 + foldHeight);
-                ctx.lineTo(centerX + fileWidth/2, centerY + fileHeight/2);
-                ctx.lineTo(centerX - fileWidth/2, centerY + fileHeight/2);
+                ctx.moveTo(centerX - fileWidth / 2, centerY - fileHeight / 2);
+                ctx.lineTo(centerX + fileWidth / 2 - foldWidth, centerY - fileHeight / 2);
+                ctx.lineTo(centerX + fileWidth / 2, centerY - fileHeight / 2 + foldHeight);
+                ctx.lineTo(centerX + fileWidth / 2, centerY + fileHeight / 2);
+                ctx.lineTo(centerX - fileWidth / 2, centerY + fileHeight / 2);
                 ctx.closePath();
-                
+
                 ctx.fillStyle = '#ffffff';
                 ctx.strokeStyle = COLORS.hardware;
                 ctx.lineWidth = 1.5;
                 ctx.fill();
                 ctx.stroke();
-                
+
                 // Draw fold
                 ctx.beginPath();
-                ctx.moveTo(centerX + fileWidth/2 - foldWidth, centerY - fileHeight/2);
-                ctx.lineTo(centerX + fileWidth/2 - foldWidth, centerY - fileHeight/2 + foldHeight);
-                ctx.lineTo(centerX + fileWidth/2, centerY - fileHeight/2 + foldHeight);
+                ctx.moveTo(centerX + fileWidth / 2 - foldWidth, centerY - fileHeight / 2);
+                ctx.lineTo(centerX + fileWidth / 2 - foldWidth, centerY - fileHeight / 2 + foldHeight);
+                ctx.lineTo(centerX + fileWidth / 2, centerY - fileHeight / 2 + foldHeight);
                 ctx.closePath();
                 ctx.fillStyle = hexToRgba(COLORS.hardware, 0.1);
                 ctx.fill();
                 ctx.stroke();
-                
+
                 // Draw content
                 ctx.fillStyle = COLORS.darkText;
                 ctx.font = '12px Inter';
                 ctx.textAlign = 'center';
-                
+
                 // Handle long content with wrapping
                 const words = content.split(' ');
                 let line = '';
                 let y11 = centerY - 8;
                 const lineHeight = 16;
                 const maxWidth = fileWidth - 20;
-                
+
                 for (let i = 0; i < words.length; i++) {
                     const testLine = line + words[i] + ' ';
                     const metrics = ctx.measureText(testLine);
-                    
+
                     if (metrics.width > maxWidth && i > 0) {
                         ctx.fillText(line, centerX, y11);
                         line = words[i] + ' ';
@@ -1796,20 +1847,20 @@
                     }
                 }
                 ctx.fillText(line, centerX, y11);
-                
+
                 // Reset alignment
                 ctx.textAlign = 'left';
             }
-            
+
             // Draw a lock
             function drawLock(x, y, locked, owner, message) {
                 const centerX = x * canvasWidth;
                 const centerY = y * canvasHeight;
-                
+
                 const lockWidth = 20;
                 const lockHeight = 25;
                 const shackleRadius = 10;
-                
+
                 // Set colors based on lock state and owner
                 let lockColor;
                 if (locked) {
@@ -1817,31 +1868,31 @@
                 } else {
                     lockColor = '#aaaaaa';
                 }
-                
+
                 // Draw lock body
                 ctx.beginPath();
-                ctx.rect(centerX - lockWidth/2, centerY - lockHeight/4, lockWidth, lockHeight/2);
+                ctx.rect(centerX - lockWidth / 2, centerY - lockHeight / 4, lockWidth, lockHeight / 2);
                 ctx.fillStyle = hexToRgba(lockColor, 0.2);
                 ctx.strokeStyle = lockColor;
                 ctx.lineWidth = 2;
                 ctx.fill();
                 ctx.stroke();
-                
+
                 // Draw lock shackle
                 ctx.beginPath();
                 ctx.lineWidth = 2;
-                
+
                 if (locked) {
                     // Closed shackle
-                    ctx.arc(centerX, centerY - lockHeight/4, lockWidth/2, Math.PI, 0, false);
+                    ctx.arc(centerX, centerY - lockHeight / 4, lockWidth / 2, Math.PI, 0, false);
                 } else {
                     // Open shackle
-                    ctx.arc(centerX - lockWidth/4, centerY - lockHeight/4, lockWidth/2, Math.PI, 0, false);
+                    ctx.arc(centerX - lockWidth / 4, centerY - lockHeight / 4, lockWidth / 2, Math.PI, 0, false);
                     ctx.lineTo(centerX, centerY - lockHeight);
                 }
-                
+
                 ctx.stroke();
-                
+
                 // Draw message
                 if (message) {
                     ctx.fillStyle = COLORS.darkText;
@@ -1849,49 +1900,49 @@
                     ctx.textAlign = 'left';
                     ctx.fillText(message, centerX + lockWidth, centerY);
                 }
-                
+
                 // Reset alignment
                 ctx.textAlign = 'left';
             }
-            
+
             // Draw a data packet
             function drawDataPacket(x, y, color, data, position) {
                 const centerX = x * canvasWidth;
                 const centerY = y * canvasHeight;
-                
+
                 const width = 70;
                 const height = 30;
-                
+
                 // Draw diamond shape for data packet
                 ctx.beginPath();
-                ctx.moveTo(centerX, centerY - height/2);
-                ctx.lineTo(centerX + width/2, centerY);
-                ctx.lineTo(centerX, centerY + height/2);
-                ctx.lineTo(centerX - width/2, centerY);
+                ctx.moveTo(centerX, centerY - height / 2);
+                ctx.lineTo(centerX + width / 2, centerY);
+                ctx.lineTo(centerX, centerY + height / 2);
+                ctx.lineTo(centerX - width / 2, centerY);
                 ctx.closePath();
-                
+
                 ctx.fillStyle = hexToRgba(color, 0.2);
                 ctx.strokeStyle = color;
                 ctx.lineWidth = 1.5;
                 ctx.fill();
                 ctx.stroke();
-                
+
                 // Draw data content
                 ctx.fillStyle = COLORS.darkText;
                 ctx.font = '12px Inter';
                 ctx.textAlign = 'center';
                 ctx.fillText(data, centerX, centerY);
-                
+
                 // Draw position if provided
                 if (position) {
                     ctx.font = '10px Inter';
                     ctx.fillText(position, centerX, centerY + 14);
                 }
-                
+
                 // Reset alignment
                 ctx.textAlign = 'left';
             }
-            
+
             // Convert hex to rgba
             function hexToRgba(hex, alpha) {
                 if (hex.startsWith('#')) {
@@ -1902,68 +1953,68 @@
                 }
                 return hex; // If it's already rgba
             }
-            
+
             // Draw the visualization layers
             function drawLayers() {
                 // Draw separation lines
                 ctx.strokeStyle = COLORS.border;
                 ctx.lineWidth = 1;
-                
+
                 // User/Kernel boundary
                 ctx.beginPath();
                 ctx.setLineDash([5, 3]);
                 ctx.moveTo(50, (layers[1].y + 0.05) * canvasHeight);
                 ctx.lineTo(canvasWidth - 50, (layers[1].y + 0.05) * canvasHeight);
                 ctx.stroke();
-                
+
                 // Draw label for user space
                 ctx.fillStyle = COLORS.midText;
                 ctx.font = 'italic 12px Inter';
                 ctx.fillText("User Space", 60, (layers[1].y + 0.05) * canvasHeight - 5);
                 ctx.fillText("Kernel Space", 60, (layers[1].y + 0.05) * canvasHeight + 15);
-                
+
                 // Kernel/Hardware boundary
                 ctx.beginPath();
                 ctx.setLineDash([5, 3]);
                 ctx.moveTo(50, (layers[4].y + 0.06) * canvasHeight);
                 ctx.lineTo(canvasWidth - 50, (layers[4].y + 0.06) * canvasHeight);
                 ctx.stroke();
-                
+
                 // Draw label for hardware
                 ctx.fillStyle = COLORS.midText;
                 ctx.font = 'italic 12px Inter';
                 ctx.fillText("Hardware", 60, (layers[4].y + 0.06) * canvasHeight + 15);
-                
+
                 // Reset dash pattern
                 ctx.setLineDash([]);
-                
+
                 // Draw each layer
                 const layerHeight = canvasHeight * 0.08;
-                
+
                 layers.forEach(layer => {
                     const y = layer.y * canvasHeight;
-                    
+
                     // Layer background
                     ctx.fillStyle = layer.lightColor;
-                    ctx.fillRect(50, y - layerHeight/2, canvasWidth - 100, layerHeight);
-                    
+                    ctx.fillRect(50, y - layerHeight / 2, canvasWidth - 100, layerHeight);
+
                     // Layer border
                     ctx.strokeStyle = layer.color;
                     ctx.lineWidth = 1;
-                    ctx.strokeRect(50, y - layerHeight/2, canvasWidth - 100, layerHeight);
-                    
+                    ctx.strokeRect(50, y - layerHeight / 2, canvasWidth - 100, layerHeight);
+
                     // Layer name
                     ctx.fillStyle = COLORS.darkText;
                     ctx.font = '12px Inter';
-                    ctx.fillText(layer.name, 60, y - layerHeight/2 + 18);
+                    ctx.fillText(layer.name, 60, y - layerHeight / 2 + 18);
                 });
             }
-            
+
             // Render state for current step
             function renderState(state, progress) {
                 // If we're transitioning, we need to interpolate between states
                 let currentState = state;
-                
+
                 // Draw processes
                 if (currentState.processes) {
                     currentState.processes.forEach(process => {
@@ -1978,7 +2029,7 @@
                         );
                     });
                 }
-                
+
                 // Draw arrows
                 if (currentState.arrows) {
                     currentState.arrows.forEach(arrow => {
@@ -1992,7 +2043,7 @@
                         );
                     });
                 }
-                
+
                 // Draw activities
                 if (currentState.activities) {
                     currentState.activities.forEach(activity => {
@@ -2005,7 +2056,7 @@
                         );
                     });
                 }
-                
+
                 // Draw file
                 if (currentState.file) {
                     drawFile(
@@ -2015,7 +2066,7 @@
                         currentState.file.highlight
                     );
                 }
-                
+
                 // Draw locks
                 if (currentState.locks) {
                     currentState.locks.forEach(lock => {
@@ -2028,7 +2079,7 @@
                         );
                     });
                 }
-                
+
                 // Draw data packets
                 if (currentState.dataPackets) {
                     currentState.dataPackets.forEach(packet => {
@@ -2042,58 +2093,58 @@
                     });
                 }
             }
-            
+
             // Main render function
             function render() {
                 // Clear canvas
                 ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-                
+
                 // Draw layers
                 drawLayers();
-                
+
                 // Render current state
                 renderState(steps[currentStep].state, transitionProgress);
-                
+
                 // Generate particles for animation
                 if (!isTransitioning && Math.random() < 0.1) {
                     generateParticles();
                 }
             }
-            
+
             // Initialize the visualization
             function init() {
                 // Set up canvas
                 handleResize();
-                
+
                 // Create timeline markers
                 createTimelineMarkers();
-                
+
                 // Set up event listeners
                 setupEventListeners();
-                
+
                 // Start with the first step
                 goToStep(0);
-                
+
                 // Hide loading indicator
                 loadingIndicator.style.display = 'none';
-                
+
                 // Start animation loop
                 requestAnimationFrame(function loop() {
                     render();
                     requestAnimationFrame(loop);
                 });
             }
-            
+
             // Event listeners
             function setupEventListeners() {
                 // Resize handling
                 window.addEventListener('resize', handleResize);
-                
+
                 // Control buttons
-                playPauseBtn.addEventListener('click', function() {
+                playPauseBtn.addEventListener('click', function () {
                     isPlaying = !isPlaying;
                     updatePlayButton();
-                    
+
                     if (isPlaying) {
                         // If at the end, start from beginning
                         if (currentStep === steps.length - 1) {
@@ -2117,33 +2168,34 @@
                         }
                     }
                 });
-                
-                prevBtn.addEventListener('click', function() {
+
+                prevBtn.addEventListener('click', function () {
                     isPlaying = false;
                     updatePlayButton();
                     if (currentStep > 0) {
                         goToStep(currentStep - 1);
                     }
                 });
-                
-                nextBtn.addEventListener('click', function() {
+
+                nextBtn.addEventListener('click', function () {
                     isPlaying = false;
                     updatePlayButton();
                     if (currentStep < steps.length - 1) {
                         goToStep(currentStep + 1);
                     }
                 });
-                
-                resetBtn.addEventListener('click', function() {
+
+                resetBtn.addEventListener('click', function () {
                     isPlaying = false;
                     updatePlayButton();
                     goToStep(0);
                 });
             }
-            
+
             // Initialize
             init();
         });
     </script>
 </body>
+
 </html>

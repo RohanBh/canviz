@@ -11,10 +11,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Analytics (privacy-friendly) -->
-    <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
-    <noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt=""
-            referrerpolicy="no-referrer-when-downgrade" /></noscript>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1DB24KTNYY"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-1DB24KTNYY');
+    </script>
 
     <script defer>
         function showTab(tabName) {
@@ -350,86 +355,93 @@
             margin-bottom: 12px;
         }
 
-        /* Demo Preview Cards */
+        /* Demo Cards - Simplified */
         .demo-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 24px;
             margin-top: 32px;
         }
 
-        .demo-preview-card {
+        .demo-card {
             background-color: var(--surface);
             border-radius: var(--card-radius);
-            overflow: hidden;
+            padding: 30px;
             border: 1px solid var(--border);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.3s ease;
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
         }
 
-        .demo-preview-card:hover {
+        .demo-card:hover {
             transform: translateY(-5px);
             box-shadow: var(--glow);
+            background-color: var(--surface-hover);
         }
 
-        .preview-image {
-            position: relative;
-            aspect-ratio: 16/9;
-            overflow: hidden;
-        }
-
-        .preview-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .demo-preview-card:hover .preview-image img {
-            transform: scale(1.05);
-        }
-
-        .preview-overlay {
+        .demo-card:before {
+            content: '';
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
+            width: 4px;
             height: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: linear-gradient(to bottom, var(--primary), var(--primary-light));
             opacity: 0;
             transition: opacity 0.3s ease;
         }
 
-        .demo-preview-card:hover .preview-overlay {
+        .demo-card:hover:before {
             opacity: 1;
         }
 
-        .preview-overlay .launch-label {
+        .demo-emoji {
+            font-size: 38px;
+            margin-bottom: 20px;
+            line-height: 1;
+        }
+
+        .demo-title {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .demo-description {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .demo-prompt {
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+            font-style: italic;
+            margin-top: auto;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
+
+        .launch-demo {
+            position: absolute;
+            bottom: -40px;
+            right: 20px;
             background-color: var(--primary);
             color: white;
-            padding: 8px 16px;
             border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.8rem;
             font-weight: 500;
-            transform: translateY(10px);
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
+            opacity: 0;
         }
 
-        .demo-preview-card:hover .preview-overlay .launch-label {
-            transform: translateY(0);
-        }
-
-        .demo-preview-card h3 {
-            padding: 20px 20px 8px 20px;
-            font-size: 1.3rem;
-            margin-bottom: 0;
-        }
-
-        .demo-preview-card p {
-            padding: 0 20px 20px 20px;
-            margin-bottom: 0;
+        .demo-card:hover .launch-demo {
+            bottom: 20px;
+            opacity: 1;
         }
 
         /* Tab Container */
@@ -814,121 +826,113 @@
 
             <!-- Tab Contents -->
             <!-- DEMO SECTION: TAB CONTENTS START -->
-            
+
             <!-- DEMO SECTION: COMPUTER SCIENCE TAB START -->
             <div id="cs" class="tab-content">
                 <div class="demo-grid animate delay-2">
                     <!-- CS Demo 1 -->
-                    <div class="demo-preview-card" onclick="window.open('demos/kernel.html', '_blank')">
-                        <div class="preview-image">
-                            <img src="/api/placeholder/400/225" alt="Parallel File Append: Deep Dive from OS to Hardware">
-                            <div class="preview-overlay">
-                                <span class="launch-label">Open Interactive Demo</span>
-                            </div>
-                        </div>
-                        <h3>Parallel File Append by 2 Processes</h3>
-                        <p>Prompt: Explain at a very detailed level (OS, kernel and hardware level) what happens when two processes are parallelly appending to a file descriptor.</p>
+                    <div class="demo-card" onclick="window.open('demos/kernel.html', '_blank')">
+                        <div class="demo-emoji">💻</div>
+                        <h3 class="demo-title">Parallel File Append</h3>
+                        <p class="demo-description">A deep dive from OS to hardware level on file operations when
+                            multiple processes write simultaneously.</p>
+                        <div class="demo-prompt">Prompt: Explain at a very detailed level what happens when two
+                            processes are parallelly appending to a file descriptor.</div>
+                        <span class="launch-demo">View Demo →</span>
                     </div>
 
                     <!-- CS Demo 2 -->
-                    <div class="demo-preview-card" onclick="window.open('demos/data-structures.html', '_blank')">
-                        <div class="preview-image">
-                            <img src="/api/placeholder/400/225" alt="Prim vs. Kruskal MST algorithms">
-                            <div class="preview-overlay">
-                                <span class="launch-label">Open Interactive Demo</span>
-                            </div>
-                        </div>
-                        <h3>Prim vs. Kruskal MST algorithms</h3>
-                        <p>Prompt: Explain in detail the difference between Prim's vs. Kruskal's algorithms.</p>
+                    <div class="demo-card" onclick="window.open('demos/data-structures.html', '_blank')">
+                        <div class="demo-emoji">🌳</div>
+                        <h3 class="demo-title">Prim vs. Kruskal MST Algorithms</h3>
+                        <p class="demo-description">Compare two fundamental graph algorithms for finding minimum
+                            spanning trees through step-by-step visualizations.</p>
+                        <div class="demo-prompt">Prompt: Explain in detail the difference between Prim's vs. Kruskal's
+                            algorithms.</div>
+                        <span class="launch-demo">View Demo →</span>
                     </div>
                 </div>
             </div>
             <!-- DEMO SECTION: COMPUTER SCIENCE TAB END -->
-            
-            <!-- DEMO SECTION: science TAB START -->
+
+            <!-- DEMO SECTION: SCIENCE TAB START -->
             <div id="science" class="tab-content">
                 <div class="demo-grid animate delay-2">
-                    <!-- science Demo 1 -->
-                    <div class="demo-preview-card" onclick="window.open('demos/lenz-law.html', '_blank')">
-                        <div class="preview-image">
-                            <img src="/api/placeholder/400/225" alt="Lenz's Law Demonstration">
-                            <div class="preview-overlay">
-                                <span class="launch-label">Open Interactive Demo</span>
-                            </div>
-                        </div>
-                        <h3>Lenz's Law</h3>
-                        <p>Prompt: Explain lenz's law.</p>
+                    <!-- Science Demo 1 -->
+                    <div class="demo-card" onclick="window.open('demos/lenz-law.html', '_blank')">
+                        <div class="demo-emoji">⚡</div>
+                        <h3 class="demo-title">Lenz's Law</h3>
+                        <p class="demo-description">Explore electromagnetic induction and how changing magnetic fields
+                            create opposing currents.</p>
+                        <div class="demo-prompt">Prompt: Explain lenz's law.</div>
+                        <span class="launch-demo">View Demo →</span>
                     </div>
 
-                    <!-- science Demo 2 -->
-                    <div class="demo-preview-card" onclick="window.open('demos/special-relativity.html', '_blank')">
-                        <div class="preview-image">
-                            <img src="/api/placeholder/400/225" alt="Special Relativity">
-                            <div class="preview-overlay">
-                                <span class="launch-label">Open Interactive Demo</span>
-                            </div>
-                        </div>
-                        <h3>Special Relativity</h3>
-                        <p>Prompt: Explain how motion changes time and space for different observers in special relativity.</p>
+                    <!-- Science Demo 2 -->
+                    <div class="demo-card" onclick="window.open('demos/special-relativity.html', '_blank')">
+                        <div class="demo-emoji">🚀</div>
+                        <h3 class="demo-title">Special Relativity</h3>
+                        <p class="demo-description">Visualize how time and space change for observers moving at
+                            different speeds relative to each other.</p>
+                        <div class="demo-prompt">Prompt: Explain how motion changes time and space for different
+                            observers in special relativity.</div>
+                        <span class="launch-demo">View Demo →</span>
                     </div>
                 </div>
             </div>
-            <!-- DEMO SECTION: science TAB END -->
-            
-            <!-- DEMO SECTION: geography TAB START -->
+            <!-- DEMO SECTION: SCIENCE TAB END -->
+
+            <!-- DEMO SECTION: GEOGRAPHY TAB START -->
             <div id="geography" class="tab-content">
                 <div class="demo-grid animate delay-2">
-                    <!-- geography Demo 1 -->
-                    <div class="demo-preview-card" onclick="window.open('demos/polar-jet-stream.html', '_blank')">
-                        <div class="preview-image">
-                            <img src="/api/placeholder/400/225" alt="Influence of Polar Jet Stream on Hurricanes">
-                            <div class="preview-overlay">
-                                <span class="launch-label">Open Interactive Demo</span>
-                            </div>
-                        </div>
-                        <h3>Influence of Polar Jet Stream on Hurricanes</h3>
-                        <p>Prompt: How does the polar jet stream influence the formation, path, and intensity of hurricanes that affect the United States? Show it with a world map (or at least with the US map) so I can see properly.</p>
+                    <!-- Geography Demo 1 -->
+                    <div class="demo-card" onclick="window.open('demos/polar-jet-stream.html', '_blank')">
+                        <div class="demo-emoji">🌪️</div>
+                        <h3 class="demo-title">Polar Jet Stream & Hurricanes</h3>
+                        <p class="demo-description">See how high-altitude wind patterns influence the formation and
+                            movement of hurricanes across the United States.</p>
+                        <div class="demo-prompt">Prompt: How does the polar jet stream influence the formation, path,
+                            and intensity of hurricanes that affect the United States?</div>
+                        <span class="launch-demo">View Demo →</span>
                     </div>
                 </div>
             </div>
-            <!-- DEMO SECTION: geography TAB END -->
-            
-            <!-- DEMO SECTION: history TAB START -->
+            <!-- DEMO SECTION: GEOGRAPHY TAB END -->
+
+            <!-- DEMO SECTION: HISTORY TAB START -->
             <div id="history" class="tab-content">
                 <div class="demo-grid animate delay-2">
-                    <!-- history Demo 1 -->
-                    <div class="demo-preview-card" onclick="window.open('demos/ww2.html', '_blank')">
-                        <div class="preview-image">
-                            <img src="/api/placeholder/400/225" alt="World War 2 Timeline and Troop Movements">
-                            <div class="preview-overlay">
-                                <span class="launch-label">Open Interactive Demo</span>
-                            </div>
-                        </div>
-                        <h3>World War 2 Timeline and Troop Movements</h3>
-                        <p>Prompt: Show me world war 2 troop movements on the world map during various history events.</p>
+                    <!-- History Demo 1 -->
+                    <div class="demo-card" onclick="window.open('demos/ww2.html', '_blank')">
+                        <div class="demo-emoji">🌍</div>
+                        <h3 class="demo-title">World War 2 Movements</h3>
+                        <p class="demo-description">Interactive timeline of troop movements and key battles across
+                            global theaters of World War 2.</p>
+                        <div class="demo-prompt">Prompt: Show me world war 2 troop movements on the world map during
+                            various history events.</div>
+                        <span class="launch-demo">View Demo →</span>
                     </div>
                 </div>
             </div>
-            <!-- DEMO SECTION: history TAB END -->
-            
-            <!-- DEMO SECTION: Economy TAB START -->
+            <!-- DEMO SECTION: HISTORY TAB END -->
+
+            <!-- DEMO SECTION: ECONOMY TAB START -->
             <div id="economy" class="tab-content">
                 <div class="demo-grid animate delay-2">
                     <!-- Economy Demo 1 -->
-                    <div class="demo-preview-card" onclick="window.open('demos/policy-impact.html', '_blank')">
-                        <div class="preview-image">
-                            <img src="/api/placeholder/400/225" alt="Economy in Motion: Policy to Impact">
-                            <div class="preview-overlay">
-                                <span class="launch-label">Open Interactive Demo</span>
-                            </div>
-                        </div>
-                        <h3>Economy in Motion: Policy to Impact</h3>
-                        <p>Prompt: Explain how interest rates, government spending, inflation, unemployment, and output are all connected.</p>
+                    <div class="demo-card" onclick="window.open('demos/policy-impact.html', '_blank')">
+                        <div class="demo-emoji">📈</div>
+                        <h3 class="demo-title">Economy in Motion</h3>
+                        <p class="demo-description">Explore the interconnected relationships between monetary policy,
+                            inflation, unemployment, and economic growth.</p>
+                        <div class="demo-prompt">Prompt: Explain how interest rates, government spending, inflation,
+                            unemployment, and output are all connected.</div>
+                        <span class="launch-demo">View Demo →</span>
                     </div>
                 </div>
             </div>
-            <!-- DEMO SECTION: Economy TAB END -->
-            
+            <!-- DEMO SECTION: ECONOMY TAB END -->
+
             <!-- DEMO SECTION: TAB CONTENTS END -->
         </div>
     </section>
@@ -1007,4 +1011,5 @@
         </div>
     </footer>
 </body>
+
 </html>
