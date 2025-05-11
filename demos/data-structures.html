@@ -1,0 +1,2026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prim's vs Kruskal's Algorithms</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-light: #3b82f6;
+      --primary-dark: #1d4ed8;
+      --secondary: #16a34a;
+      --secondary-light: #22c55e;
+      --secondary-dark: #15803d;
+      --accent: #f97316;
+      --accent-light: #fb923c;
+      --accent-dark: #ea580c;
+      --rejected: #ef4444;
+      --rejected-light: #f87171;
+      --neutral-50: #f8fafc;
+      --neutral-100: #f1f5f9;
+      --neutral-200: #e2e8f0;
+      --neutral-300: #cbd5e1;
+      --neutral-400: #94a3b8;
+      --neutral-500: #64748b;
+      --neutral-600: #475569;
+      --neutral-700: #334155;
+      --neutral-800: #1e293b;
+      --neutral-900: #0f172a;
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: var(--neutral-800);
+      background-color: var(--neutral-50);
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    h1, h2, h3, h4 {
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--neutral-900);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--neutral-600);
+      margin-bottom: 2rem;
+      font-size: 1.2rem;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .intro-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+      transition: box-shadow 0.3s, transform 0.3s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--neutral-200);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-header h3 {
+      margin: 0;
+      font-size: 1.25rem;
+    }
+
+    .card-body {
+      padding: 1.5rem;
+      flex: 1;
+    }
+
+    .explanation {
+      background-color: white;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .explanation::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background: linear-gradient(to bottom, var(--primary), var(--secondary));
+    }
+
+    .explanation h2 {
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .algo-icon {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      color: white;
+      font-weight: bold;
+    }
+
+    .algo-icon.prim {
+      background-color: var(--primary);
+    }
+
+    .algo-icon.kruskal {
+      background-color: var(--secondary);
+    }
+
+    .key-differences {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .difference-card {
+      background-color: white;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      border-top: 4px solid;
+    }
+
+    .difference-card.prim {
+      border-top-color: var(--primary);
+    }
+
+    .difference-card.kruskal {
+      border-top-color: var(--secondary);
+    }
+
+    .difference-card.comparison {
+      border-top-color: var(--accent);
+    }
+
+    .difference-card h3 {
+      font-size: 1.1rem;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .difference-card p {
+      margin: 0;
+      color: var(--neutral-700);
+      font-size: 0.95rem;
+    }
+
+    .visualization {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 1000px) {
+      .visualization {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .algorithm {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .algorithm h2 {
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .algorithm-subtitle {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--neutral-600);
+      font-size: 0.95rem;
+    }
+
+    .prim-title {
+      color: var(--primary);
+    }
+
+    .kruskal-title {
+      color: var(--secondary);
+    }
+
+    .graph-container {
+      height: 320px;
+      position: relative;
+      border-radius: var(--radius);
+      background-color: white;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+    }
+
+    .data-structure-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .data-structure {
+      min-height: 110px;
+      border-radius: var(--radius);
+      background-color: white;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      padding: 1rem;
+    }
+
+    .data-structure-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .data-structure-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--neutral-700);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .data-structure-help {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--neutral-500);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .data-structure-help:hover {
+      opacity: 1;
+    }
+
+    .data-item-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .data-item {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.4rem 0.6rem;
+      border-radius: var(--radius);
+      background-color: var(--neutral-100);
+      font-family: 'JetBrains Mono', 'SF Mono', 'Courier New', monospace;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      border: 1px solid var(--neutral-200);
+    }
+
+    .data-item.active {
+      background-color: var(--accent-light);
+      color: white;
+      border-color: var(--accent-dark);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .data-item.processed {
+      background-color: var(--secondary-light);
+      color: white;
+      border-color: var(--secondary-dark);
+    }
+
+    .data-item.rejected {
+      background-color: var(--rejected-light);
+      color: white;
+      border-color: var(--rejected);
+      text-decoration: line-through;
+    }
+
+    .step-info {
+      min-height: 70px;
+      border-radius: var(--radius);
+      background-color: white;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .step-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .prim-color {
+      color: var(--primary);
+    }
+
+    .kruskal-color {
+      color: var(--secondary);
+    }
+
+    .step-description {
+      font-size: 0.9rem;
+      color: var(--neutral-700);
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.6rem 1.2rem;
+      background-color: white;
+      color: var(--neutral-800);
+      border: 1px solid var(--neutral-300);
+      border-radius: var(--radius);
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      gap: 0.5rem;
+    }
+
+    .btn:hover {
+      border-color: var(--neutral-400);
+      background-color: var(--neutral-100);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      background-color: var(--neutral-100);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+      border-color: var(--primary-dark);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      border-color: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary);
+      color: white;
+      border-color: var(--secondary-dark);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--secondary-dark);
+      border-color: var(--secondary-dark);
+    }
+
+    .btn-accent {
+      background-color: var(--accent);
+      color: white;
+      border-color: var(--accent-dark);
+    }
+
+    .btn-accent:hover {
+      background-color: var(--accent-dark);
+      border-color: var(--accent-dark);
+    }
+
+    .speed-control {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .speed-label {
+      font-size: 0.85rem;
+      color: var(--neutral-600);
+    }
+
+    .speed-slider {
+      flex: 1;
+      max-width: 150px;
+    }
+
+    #legend {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      background-color: white;
+      border-radius: var(--radius);
+      padding: 1rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--neutral-700);
+    }
+
+    .legend-color {
+      width: 24px;
+      height: 12px;
+      border-radius: 3px;
+    }
+
+    .edge {
+      stroke-width: 2;
+      transition: stroke 0.3s, stroke-width 0.3s;
+    }
+
+    .edge.unprocessed {
+      stroke: var(--neutral-300);
+    }
+
+    .edge.considered {
+      stroke: var(--accent);
+      stroke-width: 4;
+    }
+
+    .edge.selected {
+      stroke: var(--secondary);
+      stroke-width: 4;
+    }
+
+    .edge.rejected {
+      stroke: var(--rejected);
+      stroke-width: 2;
+      stroke-dasharray: 5, 5;
+    }
+
+    .edge-label {
+      font-size: 14px;
+      text-anchor: middle;
+      dominant-baseline: central;
+      fill: var(--neutral-700);
+      font-weight: 500;
+      pointer-events: none;
+    }
+
+    .node {
+      fill: white;
+      stroke-width: 2;
+      transition: fill 0.3s, stroke 0.3s, r 0.3s, transform 0.2s;
+    }
+
+    .node.unprocessed {
+      stroke: var(--neutral-400);
+    }
+
+    .node.prim-tree {
+      fill: var(--primary-light);
+      stroke: var(--primary-dark);
+      r: 16;
+    }
+
+    .node.kruskal-tree {
+      fill: var(--secondary-light);
+      stroke: var(--secondary-dark);
+      r: 16;
+    }
+
+    .node-label {
+      font-size: 14px;
+      text-anchor: middle;
+      dominant-baseline: central;
+      fill: var(--neutral-800);
+      font-weight: 600;
+      pointer-events: none;
+      transition: fill 0.3s;
+    }
+
+    .prim-tree .node-label, .kruskal-tree .node-label {
+      fill: white;
+    }
+
+    .tooltip {
+      position: absolute;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 0.5rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 1000;
+      max-width: 200px;
+    }
+
+    .highlight-bubble {
+      position: absolute;
+      background-color: var(--accent-light);
+      color: white;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 5;
+      pointer-events: none;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .set-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .disjoint-set {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: var(--neutral-100);
+      border-radius: var(--radius);
+      padding: 0.5rem;
+      min-width: 40px;
+      border: 1px solid var(--neutral-200);
+      transition: all 0.3s;
+    }
+
+    .disjoint-set.merging {
+      background-color: var(--accent-light);
+      border-color: var(--accent-dark);
+      transform: scale(1.05);
+    }
+
+    .set-label {
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: var(--neutral-600);
+      margin-bottom: 0.25rem;
+    }
+
+    .merging .set-label {
+      color: white;
+    }
+
+    .set-elements {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .set-element {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background-color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--neutral-700);
+    }
+
+    .comparison-section {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background-color: white;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .comparison-title {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: var(--accent);
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: auto 1fr 1fr;
+      gap: 1rem;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .comparison-header {
+      padding: 1rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .comparison-prim {
+      background-color: var(--primary-light);
+      color: white;
+    }
+
+    .comparison-kruskal {
+      background-color: var(--secondary-light);
+      color: white;
+    }
+
+    .comparison-category {
+      background-color: var(--neutral-100);
+      padding: 1rem;
+      font-weight: 600;
+    }
+
+    .comparison-cell {
+      padding: 1rem;
+      background-color: white;
+      border: 1px solid var(--neutral-200);
+    }
+
+    .comparison-cell:first-of-type {
+      border-right: none;
+    }
+
+    .explanation-tooltip {
+      position: absolute;
+      background-color: white;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      padding: 1rem;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+      max-width: 300px;
+      z-index: 100;
+      transform: translateY(10px);
+      border-left: 4px solid var(--accent);
+    }
+
+    .explanation-tooltip.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .explanation-tooltip h4 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1rem;
+      color: var(--accent);
+    }
+
+    .explanation-tooltip p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--neutral-700);
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .node.pulse {
+      animation: pulse 0.5s ease-in-out;
+    }
+
+    @keyframes highlight-fade {
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1.5); }
+    }
+
+    .highlight-ring {
+      fill: none;
+      stroke: var(--accent);
+      stroke-width: 3;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .highlight-ring.active {
+      opacity: 1;
+      animation: highlight-fade 1.5s ease-out forwards;
+    }
+
+    .node-set-label {
+      font-size: 10px;
+      fill: var(--neutral-600);
+      text-anchor: middle;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .node-set-label.visible {
+      opacity: 1;
+    }
+
+    .edge-weight-highlight {
+      stroke: var(--accent);
+      stroke-width: 2;
+      fill: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .edge-weight-highlight.active {
+      opacity: 1;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #step-counter {
+      font-size: 0.9rem;
+      color: var(--neutral-600);
+      text-align: center;
+      margin-top: 0.5rem;
+    }
+
+    .tab-container {
+      display: flex;
+      border-bottom: 1px solid var(--neutral-200);
+      overflow-x: auto;
+      margin-bottom: 1rem;
+    }
+
+    .tab {
+      padding: 0.75rem 1.25rem;
+      font-weight: 500;
+      color: var(--neutral-600);
+      cursor: pointer;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .tab:hover:not(.active) {
+      color: var(--neutral-800);
+      background-color: var(--neutral-100);
+    }
+
+    .detail-panel {
+      display: none;
+    }
+
+    .detail-panel.active {
+      display: block;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .code-block {
+      background-color: var(--neutral-800);
+      color: white;
+      padding: 1rem;
+      border-radius: var(--radius);
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', 'SF Mono', 'Courier New', monospace;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .insight-box {
+      margin-top: 1rem;
+      padding: 1rem;
+      background-color: var(--neutral-100);
+      border-radius: var(--radius);
+      border-left: 4px solid var(--accent);
+    }
+
+    .insight-box h4 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1rem;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .insight-box p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--neutral-700);
+    }
+
+    .svg-icon {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Prim's vs Kruskal's Algorithms</h1>
+  <div class="subtitle">A visual guide to understanding Minimum Spanning Tree algorithms</div>
+  
+  <div class="container">
+    <div class="explanation">
+      <h2>Minimum Spanning Tree Algorithms</h2>
+      <p>A <strong>Minimum Spanning Tree (MST)</strong> connects all vertices in a weighted graph using the minimum possible total edge weight, without forming cycles.</p>
+      
+      <div class="key-differences">
+        <div class="difference-card prim">
+          <h3>
+            <div class="algo-icon prim">P</div>
+            Prim's Algorithm
+          </h3>
+          <p><strong>Approach:</strong> Grows a <em>single tree</em> starting from one vertex.</p>
+          <p><strong>Strategy:</strong> At each step, adds the minimum-weight edge that connects the growing tree to a new vertex.</p>
+          <p><strong>Data Structure:</strong> Priority queue to track edges connecting tree to outside vertices.</p>
+        </div>
+        
+        <div class="difference-card kruskal">
+          <h3>
+            <div class="algo-icon kruskal">K</div>
+            Kruskal's Algorithm
+          </h3>
+          <p><strong>Approach:</strong> Builds a <em>forest of trees</em> that gradually merge.</p>
+          <p><strong>Strategy:</strong> Processes edges in order of increasing weight, regardless of location.</p>
+          <p><strong>Data Structure:</strong> Disjoint-set (Union-Find) to detect and prevent cycles.</p>
+        </div>
+        
+        <div class="difference-card comparison">
+          <h3>
+            <svg class="svg-icon" viewBox="0 0 24 24">
+              <path d="M21 18v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            Key Insight
+          </h3>
+          <p>Prim's grows <strong>locally</strong> from a single point, while Kruskal's considers edges <strong>globally</strong> based solely on weight.</p>
+          <p>This fundamental difference affects how they handle problems, their implementation, and their performance on different types of graphs.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="reset-btn" class="btn">
+        <svg class="svg-icon" viewBox="0 0 24 24">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+          <path d="M3 3v5h5"></path>
+        </svg>
+        Reset
+      </button>
+      <button id="prev-btn" class="btn" disabled>
+        <svg class="svg-icon" viewBox="0 0 24 24">
+          <path d="M19 12H5"></path>
+          <path d="m12 19-7-7 7-7"></path>
+        </svg>
+        Previous
+      </button>
+      <button id="next-btn" class="btn btn-primary">
+        <svg class="svg-icon" viewBox="0 0 24 24">
+          <path d="M5 12h14"></path>
+          <path d="m12 5 7 7-7 7"></path>
+        </svg>
+        Next Step
+      </button>
+      <button id="play-btn" class="btn btn-accent">
+        <svg class="svg-icon" id="play-icon" viewBox="0 0 24 24">
+          <polygon points="5 3 19 12 5 21 5 3"></polygon>
+        </svg>
+        <svg class="svg-icon hidden" id="pause-icon" viewBox="0 0 24 24">
+          <rect x="6" y="4" width="4" height="16"></rect>
+          <rect x="14" y="4" width="4" height="16"></rect>
+        </svg>
+        <span id="play-text">Play Animation</span>
+      </button>
+    </div>
+    
+    <div class="speed-control">
+      <span class="speed-label">Speed:</span>
+      <input type="range" min="0.5" max="3" step="0.5" value="1" class="speed-slider" id="speed-slider">
+      <span class="speed-value" id="speed-value">1x</span>
+    </div>
+
+    <div id="legend">
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: var(--neutral-300);"></div>
+        <span>Unprocessed Edge</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: var(--accent);"></div>
+        <span>Edge Being Considered</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: var(--secondary);"></div>
+        <span>Edge in MST</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: var(--rejected);"></div>
+        <span>Rejected Edge</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: var(--primary);"></div>
+        <span>Vertex in Tree</span>
+      </div>
+    </div>
+
+    <div id="step-counter">Step 0 of 0</div>
+
+    <div class="visualization">
+      <div class="algorithm">
+        <h2 class="prim-title">Prim's Algorithm</h2>
+        <div class="algorithm-subtitle">Grows a single tree starting from a vertex</div>
+        <div class="graph-container" id="prims-graph"></div>
+        <div class="data-structure-container">
+          <div class="data-structure">
+            <div class="data-structure-header">
+              <div class="data-structure-title">
+                <svg class="svg-icon" viewBox="0 0 24 24">
+                  <polygon points="12 2 19 21 12 17 5 21 12 2"></polygon>
+                </svg>
+                Priority Queue (Min Heap)
+              </div>
+              <button class="data-structure-help" id="prim-help-btn">
+                <svg class="svg-icon" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="data-item-container" id="prims-queue"></div>
+          </div>
+        </div>
+        <div class="step-info">
+          <div class="step-title prim-color" id="prims-step-title">Getting Started</div>
+          <div class="step-description" id="prims-info">
+            Prim's algorithm starts from a single vertex and grows the MST by adding the minimum-weight edge connecting the tree to a new vertex.
+          </div>
+        </div>
+        <div class="explanation-tooltip" id="prim-explanation">
+          <h4>Priority Queue</h4>
+          <p>In Prim's algorithm, the priority queue stores edges that connect vertices in the current tree to vertices outside the tree, ordered by weight.</p>
+        </div>
+      </div>
+
+      <div class="algorithm">
+        <h2 class="kruskal-title">Kruskal's Algorithm</h2>
+        <div class="algorithm-subtitle">Processes edges in ascending weight order</div>
+        <div class="graph-container" id="kruskals-graph"></div>
+        <div class="data-structure-container">
+          <div class="data-structure">
+            <div class="data-structure-header">
+              <div class="data-structure-title">
+                <svg class="svg-icon" viewBox="0 0 24 24">
+                  <line x1="4" y1="21" x2="4" y2="14"></line>
+                  <line x1="4" y1="10" x2="4" y2="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12" y2="3"></line>
+                  <line x1="20" y1="21" x2="20" y2="16"></line>
+                  <line x1="20" y1="12" x2="20" y2="3"></line>
+                  <line x1="1" y1="14" x2="7" y2="14"></line>
+                  <line x1="9" y1="8" x2="15" y2="8"></line>
+                  <line x1="17" y1="16" x2="23" y2="16"></line>
+                </svg>
+                Sorted Edges
+              </div>
+              <button class="data-structure-help" id="kruskal-edges-help-btn">
+                <svg class="svg-icon" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="data-item-container" id="kruskals-edges"></div>
+          </div>
+
+          <div class="data-structure">
+            <div class="data-structure-header">
+              <div class="data-structure-title">
+                <svg class="svg-icon" viewBox="0 0 24 24">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                Disjoint Sets (Union-Find)
+              </div>
+              <button class="data-structure-help" id="kruskal-sets-help-btn">
+                <svg class="svg-icon" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="set-container" id="kruskals-sets"></div>
+          </div>
+        </div>
+        <div class="step-info">
+          <div class="step-title kruskal-color" id="kruskals-step-title">Getting Started</div>
+          <div class="step-description" id="kruskals-info">
+            Kruskal's algorithm sorts all edges by weight and adds them to the MST if they don't create a cycle, using a disjoint-set data structure.
+          </div>
+        </div>
+        <div class="explanation-tooltip" id="kruskal-edges-explanation">
+          <h4>Sorted Edges</h4>
+          <p>Kruskal's algorithm first sorts all edges by weight and then processes them one by one in ascending order.</p>
+        </div>
+        <div class="explanation-tooltip" id="kruskal-sets-explanation">
+          <h4>Disjoint Sets</h4>
+          <p>The Union-Find data structure helps detect whether adding an edge would create a cycle by tracking which vertices are connected.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="comparison-section">
+      <h2 class="comparison-title">Algorithm Comparison</h2>
+      <div class="comparison-grid">
+        <div></div>
+        <div class="comparison-header comparison-prim">Prim's Algorithm</div>
+        <div class="comparison-header comparison-kruskal">Kruskal's Algorithm</div>
+        
+        <div class="comparison-category">Growth Strategy</div>
+        <div class="comparison-cell">Grows a single tree from a starting vertex</div>
+        <div class="comparison-cell">Creates a forest of trees that gradually merge</div>
+        
+        <div class="comparison-category">Edge Selection</div>
+        <div class="comparison-cell">Selects minimum-weight edge connecting tree to a new vertex</div>
+        <div class="comparison-cell">Selects minimum-weight edge from the entire graph</div>
+        
+        <div class="comparison-category">Time Complexity</div>
+        <div class="comparison-cell">O(E log V) with binary heap<br>O(E + V log V) with Fibonacci heap</div>
+        <div class="comparison-cell">O(E log E) or O(E log V)<br>Dominated by the sorting step</div>
+        
+        <div class="comparison-category">Space Complexity</div>
+        <div class="comparison-cell">O(V + E)</div>
+        <div class="comparison-cell">O(V + E)</div>
+        
+        <div class="comparison-category">Best For</div>
+        <div class="comparison-cell">Dense graphs (where E is close to V²)</div>
+        <div class="comparison-cell">Sparse graphs (where E is close to V)</div>
+        
+        <div class="comparison-category">Key Insight</div>
+        <div class="comparison-cell">Only needs to track edges crossing the frontier</div>
+        <div class="comparison-cell">Doesn't need a connected graph initially</div>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <h4>
+        <svg class="svg-icon" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        Why These Algorithms Matter
+      </h4>
+      <p>Minimum Spanning Tree algorithms are essential in network design, circuit design, transportation planning, and clustering. The choice between Prim's and Kruskal's often depends on the graph's characteristics - Prim's performs better on dense graphs, while Kruskal's is often faster on sparse graphs.</p>
+    </div>
+  </div>
+
+  <div class="tooltip" id="tooltip"></div>
+  <div class="highlight-bubble" id="highlight-bubble">!</div>
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script>
+    // Define graph data
+    const vertices = [
+      { id: 'A', x: 100, y: 50 },
+      { id: 'B', x: 220, y: 50 },
+      { id: 'C', x: 160, y: 120 },
+      { id: 'D', x: 70, y: 190 },
+      { id: 'E', x: 220, y: 190 },
+      { id: 'F', x: 280, y: 120 }
+    ];
+
+    const edges = [
+      { source: 'A', target: 'B', weight: 4 },
+      { source: 'A', target: 'C', weight: 2 },
+      { source: 'A', target: 'D', weight: 6 },
+      { source: 'B', target: 'C', weight: 1 },
+      { source: 'B', target: 'F', weight: 7 },
+      { source: 'C', target: 'D', weight: 3 },
+      { source: 'C', target: 'E', weight: 5 },
+      { source: 'C', target: 'F', weight: 8 },
+      { source: 'D', target: 'E', weight: 4 },
+      { source: 'E', target: 'F', weight: 9 }
+    ];
+
+    // Create deep copies of the graph for each algorithm
+    const primsGraph = {
+      vertices: JSON.parse(JSON.stringify(vertices)),
+      edges: JSON.parse(JSON.stringify(edges))
+    };
+
+    const kruskalsGraph = {
+      vertices: JSON.parse(JSON.stringify(vertices)),
+      edges: JSON.parse(JSON.stringify(edges))
+    };
+
+    // Set up visualization containers
+    const primsSvg = d3.select("#prims-graph")
+      .append("svg")
+      .attr("width", "100%")
+      .attr("height", "100%")
+      .attr("viewBox", "0 0 350 250")
+      .attr("preserveAspectRatio", "xMidYMid meet");
+      
+    const kruskalsSvg = d3.select("#kruskals-graph")
+      .append("svg")
+      .attr("width", "100%")
+      .attr("height", "100%")
+      .attr("viewBox", "0 0 350 250")
+      .attr("preserveAspectRatio", "xMidYMid meet");
+
+    // Set up tooltip
+    const tooltip = d3.select("#tooltip");
+
+    function showTooltip(text, x, y) {
+      tooltip
+        .style("left", `${x}px`)
+        .style("top", `${y}px`)
+        .text(text)
+        .style("opacity", 1);
+    }
+
+    function hideTooltip() {
+      tooltip.style("opacity", 0);
+    }
+
+    // Helper functions to get vertex objects
+    function getVertexObject(graph, id) {
+      return graph.vertices.find(v => v.id === id);
+    }
+
+    // Prim's algorithm steps generator
+    function* primsAlgorithm(graph) {
+      const { vertices, edges } = graph;
+      const vertexMap = new Map(vertices.map(v => [v.id, v]));
+      
+      // Start with vertex A
+      const startVertex = 'A';
+      const mst = [];
+      const visited = new Set([startVertex]);
+      let priorityQueue = [];
+      
+      // Get all edges connected to the start vertex
+      edges.filter(e => e.source === startVertex || e.target === startVertex)
+        .forEach(e => {
+          priorityQueue.push(e);
+        });
+      
+      // Sort the priority queue by weight
+      priorityQueue.sort((a, b) => a.weight - b.weight);
+      
+      // Initial state
+      yield {
+        mst: [],
+        visited: new Set([startVertex]),
+        priorityQueue: [...priorityQueue],
+        currentEdge: null,
+        considered: [],
+        rejected: [],
+        message: `Starting from vertex ${startVertex}. Adding all connected edges to the priority queue.`,
+        title: "Initializing",
+        hint: "Prim's algorithm starts from a single vertex and grows outward."
+      };
+      
+      while (priorityQueue.length > 0 && visited.size < vertices.length) {
+        // Get the minimum weight edge
+        const minEdge = priorityQueue.shift();
+        
+        // Determine which endpoint is not yet in the tree
+        let nextVertex;
+        if (visited.has(minEdge.source) && !visited.has(minEdge.target)) {
+          nextVertex = minEdge.target;
+        } else if (visited.has(minEdge.target) && !visited.has(minEdge.source)) {
+          nextVertex = minEdge.source;
+        } else {
+          // Both endpoints already in tree, skip
+          yield {
+            mst: [...mst],
+            visited: new Set(visited),
+            priorityQueue: [...priorityQueue],
+            currentEdge: minEdge,
+            considered: [minEdge],
+            rejected: [...(mst.includes(minEdge) ? [] : [minEdge])],
+            message: `Edge ${minEdge.source}-${minEdge.target} (weight ${minEdge.weight}) connects two vertices already in the tree. This would create a cycle, so we reject it.`,
+            title: "Avoiding Cycles",
+            hint: "In a tree, there must be exactly one path between any two vertices. Adding this edge would create a second path (a cycle)."
+          };
+          continue;
+        }
+        
+        // Add the edge to MST and the vertex to visited
+        mst.push(minEdge);
+        visited.add(nextVertex);
+        
+        yield {
+          mst: [...mst],
+          visited: new Set(visited),
+          priorityQueue: [...priorityQueue],
+          currentEdge: minEdge,
+          considered: [minEdge],
+          rejected: [],
+          message: `Add edge ${minEdge.source}-${minEdge.target} (weight ${minEdge.weight}) to the MST. Vertex ${nextVertex} joins the tree.`,
+          title: "Growing the Tree",
+          hint: `Prim's always connects a new vertex to the existing tree using the minimum-weight edge available.`
+        };
+        
+        // Get all edges connected to the new vertex
+        const newEdges = edges.filter(e => 
+          (e.source === nextVertex || e.target === nextVertex) && 
+          !mst.includes(e)
+        );
+        
+        // Add only edges that connect to unvisited vertices
+        const edgesToAdd = newEdges.filter(e => {
+          const otherVertex = e.source === nextVertex ? e.target : e.source;
+          return !visited.has(otherVertex);
+        });
+        
+        if (edgesToAdd.length > 0) {
+          priorityQueue.push(...edgesToAdd);
+          // Sort the priority queue by weight
+          priorityQueue.sort((a, b) => a.weight - b.weight);
+          
+          yield {
+            mst: [...mst],
+            visited: new Set(visited),
+            priorityQueue: [...priorityQueue],
+            currentEdge: null,
+            considered: [],
+            rejected: [],
+            message: `Added ${edgesToAdd.length} new edge${edgesToAdd.length > 1 ? 's' : ''} to the priority queue from vertex ${nextVertex} and sorted them by weight.`,
+            title: "Updating the Priority Queue",
+            hint: `The priority queue always contains edges that connect the current tree to unvisited vertices.`
+          };
+        }
+      }
+      
+      // Final state
+      const totalWeight = mst.reduce((sum, e) => sum + e.weight, 0);
+      yield {
+        mst: [...mst],
+        visited: new Set(visited),
+        priorityQueue: [...priorityQueue],
+        currentEdge: null,
+        considered: [],
+        rejected: [],
+        message: `Prim's algorithm complete! The MST contains ${mst.length} edges with a total weight of ${totalWeight}.`,
+        title: "Complete",
+        hint: `Prim's algorithm guarantees the minimum spanning tree because at each step it adds the lightest edge that connects the tree to a new vertex.`
+      };
+    }
+
+    // Kruskal's algorithm steps generator
+    function* kruskalsAlgorithm(graph) {
+      const { vertices, edges } = graph;
+      
+      // Sort edges by weight
+      const sortedEdges = [...edges].sort((a, b) => a.weight - b.weight);
+      
+      // Initialize disjoint set (each vertex in its own set)
+      const parents = {};
+      vertices.forEach(v => {
+        parents[v.id] = v.id;
+      });
+      
+      // Find function for disjoint set
+      function find(vertex) {
+        if (parents[vertex] !== vertex) {
+          parents[vertex] = find(parents[vertex]);
+        }
+        return parents[vertex];
+      }
+      
+      // Union function for disjoint set
+      function union(x, y) {
+        parents[find(x)] = find(y);
+      }
+      
+      const mst = [];
+      const processedEdges = [];
+      const rejectedEdges = [];
+      
+      // Initial state
+      yield {
+        mst: [],
+        sortedEdges: [...sortedEdges],
+        currentIndex: -1,
+        processedEdges: [],
+        rejectedEdges: [],
+        parents: {...parents},
+        message: `Kruskal's first sorts all edges by weight. We'll process them in ascending order to build our MST.`,
+        title: "Sorting Edges",
+        hint: `Unlike Prim's, Kruskal's considers edges from anywhere in the graph, not just from a growing tree.`,
+        mergingSets: []
+      };
+      
+      for (let i = 0; i < sortedEdges.length; i++) {
+        const edge = sortedEdges[i];
+        const rootSource = find(edge.source);
+        const rootTarget = find(edge.target);
+        
+        // Consider the current edge
+        yield {
+          mst: [...mst],
+          sortedEdges: [...sortedEdges],
+          currentIndex: i,
+          processedEdges: [...processedEdges],
+          rejectedEdges: [...rejectedEdges],
+          parents: {...parents},
+          message: `Considering edge ${edge.source}-${edge.target} (weight ${edge.weight}). Checking if it would create a cycle...`,
+          title: "Evaluating Edge",
+          hint: `To avoid cycles, we check if the vertices of this edge are already in the same connected component.`,
+          mergingSets: []
+        };
+        
+        if (rootSource !== rootTarget) {
+          // Add to MST - no cycle formed
+          mst.push(edge);
+          
+          let beforeParents = {...parents};
+          union(edge.source, edge.target);
+          
+          processedEdges.push(edge);
+          
+          yield {
+            mst: [...mst],
+            sortedEdges: [...sortedEdges],
+            currentIndex: i,
+            processedEdges: [...processedEdges],
+            rejectedEdges: [...rejectedEdges],
+            parents: {...parents},
+            prevParents: beforeParents,
+            message: `Added edge ${edge.source}-${edge.target} to MST. Vertices are in different sets (${rootSource} and ${rootTarget}), so no cycle is formed. Merging these sets.`,
+            title: "Adding to MST",
+            hint: `When we add an edge, we merge the disjoint sets containing its endpoints.`,
+            mergingSets: [rootSource, rootTarget]
+          };
+        } else {
+          // Reject - would form a cycle
+          rejectedEdges.push(edge);
+          
+          yield {
+            mst: [...mst],
+            sortedEdges: [...sortedEdges],
+            currentIndex: i,
+            processedEdges: [...processedEdges],
+            rejectedEdges: [...rejectedEdges],
+            parents: {...parents},
+            message: `Rejected edge ${edge.source}-${edge.target}. Both vertices are already in the same set (${rootSource}), so adding this edge would create a cycle.`,
+            title: "Rejecting Edge",
+            hint: `If both endpoints are in the same set, there's already a path between them. Adding this edge would create a cycle.`,
+            mergingSets: []
+          };
+        }
+      }
+      
+      // Final state
+      const totalWeight = mst.reduce((sum, e) => sum + e.weight, 0);
+      yield {
+        mst: [...mst],
+        sortedEdges: [...sortedEdges],
+        currentIndex: sortedEdges.length,
+        processedEdges: [...processedEdges],
+        rejectedEdges: [...rejectedEdges],
+        parents: {...parents},
+        message: `Kruskal's algorithm complete! The MST contains ${mst.length} edges with a total weight of ${totalWeight}.`,
+        title: "Complete",
+        hint: `Kruskal's algorithm guarantees the minimum spanning tree by always choosing the globally lightest edge that doesn't create a cycle.`,
+        mergingSets: []
+      };
+    }
+
+    // Initialize the algorithm generators
+    let primsSteps = primsAlgorithm(primsGraph);
+    let kruskalsSteps = kruskalsAlgorithm(kruskalsGraph);
+    
+    let primsState = primsSteps.next().value;
+    let kruskalsState = kruskalsSteps.next().value;
+    
+    let currentStep = 0;
+    let maxSteps = 0; // Will be calculated
+    let isPlaying = false;
+    let playbackSpeed = 1;
+    let animationTimer;
+
+    // Function to draw the graph
+    function drawGraph(svg, graph, algorithm, state) {
+      // Clear the SVG
+      svg.selectAll("*").remove();
+      
+      // Create a group for all elements
+      const g = svg.append("g");
+      
+      // Draw highlight rings (for animations)
+      const rings = g.selectAll(".highlight-ring")
+        .data(graph.vertices)
+        .enter()
+        .append("circle")
+        .attr("class", "highlight-ring")
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y)
+        .attr("r", 20);
+      
+      // Draw edges
+      const edgeElements = g.selectAll(".edge")
+        .data(graph.edges)
+        .enter()
+        .append("line")
+        .attr("class", d => {
+          let classes = "edge";
+          
+          if (algorithm === "prims") {
+            if (state.mst.some(e => e.source === d.source && e.target === d.target || 
+                                 e.source === d.target && e.target === d.source)) {
+              classes += " selected";
+            } else if (state.rejected.some(e => e.source === d.source && e.target === d.target || 
+                                         e.source === d.target && e.target === d.source)) {
+              classes += " rejected";
+            } else if (state.considered.some(e => e.source === d.source && e.target === d.target || 
+                                          e.source === d.target && e.target === d.source)) {
+              classes += " considered";
+            } else {
+              classes += " unprocessed";
+            }
+          } else if (algorithm === "kruskals") {
+            if (state.mst.some(e => e.source === d.source && e.target === d.target || 
+                               e.source === d.target && e.target === d.source)) {
+              classes += " selected";
+            } else if (state.rejectedEdges.some(e => e.source === d.source && e.target === d.target || 
+                                             e.source === d.target && e.target === d.source)) {
+              classes += " rejected";
+            } else if (state.currentIndex >= 0 && 
+                      state.sortedEdges[state.currentIndex].source === d.source && 
+                      state.sortedEdges[state.currentIndex].target === d.target) {
+              classes += " considered";
+            } else if (state.currentIndex >= 0 && 
+                      state.sortedEdges[state.currentIndex].source === d.target && 
+                      state.sortedEdges[state.currentIndex].target === d.source) {
+              classes += " considered";
+            } else {
+              classes += " unprocessed";
+            }
+          }
+          
+          return classes;
+        })
+        .attr("x1", d => getVertexObject(graph, d.source).x)
+        .attr("y1", d => getVertexObject(graph, d.source).y)
+        .attr("x2", d => getVertexObject(graph, d.target).x)
+        .attr("y2", d => getVertexObject(graph, d.target).y)
+        .on("mouseover", (event, d) => {
+          const rect = event.target.getBoundingClientRect();
+          const text = `Edge ${d.source}-${d.target}: Weight ${d.weight}`;
+          showTooltip(text, rect.x + rect.width/2, rect.y);
+        })
+        .on("mouseout", hideTooltip);
+      
+      // Draw weight highlights (circles behind weight labels)
+      const weightHighlights = g.selectAll(".edge-weight-highlight")
+        .data(graph.edges)
+        .enter()
+        .append("circle")
+        .attr("class", d => {
+          let classes = "edge-weight-highlight";
+          
+          if (algorithm === "prims" && state.considered.includes(d)) {
+            classes += " active";
+          } else if (algorithm === "kruskals" && 
+                    state.currentIndex >= 0 && 
+                    state.sortedEdges[state.currentIndex] === d) {
+            classes += " active";
+          }
+          
+          return classes;
+        })
+        .attr("cx", d => (getVertexObject(graph, d.source).x + getVertexObject(graph, d.target).x) / 2 + 10)
+        .attr("cy", d => (getVertexObject(graph, d.source).y + getVertexObject(graph, d.target).y) / 2 - 10)
+        .attr("r", 12);
+      
+      // Draw edge weights
+      const edgeLabels = g.selectAll(".edge-label")
+        .data(graph.edges)
+        .enter()
+        .append("text")
+        .attr("class", "edge-label")
+        .attr("x", d => (getVertexObject(graph, d.source).x + getVertexObject(graph, d.target).x) / 2 + 10)
+        .attr("y", d => (getVertexObject(graph, d.source).y + getVertexObject(graph, d.target).y) / 2 - 10)
+        .text(d => d.weight);
+      
+      // Draw vertices
+      const nodeGroups = g.selectAll(".node-group")
+        .data(graph.vertices)
+        .enter()
+        .append("g")
+        .attr("class", "node-group")
+        .attr("transform", d => `translate(${d.x}, ${d.y})`);
+      
+      nodeGroups.append("circle")
+        .attr("class", d => {
+          let classes = "node";
+          
+          if (algorithm === "prims") {
+            if (state.visited.has(d.id)) {
+              classes += " prim-tree";
+            } else {
+              classes += " unprocessed";
+            }
+          } else if (algorithm === "kruskals") {
+            if (state.mst.some(e => e.source === d.id || e.target === d.id)) {
+              classes += " kruskal-tree";
+            } else {
+              classes += " unprocessed";
+            }
+          }
+          
+          return classes;
+        })
+        .attr("r", 15)
+        .on("mouseover", (event, d) => {
+          const rect = event.target.getBoundingClientRect();
+          let text = `Vertex ${d.id}`;
+          
+          if (algorithm === "kruskals" && state.parents) {
+            text += `, Set: ${state.parents[d.id]}`;
+          }
+          
+          showTooltip(text, rect.x + rect.width/2, rect.y);
+        })
+        .on("mouseout", hideTooltip);
+      
+      // Draw vertex labels
+      nodeGroups.append("text")
+        .attr("class", "node-label")
+        .text(d => d.id);
+      
+      // For Kruskal's algorithm, add set labels
+      if (algorithm === "kruskals") {
+        nodeGroups.append("text")
+          .attr("class", d => {
+            const showSets = state.currentIndex >= 0;
+            return "node-set-label" + (showSets ? " visible" : "");
+          })
+          .attr("y", 25)
+          .text(d => state.parents ? `Set: ${state.parents[d.id]}` : "");
+      }
+    }
+
+    // Update Prim's priority queue display
+    function updatePrimsQueue() {
+      const container = d3.select("#prims-queue");
+      container.html("");
+      
+      if (!primsState.priorityQueue) return;
+      
+      primsState.priorityQueue.forEach((edge, idx) => {
+        const div = container.append("div")
+          .attr("class", "data-item" + (idx === 0 ? " active" : ""))
+          .html(`${edge.source}–${edge.target} (${edge.weight})`);
+      });
+    }
+
+    // Update Kruskal's sorted edges display
+    function updateKruskalsEdges() {
+      const container = d3.select("#kruskals-edges");
+      container.html("");
+      
+      if (!kruskalsState.sortedEdges) return;
+      
+      kruskalsState.sortedEdges.forEach((edge, idx) => {
+        let className = "data-item";
+        
+        if (idx === kruskalsState.currentIndex) {
+          className += " active";
+        } else if (idx < kruskalsState.currentIndex) {
+          if (kruskalsState.mst.some(e => e.source === edge.source && e.target === edge.target ||
+                                      e.source === edge.target && e.target === edge.source)) {
+            className += " processed";
+          } else if (kruskalsState.rejectedEdges.some(e => e.source === edge.source && e.target === edge.target ||
+                                                     e.source === edge.target && e.target === edge.source)) {
+            className += " rejected";
+          }
+        }
+        
+        container.append("div")
+          .attr("class", className)
+          .html(`${edge.source}–${edge.target} (${edge.weight})`);
+      });
+    }
+
+    // Update Kruskal's disjoint sets display
+    function updateKruskalsSets() {
+      const container = d3.select("#kruskals-sets");
+      container.html("");
+      
+      if (!kruskalsState.parents) return;
+      
+      // Group vertices by their parent (set)
+      const sets = {};
+      for (const vertexId in kruskalsState.parents) {
+        const setId = kruskalsState.parents[vertexId];
+        if (!sets[setId]) {
+          sets[setId] = [];
+        }
+        sets[setId].push(vertexId);
+      }
+      
+      // Sort sets by their representative
+      const sortedSetIds = Object.keys(sets).sort();
+      
+      sortedSetIds.forEach(setId => {
+        const isBeingMerged = kruskalsState.mergingSets && 
+                              kruskalsState.mergingSets.includes(setId);
+        
+        const setDiv = container.append("div")
+          .attr("class", "disjoint-set" + (isBeingMerged ? " merging" : ""));
+        
+        setDiv.append("div")
+          .attr("class", "set-label")
+          .text(`Set ${setId}`);
+        
+        const elementsDiv = setDiv.append("div")
+          .attr("class", "set-elements");
+        
+        sets[setId].sort().forEach(vertexId => {
+          elementsDiv.append("div")
+            .attr("class", "set-element")
+            .text(vertexId);
+        });
+      });
+    }
+
+    // Update info displays for both algorithms
+    function updateInfoText() {
+      d3.select("#prims-step-title").text(primsState.title || "");
+      d3.select("#prims-info").text(primsState.message || "");
+      
+      d3.select("#kruskals-step-title").text(kruskalsState.title || "");
+      d3.select("#kruskals-info").text(kruskalsState.message || "");
+      
+      // Update step counter
+      d3.select("#step-counter").text(`Step ${currentStep} of ${maxSteps}`);
+    }
+
+    // Render the entire visualization
+    function render() {
+      drawGraph(primsSvg, primsGraph, "prims", primsState);
+      drawGraph(kruskalsSvg, kruskalsGraph, "kruskals", kruskalsState);
+      updatePrimsQueue();
+      updateKruskalsEdges();
+      updateKruskalsSets();
+      updateInfoText();
+    }
+
+    // Control functions
+    function nextStep() {
+      const primsResult = primsSteps.next();
+      const kruskalsResult = kruskalsSteps.next();
+      
+      if (!primsResult.done && !kruskalsResult.done) {
+        primsState = primsResult.value;
+        kruskalsState = kruskalsResult.value;
+        currentStep++;
+        d3.select("#prev-btn").attr("disabled", null);
+        render();
+        
+        // Show highlighting animations
+        highlightChanges();
+      } else {
+        // Algorithms complete
+        d3.select("#next-btn").attr("disabled", "disabled");
+        stopAnimation();
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 0) {
+        // Reset and replay until the previous step
+        resetAlgorithms(false); // Reset without redrawing
+        
+        for (let i = 0; i < currentStep - 1; i++) {
+          const primsResult = primsSteps.next();
+          const kruskalsResult = kruskalsSteps.next();
+          
+          if (!primsResult.done && !kruskalsResult.done) {
+            primsState = primsResult.value;
+            kruskalsState = kruskalsResult.value;
+          }
+        }
+        
+        currentStep--;
+        if (currentStep === 0) {
+          d3.select("#prev-btn").attr("disabled", "disabled");
+        }
+        d3.select("#next-btn").attr("disabled", null);
+        render();
+      }
+    }
+
+    function resetAlgorithms(redraw = true) {
+      primsSteps = primsAlgorithm(primsGraph);
+      kruskalsSteps = kruskalsAlgorithm(kruskalsGraph);
+      primsState = primsSteps.next().value;
+      kruskalsState = kruskalsSteps.next().value;
+      currentStep = 0;
+      d3.select("#prev-btn").attr("disabled", "disabled");
+      d3.select("#next-btn").attr("disabled", null);
+      
+      if (redraw) {
+        render();
+      }
+    }
+
+    // Calculate the maximum number of steps
+    function calculateMaxSteps() {
+      let tempPrimsSteps = primsAlgorithm(JSON.parse(JSON.stringify(primsGraph)));
+      let count = 0;
+      let result;
+      do {
+        result = tempPrimsSteps.next();
+        if (!result.done) count++;
+      } while (!result.done);
+      
+      maxSteps = count - 1; // -1 because we start at step 0
+      d3.select("#step-counter").text(`Step ${currentStep} of ${maxSteps}`);
+    }
+
+    // Animation functions
+    function togglePlayAnimation() {
+      if (isPlaying) {
+        stopAnimation();
+      } else {
+        startAnimation();
+      }
+    }
+
+    function startAnimation() {
+      isPlaying = true;
+      d3.select("#play-text").text("Pause Animation");
+      d3.select("#play-icon").classed("hidden", true);
+      d3.select("#pause-icon").classed("hidden", false);
+      
+      animationTimer = setInterval(() => {
+        const primsResult = primsSteps.next();
+        const kruskalsResult = kruskalsSteps.next();
+        
+        if (!primsResult.done && !kruskalsResult.done) {
+          primsState = primsResult.value;
+          kruskalsState = kruskalsResult.value;
+          currentStep++;
+          d3.select("#prev-btn").attr("disabled", null);
+          render();
+          highlightChanges();
+        } else {
+          stopAnimation();
+          d3.select("#next-btn").attr("disabled", "disabled");
+        }
+      }, 2000 / playbackSpeed);
+    }
+
+    function stopAnimation() {
+      isPlaying = false;
+      d3.select("#play-text").text("Play Animation");
+      d3.select("#play-icon").classed("hidden", false);
+      d3.select("#pause-icon").classed("hidden", true);
+      clearInterval(animationTimer);
+    }
+
+    // Helper function to highlight changes in the visualization
+    function highlightChanges() {
+      // For Prim's, highlight the newly added vertex
+      if (primsState.currentEdge) {
+        const target = primsState.currentEdge.target;
+        const source = primsState.currentEdge.source;
+        
+        // Determine which vertex was just added
+        const newVertex = primsState.visited.has(target) && 
+                         primsState.mst.some(e => e.source === source && e.target === target || 
+                                             e.source === target && e.target === source) 
+                         ? target : source;
+        
+        if (newVertex && primsState.visited.has(newVertex)) {
+          const vertexObj = getVertexObject(primsGraph, newVertex);
+          
+          // Pulse animation on the vertex
+          primsSvg.selectAll(".node")
+            .filter(d => d.id === newVertex)
+            .classed("pulse", true)
+            .on("animationend", function() {
+              d3.select(this).classed("pulse", false);
+            });
+          
+          // Highlight ring animation
+          primsSvg.selectAll(".highlight-ring")
+            .filter(d => d.id === newVertex)
+            .classed("active", true)
+            .on("animationend", function() {
+              d3.select(this).classed("active", false);
+            });
+        }
+      }
+      
+      // For Kruskal's, highlight the merged sets
+      if (kruskalsState.mergingSets && kruskalsState.mergingSets.length > 0) {
+        // Highlight the merged sets in the UI
+        d3.selectAll(".disjoint-set")
+          .filter(function() {
+            const setLabel = d3.select(this).select(".set-label").text();
+            const setId = setLabel.replace("Set ", "");
+            return kruskalsState.mergingSets.includes(setId);
+          })
+          .classed("merging", true);
+        
+        // After a delay, remove the highlight
+        setTimeout(() => {
+          d3.selectAll(".disjoint-set").classed("merging", false);
+        }, 1500 / playbackSpeed);
+      }
+    }
+
+    // Handle explanation tooltips
+    function setupExplanationTooltips() {
+      const primTooltip = d3.select("#prim-explanation");
+      const kruskalEdgesTooltip = d3.select("#kruskal-edges-explanation");
+      const kruskalSetsTooltip = d3.select("#kruskal-sets-explanation");
+      
+      d3.select("#prim-help-btn").on("click", function(event) {
+        const rect = this.getBoundingClientRect();
+        primTooltip
+          .style("left", `${rect.right}px`)
+          .style("top", `${rect.bottom}px`)
+          .classed("visible", !primTooltip.classed("visible"));
+          
+        // Hide other tooltips
+        kruskalEdgesTooltip.classed("visible", false);
+        kruskalSetsTooltip.classed("visible", false);
+      });
+      
+      d3.select("#kruskal-edges-help-btn").on("click", function(event) {
+        const rect = this.getBoundingClientRect();
+        kruskalEdgesTooltip
+          .style("left", `${rect.right}px`)
+          .style("top", `${rect.bottom}px`)
+          .classed("visible", !kruskalEdgesTooltip.classed("visible"));
+          
+        // Hide other tooltips
+        primTooltip.classed("visible", false);
+        kruskalSetsTooltip.classed("visible", false);
+      });
+      
+      d3.select("#kruskal-sets-help-btn").on("click", function(event) {
+        const rect = this.getBoundingClientRect();
+        kruskalSetsTooltip
+          .style("left", `${rect.right}px`)
+          .style("top", `${rect.bottom}px`)
+          .classed("visible", !kruskalSetsTooltip.classed("visible"));
+          
+        // Hide other tooltips
+        primTooltip.classed("visible", false);
+        kruskalEdgesTooltip.classed("visible", false);
+      });
+      
+      // Hide tooltips when clicking elsewhere
+      document.addEventListener("click", function(event) {
+        if (!event.target.closest("#prim-help-btn") && 
+            !event.target.closest("#kruskal-edges-help-btn") && 
+            !event.target.closest("#kruskal-sets-help-btn") &&
+            !event.target.closest(".explanation-tooltip")) {
+          primTooltip.classed("visible", false);
+          kruskalEdgesTooltip.classed("visible", false);
+          kruskalSetsTooltip.classed("visible", false);
+        }
+      });
+    }
+
+    // Setup speed control
+    function setupSpeedControl() {
+      const slider = document.getElementById("speed-slider");
+      const value = document.getElementById("speed-value");
+      
+      slider.addEventListener("input", function() {
+        playbackSpeed = parseFloat(this.value);
+        value.textContent = `${playbackSpeed}x`;
+        
+        // If already playing, restart with new speed
+        if (isPlaying) {
+          stopAnimation();
+          startAnimation();
+        }
+      });
+    }
+
+    // Attach event handlers
+    d3.select("#next-btn").on("click", nextStep);
+    d3.select("#prev-btn").on("click", prevStep);
+    d3.select("#reset-btn").on("click", function() {
+      stopAnimation();
+      resetAlgorithms();
+    });
+    d3.select("#play-btn").on("click", togglePlayAnimation);
+
+    // Initialize
+    calculateMaxSteps();
+    setupExplanationTooltips();
+    setupSpeedControl();
+    render();
+
+    // Add highlight to show the key differences
+    function highlightKeyDifference(text, target, position = "top") {
+      const highlightBubble = d3.select("#highlight-bubble");
+      const targetElement = d3.select(target);
+      const rect = targetElement.node().getBoundingClientRect();
+      
+      let top, left;
+      
+      switch(position) {
+        case "top":
+          top = rect.top - 40;
+          left = rect.left + rect.width / 2;
+          break;
+        case "bottom":
+          top = rect.bottom + 10;
+          left = rect.left + rect.width / 2;
+          break;
+        case "left":
+          top = rect.top + rect.height / 2;
+          left = rect.left - 40;
+          break;
+        case "right":
+          top = rect.top + rect.height / 2;
+          left = rect.right + 10;
+          break;
+      }
+      
+      highlightBubble
+        .style("top", `${top}px`)
+        .style("left", `${left}px`)
+        .text("!")
+        .on("mouseover", function() {
+          const bubbleRect = this.getBoundingClientRect();
+          showTooltip(text, bubbleRect.left, bubbleRect.top);
+        })
+        .on("mouseout", hideTooltip)
+        .style("opacity", 1);
+      
+      setTimeout(() => {
+        highlightBubble.style("opacity", 0);
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,1794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Macroeconomic Relationships</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #4f46e5;
+            --background-color: #f8fafc;
+            --card-color: #ffffff;
+            --text-color: #1e293b;
+            --text-light: #64748b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --purple-color: #8b5cf6;
+            --teal-color: #14b8a6;
+            
+            --interest-color: #3b82f6;
+            --spending-color: #10b981;
+            --inflation-color: #ef4444;
+            --unemployment-color: #f59e0b;
+            --output-color: #8b5cf6;
+            
+            --positive-color: #10b981;
+            --negative-color: #ef4444;
+            --neutral-color: #64748b;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            margin: 0;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: var(--text-color);
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin: 0.5rem 0;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+
+        h2 {
+            font-weight: 600;
+            font-size: 1.5rem;
+            margin: 1rem 0;
+            color: var(--text-color);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-top: 0;
+        }
+
+        .card {
+            background: var(--card-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .controls-card {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .slider-container {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .slider-label span {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .slider-value {
+            font-weight: 600;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            background: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            outline: none;
+            background: #e2e8f0;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        #interest-slider {
+            background: linear-gradient(90deg, #dbeafe, var(--interest-color));
+        }
+
+        #interest-slider::-webkit-slider-thumb {
+            background: var(--interest-color);
+            box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+        }
+
+        #interest-slider::-moz-range-thumb {
+            background: var(--interest-color);
+            box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+        }
+
+        #spending-slider {
+            background: linear-gradient(90deg, #dcfce7, var(--spending-color));
+        }
+
+        #spending-slider::-webkit-slider-thumb {
+            background: var(--spending-color);
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+        }
+
+        #spending-slider::-moz-range-thumb {
+            background: var(--spending-color);
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        button {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 2px 10px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: var(--text-color);
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        .visualization-container {
+            position: relative;
+            overflow: hidden;
+            height: 600px;
+            transition: height 0.5s ease;
+        }
+
+        #visualization {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            border-radius: 8px;
+            background: rgb(248, 250, 252);
+            background: radial-gradient(circle, rgba(248, 250, 252, 1) 0%, rgba(241, 245, 249, 1) 100%);
+            transition: all 0.5s ease;
+        }
+
+        .node {
+            position: absolute;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: white;
+            padding: 0.5rem;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 10;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        .node-title {
+            font-weight: 600;
+            font-size: 1rem;
+            text-align: center;
+            margin: 0;
+            padding: 0 0.5rem;
+        }
+
+        .node-value {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-top: 0.25rem;
+        }
+
+        .node::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            right: -8px;
+            bottom: -8px;
+            background: inherit;
+            border-radius: 50%;
+            opacity: 0.15;
+            z-index: -1;
+            transform: scale(0);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .node:hover::before, .node.active::before {
+            transform: scale(1);
+        }
+
+        .node-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .node-interest {
+            background: var(--interest-color);
+        }
+
+        .node-spending {
+            background: var(--spending-color);
+        }
+
+        .node-inflation {
+            background: var(--inflation-color);
+        }
+
+        .node-unemployment {
+            background: var(--unemployment-color);
+        }
+
+        .node-output {
+            background: var(--output-color);
+        }
+
+        .node-label {
+            position: absolute;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-light);
+            background: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            white-space: nowrap;
+            z-index: 11;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .node-label.policy {
+            background: #eff6ff;
+            color: #1e40af;
+        }
+
+        .node-label.outcome {
+            background: #f0f9ff;
+            color: #0369a1;
+        }
+
+        #canvas-connections {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .connection-label {
+            position: absolute;
+            background: white;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.25rem 0.6rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transform: translate(-50%, -50%);
+            z-index: 9;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .connection-label.positive {
+            color: var(--positive-color);
+        }
+
+        .connection-label.negative {
+            color: var(--negative-color);
+        }
+
+        .tooltip {
+            position: absolute;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: 1rem;
+            max-width: 300px;
+            z-index: 100;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .tooltip-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .explanation-card {
+            position: relative;
+        }
+
+        .explanation-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .explanation-title h2 {
+            margin: 0;
+        }
+
+        .explanation-content {
+            color: var(--text-light);
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        .key-fact {
+            background: #f8fafc;
+            border-left: 3px solid var(--primary-color);
+            padding: 0.75rem 1rem;
+            margin: 1rem 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .highlight {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            background: #f1f5f9;
+            color: var(--text-light);
+            white-space: nowrap;
+        }
+
+        .tag-policy {
+            background: #eff6ff;
+            color: #1e40af;
+        }
+
+        .tag-outcome {
+            background: #f0f9ff;
+            color: #0369a1;
+        }
+
+        .simulation-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .simulation-speed {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .speed-slider {
+            width: 100px;
+        }
+
+        .focus-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .focus-btn {
+            font-size: 0.8rem;
+            padding: 0.35rem 0.7rem;
+            border-radius: 6px;
+            background: #f1f5f9;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .focus-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .focus-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .scenario-selector {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 20;
+        }
+
+        .scenario-btn {
+            font-size: 0.8rem;
+            padding: 0.35rem 0.7rem;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .scenario-btn:hover {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .scenario-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .floating-info {
+            position: absolute;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: 1rem;
+            max-width: 250px;
+            z-index: 50;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .info-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .pulse-animation {
+            animation: pulse 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.15);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .grow-animation {
+            animation: grow 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes grow {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(59, 130, 246, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .controls-card {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .button-group {
+                width: 100%;
+            }
+            
+            button {
+                flex: 1;
+            }
+            
+            .visualization-container {
+                height: 500px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .node-title {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Macroeconomic Relationships</h1>
+            <p class="subtitle">Explore how key economic variables interact in a dynamic system</p>
+        </header>
+
+        <div class="card controls-card">
+            <div class="slider-container">
+                <div class="slider-label">
+                    <span>Interest Rates</span>
+                    <span id="interest-value" class="slider-value">5%</span>
+                </div>
+                <input type="range" id="interest-slider" class="slider" min="1" max="9" value="5" step="0.1">
+            </div>
+            
+            <div class="slider-container">
+                <div class="slider-label">
+                    <span>Government Spending</span>
+                    <span id="spending-value" class="slider-value">5</span>
+                </div>
+                <input type="range" id="spending-slider" class="slider" min="1" max="9" value="5" step="0.1">
+            </div>
+            
+            <div class="button-group">
+                <button id="simulate-btn" class="btn-primary">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                    Simulate Effects
+                </button>
+                <button id="reset-btn" class="btn-secondary">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 2v6h6"></path>
+                        <path d="M21 12A9 9 0 0 0 6 5.3L3 8"></path>
+                        <path d="M21 22v-6h-6"></path>
+                        <path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"></path>
+                    </svg>
+                    Reset
+                </button>
+            </div>
+        </div>
+
+        <div class="card visualization-container">
+            <div id="visualization">
+                <canvas id="canvas-connections"></canvas>
+                
+                <div id="node-interest" class="node node-interest" data-node="interest">
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                    <div class="node-title">Interest Rates</div>
+                    <div class="node-value">5%</div>
+                </div>
+                
+                <div id="node-spending" class="node node-spending" data-node="spending">
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                    </svg>
+                    <div class="node-title">Government Spending</div>
+                    <div class="node-value">5</div>
+                </div>
+                
+                <div id="node-inflation" class="node node-inflation" data-node="inflation">
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="19" x2="12" y2="5"></line>
+                        <polyline points="5 12 12 5 19 12"></polyline>
+                    </svg>
+                    <div class="node-title">Inflation</div>
+                    <div class="node-value">5%</div>
+                </div>
+                
+                <div id="node-unemployment" class="node node-unemployment" data-node="unemployment">
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    <div class="node-title">Unemployment</div>
+                    <div class="node-value">5%</div>
+                </div>
+                
+                <div id="node-output" class="node node-output" data-node="output">
+                    <svg class="node-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                    </svg>
+                    <div class="node-title">Economic Output</div>
+                    <div class="node-value">5</div>
+                </div>
+
+                <div id="tooltip" class="tooltip"></div>
+                
+                <!-- Connection labels -->
+                <div id="connection-interest-inflation" class="connection-label negative">Reduces</div>
+                <div id="connection-interest-output" class="connection-label negative">Slows</div>
+                <div id="connection-spending-output" class="connection-label positive">Stimulates</div>
+                <div id="connection-spending-inflation" class="connection-label positive">Increases</div>
+                <div id="connection-output-unemployment" class="connection-label negative">Reduces</div>
+                <div id="connection-unemployment-inflation" class="connection-label negative">Reduces</div>
+                <div id="connection-output-inflation" class="connection-label positive">Can increase</div>
+                <div id="connection-inflation-interest" class="connection-label positive">Drives up</div>
+                
+                <!-- Node type labels -->
+                <div class="node-label policy" id="policy-label-interest">Policy Tool</div>
+                <div class="node-label policy" id="policy-label-spending">Policy Tool</div>
+                <div class="node-label outcome" id="outcome-label-inflation">Economic Outcome</div>
+                <div class="node-label outcome" id="outcome-label-unemployment">Economic Outcome</div>
+                <div class="node-label outcome" id="outcome-label-output">Economic Outcome</div>
+                
+                <!-- Floating info boxes -->
+                <div class="floating-info" id="phillips-curve-info">
+                    <div class="info-title">Phillips Curve</div>
+                    <p>The Phillips Curve shows the inverse relationship between unemployment and inflation. When unemployment decreases, inflation tends to rise, and vice versa.</p>
+                </div>
+                
+                <div class="floating-info" id="okuns-law-info">
+                    <div class="info-title">Okun's Law</div>
+                    <p>Okun's Law describes how GDP growth relates to changes in unemployment. Typically, a 1% increase in GDP corresponds to a 0.5% decrease in unemployment.</p>
+                </div>
+                
+                <div class="floating-info" id="monetary-policy-info">
+                    <div class="info-title">Monetary Policy</div>
+                    <p>Central banks use interest rates as their primary tool to influence inflation, employment, and economic growth by affecting borrowing costs throughout the economy.</p>
+                </div>
+                
+                <div class="floating-info" id="fiscal-policy-info">
+                    <div class="info-title">Fiscal Policy</div>
+                    <p>Government spending is a key fiscal policy tool that directly affects aggregate demand in the economy, influencing both output and inflation.</p>
+                </div>
+                
+                <div class="scenario-selector">
+                    <div class="scenario-btn" data-scenario="recession">Recession</div>
+                    <div class="scenario-btn" data-scenario="growth">Growth</div>
+                    <div class="scenario-btn" data-scenario="stagflation">Stagflation</div>
+                </div>
+                
+                <div class="loading-overlay">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card explanation-card">
+            <div class="explanation-title">
+                <h2 id="explanation-title">How These Economic Variables Interact</h2>
+            </div>
+            <div id="explanation-content" class="explanation-content">
+                <p>This visualization shows the interconnected relationships between key macroeconomic variables. The economy functions as a dynamic system where changes in one variable create ripple effects throughout.</p>
+                
+                <div class="key-fact">
+                    <p><span class="highlight">Policy Variables:</span> Interest rates (monetary policy) and government spending (fiscal policy) are the primary tools used to influence economic outcomes.</p>
+                </div>
+                
+                <p>To see these relationships in action, adjust the sliders for interest rates and government spending, then click "Simulate Effects" to watch how these changes propagate through the economic system.</p>
+                
+                <p>Click on any variable to see detailed information about its relationships with other variables.</p>
+            </div>
+            
+            <div class="focus-controls">
+                <div class="focus-btn" data-focus="interest">Interest Rates</div>
+                <div class="focus-btn" data-focus="spending">Government Spending</div>
+                <div class="focus-btn" data-focus="inflation">Inflation</div>
+                <div class="focus-btn" data-focus="unemployment">Unemployment</div>
+                <div class="focus-btn" data-focus="output">Economic Output</div>
+                <div class="focus-btn" data-focus="all">Show All</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Canvas setup for connections
+            const canvas = document.getElementById('canvas-connections');
+            const ctx = canvas.getContext('2d');
+            resizeCanvas();
+            
+            // Node positions and data
+            const nodes = {
+                interest: {
+                    element: document.getElementById('node-interest'),
+                    value: 5,
+                    baseSize: 120,
+                    x: 0, y: 0, // Will be set in positionNodes()
+                    type: 'policy',
+                    description: "Interest rates are a key monetary policy tool controlled by central banks. Higher rates discourage borrowing and spending, helping control inflation but potentially slowing economic growth. Lower rates stimulate borrowing and economic activity but may increase inflation risks.",
+                    detailedContent: `
+                        <p><span class="tag tag-policy">Policy Tool</span></p>
+                        <p>Interest rates are the primary tool of monetary policy, controlled by central banks like the Federal Reserve.</p>
+                        <div class="key-fact">
+                            <p>When interest rates increase:</p>
+                            <ul>
+                                <li>Borrowing becomes more expensive</li>
+                                <li>Consumer spending typically decreases</li>
+                                <li>Business investment often declines</li>
+                                <li>Economic growth usually slows</li>
+                                <li>Inflation pressures tend to decrease</li>
+                            </ul>
+                        </div>
+                        <p>The opposite effects generally occur when interest rates are lowered, stimulating economic activity but potentially increasing inflation.</p>
+                    `
+                },
+                spending: {
+                    element: document.getElementById('node-spending'),
+                    value: 5,
+                    baseSize: 120,
+                    x: 0, y: 0,
+                    type: 'policy',
+                    description: "Government spending is a fiscal policy tool. Increased spending stimulates economic growth and can reduce unemployment, but may increase inflation and public debt. Decreased spending can help control inflation and debt but may slow economic growth.",
+                    detailedContent: `
+                        <p><span class="tag tag-policy">Policy Tool</span></p>
+                        <p>Government spending is the primary tool of fiscal policy, controlled by legislative and executive branches.</p>
+                        <div class="key-fact">
+                            <p>When government spending increases:</p>
+                            <ul>
+                                <li>Aggregate demand rises directly</li>
+                                <li>Economic output generally increases</li>
+                                <li>Unemployment typically falls</li>
+                                <li>Inflation may increase, especially if the economy is near capacity</li>
+                                <li>Public debt typically rises</li>
+                            </ul>
+                        </div>
+                        <p>Government spending can be targeted to specific sectors or used broadly to influence economic activity during recessions or periods of high unemployment.</p>
+                    `
+                },
+                inflation: {
+                    element: document.getElementById('node-inflation'),
+                    value: 5,
+                    baseSize: 120,
+                    x: 0, y: 0,
+                    type: 'outcome',
+                    description: "Inflation is the rate at which prices rise over time. It's influenced by economic activity, monetary policy, fiscal policy, and supply constraints. Central banks typically target low, stable inflation (around 2%).",
+                    detailedContent: `
+                        <p><span class="tag tag-outcome">Economic Outcome</span></p>
+                        <p>Inflation measures the rate at which the general price level of goods and services rises, causing purchasing power to fall.</p>
+                        <div class="key-fact">
+                            <p>Inflation is affected by multiple factors:</p>
+                            <ul>
+                                <li>Demand-pull: Too much money chasing too few goods</li>
+                                <li>Cost-push: Rising production costs passed to consumers</li>
+                                <li>Built-in: Expectations of future inflation affecting present behavior</li>
+                                <li>Monetary: Expansion of money supply beyond economic growth</li>
+                            </ul>
+                        </div>
+                        <p>Most central banks target a low, stable inflation rate (typically around 2%) as optimal for economic growth and stability.</p>
+                    `
+                },
+                unemployment: {
+                    element: document.getElementById('node-unemployment'),
+                    value: 5,
+                    baseSize: 120,
+                    x: 0, y: 0,
+                    type: 'outcome',
+                    description: "Unemployment measures the percentage of the labor force without jobs. It's closely tied to economic growth (Okun's Law) and has an inverse relationship with inflation (Phillips Curve).",
+                    detailedContent: `
+                        <p><span class="tag tag-outcome">Economic Outcome</span></p>
+                        <p>Unemployment measures the percentage of the labor force that is jobless and actively seeking employment.</p>
+                        <div class="key-fact">
+                            <p>Key concepts related to unemployment:</p>
+                            <ul>
+                                <li>Natural rate: The "full employment" level (typically 4-5%)</li>
+                                <li>Cyclical unemployment: Related to business cycles</li>
+                                <li>Structural unemployment: Due to skills mismatches</li>
+                                <li>Frictional unemployment: Due to job transitions</li>
+                            </ul>
+                        </div>
+                        <p>Unemployment is a lagging indicator, typically changing after the economy has already shifted direction. It has both economic and social costs.</p>
+                    `
+                },
+                output: {
+                    element: document.getElementById('node-output'),
+                    value: 5,
+                    baseSize: 120,
+                    x: 0, y: 0,
+                    type: 'outcome',
+                    description: "Economic output (GDP) measures the total value of goods and services produced. Growth in output generally reduces unemployment but may increase inflation if the economy reaches capacity constraints.",
+                    detailedContent: `
+                        <p><span class="tag tag-outcome">Economic Outcome</span></p>
+                        <p>Economic output, typically measured as GDP (Gross Domestic Product), represents the total value of goods and services produced within an economy.</p>
+                        <div class="key-fact">
+                            <p>Economic output is influenced by:</p>
+                            <ul>
+                                <li>Consumer spending</li>
+                                <li>Business investment</li>
+                                <li>Government spending</li>
+                                <li>Net exports (exports minus imports)</li>
+                                <li>Productivity growth</li>
+                            </ul>
+                        </div>
+                        <p>Sustainable economic growth is typically viewed as 2-3% annually in developed economies. Growth beyond an economy's potential can lead to inflation and other imbalances.</p>
+                    `
+                }
+            };
+
+            // Define relationships between nodes
+            const connections = [
+                { 
+                    from: 'interest', 
+                    to: 'inflation', 
+                    effect: 'negative', 
+                    strength: 0.8,
+                    description: "Higher interest rates reduce aggregate demand and help control inflation by making borrowing more expensive.",
+                    labelElement: document.getElementById('connection-interest-inflation')
+                },
+                { 
+                    from: 'interest', 
+                    to: 'output', 
+                    effect: 'negative', 
+                    strength: 0.7,
+                    description: "Higher interest rates reduce borrowing, investment, and consumer spending, slowing economic output.",
+                    labelElement: document.getElementById('connection-interest-output')
+                },
+                { 
+                    from: 'spending', 
+                    to: 'output', 
+                    effect: 'positive', 
+                    strength: 0.8,
+                    description: "Increased government spending directly adds to aggregate demand, boosting economic output.",
+                    labelElement: document.getElementById('connection-spending-output')
+                },
+                { 
+                    from: 'spending', 
+                    to: 'inflation', 
+                    effect: 'positive', 
+                    strength: 0.5,
+                    description: "Higher government spending can increase aggregate demand, potentially driving up prices if the economy is near capacity.",
+                    labelElement: document.getElementById('connection-spending-inflation')
+                },
+                { 
+                    from: 'output', 
+                    to: 'unemployment', 
+                    effect: 'negative', 
+                    strength: 0.9,
+                    description: "Higher economic output creates jobs, reducing unemployment (Okun's Law).",
+                    labelElement: document.getElementById('connection-output-unemployment')
+                },
+                { 
+                    from: 'unemployment', 
+                    to: 'inflation', 
+                    effect: 'negative', 
+                    strength: 0.7,
+                    description: "Lower unemployment can lead to wage growth and higher inflation (Phillips Curve).",
+                    labelElement: document.getElementById('connection-unemployment-inflation')
+                },
+                { 
+                    from: 'output', 
+                    to: 'inflation', 
+                    effect: 'positive', 
+                    strength: 0.6,
+                    description: "When output exceeds the economy's potential, inflation tends to rise due to resource constraints.",
+                    labelElement: document.getElementById('connection-output-inflation')
+                },
+                { 
+                    from: 'inflation', 
+                    to: 'interest', 
+                    effect: 'positive', 
+                    strength: 0.8,
+                    description: "Rising inflation often prompts central banks to raise interest rates to cool the economy.",
+                    labelElement: document.getElementById('connection-inflation-interest')
+                }
+            ];
+
+            // Floating info boxes data
+            const floatingInfos = [
+                {
+                    id: 'phillips-curve-info',
+                    linkedConnections: ['unemployment-inflation'],
+                    position: { x: 0.4, y: 0.7 }
+                },
+                {
+                    id: 'okuns-law-info',
+                    linkedConnections: ['output-unemployment'],
+                    position: { x: 0.7, y: 0.7 }
+                },
+                {
+                    id: 'monetary-policy-info',
+                    linkedConnections: ['interest-inflation', 'interest-output'],
+                    position: { x: 0.2, y: 0.2 }
+                },
+                {
+                    id: 'fiscal-policy-info',
+                    linkedConnections: ['spending-output', 'spending-inflation'],
+                    position: { x: 0.8, y: 0.2 }
+                }
+            ];
+
+            // Economic scenarios
+            const scenarios = {
+                recession: {
+                    interest: 3,
+                    spending: 7,
+                    description: "During a recession, central banks typically lower interest rates to stimulate borrowing and spending. Governments often increase spending to boost aggregate demand and reduce unemployment."
+                },
+                growth: {
+                    interest: 6.5,
+                    spending: 4.5,
+                    description: "In periods of strong economic growth, central banks may raise interest rates to prevent overheating and inflation. Government spending might be reduced to avoid excessive stimulus."
+                },
+                stagflation: {
+                    interest: 7,
+                    spending: 6,
+                    description: "Stagflation combines high inflation with low growth and high unemployment. In this challenging scenario, central banks may raise rates to fight inflation while governments increase spending to stimulate growth."
+                }
+            };
+            
+            // Particles for animated connections
+            let particles = [];
+            
+            // State variables
+            let isSimulating = false;
+            let simulationSpeed = 1;
+            let activeFocus = 'all';
+            let activeNode = null;
+            
+            // Position nodes in the visualization
+            function positionNodes() {
+                const container = document.getElementById('visualization');
+                const width = container.clientWidth;
+                const height = container.clientHeight;
+                
+                // Calculate positions based on container size
+                const positions = {
+                    interest: { x: width * 0.2, y: height * 0.5 },
+                    spending: { x: width * 0.8, y: height * 0.5 },
+                    inflation: { x: width * 0.5, y: height * 0.2 },
+                    unemployment: { x: width * 0.2, y: height * 0.8 },
+                    output: { x: width * 0.8, y: height * 0.8 }
+                };
+                
+                // Update node positions
+                for (const [key, node] of Object.entries(nodes)) {
+                    node.x = positions[key].x;
+                    node.y = positions[key].y;
+                    node.element.style.left = `${node.x}px`;
+                    node.element.style.top = `${node.y}px`;
+                    
+                    // Position node type labels
+                    const nodeLabel = document.getElementById(`${node.type}-label-${key}`);
+                    if (nodeLabel) {
+                        nodeLabel.style.left = `${node.x}px`;
+                        nodeLabel.style.top = `${node.y - node.baseSize/2 - 25}px`;
+                        nodeLabel.style.transform = 'translateX(-50%)';
+                    }
+                }
+                
+                // Position connection labels
+                for (const conn of connections) {
+                    if (conn.labelElement) {
+                        const fromNode = nodes[conn.from];
+                        const toNode = nodes[conn.to];
+                        const midX = (fromNode.x + toNode.x) / 2;
+                        const midY = (fromNode.y + toNode.y) / 2;
+                        
+                        conn.labelElement.style.left = `${midX}px`;
+                        conn.labelElement.style.top = `${midY}px`;
+                    }
+                }
+                
+                // Position floating info boxes
+                for (const info of floatingInfos) {
+                    const infoBox = document.getElementById(info.id);
+                    if (infoBox) {
+                        infoBox.style.left = `${width * info.position.x}px`;
+                        infoBox.style.top = `${height * info.position.y}px`;
+                        infoBox.style.transform = 'translate(-50%, -50%)';
+                    }
+                }
+            }
+            
+            // Update node sizes based on their values
+            function updateNodes() {
+                for (const [key, node] of Object.entries(nodes)) {
+                    const scaleFactor = 0.9 + (node.value / 10) * 0.4; // Scale between 90% and 130%
+                    const newSize = node.baseSize * scaleFactor;
+                    
+                    node.element.style.width = `${newSize}px`;
+                    node.element.style.height = `${newSize}px`;
+                    
+                    // Update value display
+                    const valueElement = node.element.querySelector('.node-value');
+                    if (valueElement) {
+                        valueElement.textContent = key === 'interest' || key === 'unemployment' || key === 'inflation'
+                            ? `${node.value.toFixed(1)}%`
+                            : node.value.toFixed(1);
+                    }
+                }
+            }
+            
+            // Draw connections between nodes
+            function drawConnections() {
+                if (!canvas.width || !canvas.height) return;
+                
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw connections
+                for (const conn of connections) {
+                    const fromNode = nodes[conn.from];
+                    const toNode = nodes[conn.to];
+                    
+                    // Skip if we're focusing on a specific node and this connection doesn't involve it
+                    if (activeFocus !== 'all' && activeFocus !== conn.from && activeFocus !== conn.to) {
+                        continue;
+                    }
+                    
+                    const centerX1 = fromNode.x;
+                    const centerY1 = fromNode.y;
+                    const centerX2 = toNode.x;
+                    const centerY2 = toNode.y;
+                    
+                    // Calculate distance and angle
+                    const dx = centerX2 - centerX1;
+                    const dy = centerY2 - centerY1;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    // Draw the connection line with gradient
+                    ctx.beginPath();
+                    
+                    // Create gradient based on effect (positive/negative)
+                    const gradient = ctx.createLinearGradient(centerX1, centerY1, centerX2, centerY2);
+                    
+                    if (conn.effect === 'positive') {
+                        gradient.addColorStop(0, 'rgba(16, 185, 129, 0.1)');
+                        gradient.addColorStop(1, 'rgba(16, 185, 129, 0.5)');
+                    } else {
+                        gradient.addColorStop(0, 'rgba(239, 68, 68, 0.1)');
+                        gradient.addColorStop(1, 'rgba(239, 68, 68, 0.5)');
+                    }
+                    
+                    ctx.strokeStyle = gradient;
+                    ctx.lineWidth = 5;
+                    
+                    // Calculate radius (half of the node size)
+                    const radius1 = fromNode.baseSize / 2 * (0.9 + (fromNode.value / 10) * 0.4);
+                    const radius2 = toNode.baseSize / 2 * (0.9 + (toNode.value / 10) * 0.4);
+                    
+                    // Calculate start and end points (on the edge of nodes)
+                    const angle = Math.atan2(dy, dx);
+                    const startX = centerX1 + Math.cos(angle) * radius1;
+                    const startY = centerY1 + Math.sin(angle) * radius1;
+                    const endX = centerX2 - Math.cos(angle) * radius2;
+                    const endY = centerY2 - Math.sin(angle) * radius2;
+                    
+                    // Draw the line
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(endX, endY);
+                    ctx.stroke();
+                    
+                    // Draw arrow at the end
+                    const arrowSize = 10;
+                    const arrowAngle = Math.atan2(dy, dx);
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(endX, endY);
+                    ctx.lineTo(
+                        endX - arrowSize * Math.cos(arrowAngle - Math.PI / 6),
+                        endY - arrowSize * Math.sin(arrowAngle - Math.PI / 6)
+                    );
+                    ctx.lineTo(
+                        endX - arrowSize * Math.cos(arrowAngle + Math.PI / 6),
+                        endY - arrowSize * Math.sin(arrowAngle + Math.PI / 6)
+                    );
+                    ctx.closePath();
+                    
+                    if (conn.effect === 'positive') {
+                        ctx.fillStyle = 'rgba(16, 185, 129, 0.8)';
+                    } else {
+                        ctx.fillStyle = 'rgba(239, 68, 68, 0.8)';
+                    }
+                    
+                    ctx.fill();
+                    
+                    // Show connection label if focusing or hovering
+                    if (conn.labelElement) {
+                        if (activeFocus === conn.from || activeFocus === conn.to || activeNode === conn.from || activeNode === conn.to) {
+                            conn.labelElement.style.opacity = '1';
+                        } else if (activeFocus === 'all') {
+                            conn.labelElement.style.opacity = '0';
+                        } else {
+                            conn.labelElement.style.opacity = '0';
+                        }
+                    }
+                }
+                
+                // Draw particles
+                for (let i = 0; i < particles.length; i++) {
+                    const p = particles[i];
+                    
+                    // Skip if we're focusing on a specific node and this particle doesn't involve it
+                    if (activeFocus !== 'all' && activeFocus !== p.from && activeFocus !== p.to) {
+                        continue;
+                    }
+                    
+                    // Update particle position
+                    p.progress += p.speed;
+                    
+                    if (p.progress >= 1) {
+                        // Remove particle once it reaches the end
+                        particles.splice(i, 1);
+                        i--;
+                        continue;
+                    }
+                    
+                    // Calculate current position
+                    const fromNode = nodes[p.from];
+                    const toNode = nodes[p.to];
+                    
+                    // Calculate radius (half of the node size)
+                    const radius1 = fromNode.baseSize / 2 * (0.9 + (fromNode.value / 10) * 0.4);
+                    const radius2 = toNode.baseSize / 2 * (0.9 + (toNode.value / 10) * 0.4);
+                    
+                    // Calculate start and end points (on the edge of nodes)
+                    const dx = toNode.x - fromNode.x;
+                    const dy = toNode.y - fromNode.y;
+                    const angle = Math.atan2(dy, dx);
+                    
+                    const startX = fromNode.x + Math.cos(angle) * radius1;
+                    const startY = fromNode.y + Math.sin(angle) * radius1;
+                    const endX = toNode.x - Math.cos(angle) * radius2;
+                    const endY = toNode.y - Math.sin(angle) * radius2;
+                    
+                    // Calculate current position using cubic easing for more natural movement
+                    const t = p.progress;
+                    const tc = t*t*t; // Cubic easing
+                    const x = startX + (endX - startX) * tc;
+                    const y = startY + (endY - startY) * tc;
+                    
+                    // Draw particle
+                    ctx.beginPath();
+                    const size = p.size * (1 - 0.5 * Math.sin(p.progress * Math.PI)); // Particle gets smaller near the end
+                    
+                    // Create gradient for particle
+                    const gradientSize = size * 2;
+                    const particleGradient = ctx.createRadialGradient(x, y, 0, x, y, gradientSize);
+                    
+                    if (p.effect === 'positive') {
+                        particleGradient.addColorStop(0, 'rgba(16, 185, 129, 0.8)');
+                        particleGradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
+                    } else {
+                        particleGradient.addColorStop(0, 'rgba(239, 68, 68, 0.8)');
+                        particleGradient.addColorStop(1, 'rgba(239, 68, 68, 0)');
+                    }
+                    
+                    ctx.fillStyle = particleGradient;
+                    ctx.arc(x, y, gradientSize, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Inner circle for stronger visual
+                    ctx.beginPath();
+                    ctx.arc(x, y, size * 0.6, 0, Math.PI * 2);
+                    
+                    if (p.effect === 'positive') {
+                        ctx.fillStyle = 'rgba(16, 185, 129, 0.8)';
+                    } else {
+                        ctx.fillStyle = 'rgba(239, 68, 68, 0.8)';
+                    }
+                    
+                    ctx.fill();
+                }
+            }
+            
+            // Show tooltip
+            function showTooltip(node, event) {
+                const tooltip = document.getElementById('tooltip');
+                const nodeData = nodes[node];
+                
+                if (!nodeData) return;
+                
+                tooltip.innerHTML = `
+                    <div class="tooltip-title">${nodeData.element.querySelector('.node-title').textContent}</div>
+                    <p>${nodeData.description}</p>
+                `;
+                
+                const rect = nodeData.element.getBoundingClientRect();
+                const vizRect = document.getElementById('visualization').getBoundingClientRect();
+                
+                const offsetY = 20; // Distance below the node
+                
+                tooltip.style.left = `${nodeData.x}px`;
+                tooltip.style.top = `${nodeData.y + rect.height/2 + offsetY}px`;
+                tooltip.style.transform = 'translateX(-50%)';
+                tooltip.style.opacity = '1';
+            }
+            
+            // Hide tooltip
+            function hideTooltip() {
+                document.getElementById('tooltip').style.opacity = '0';
+            }
+            
+            // Create a particle effect for connection
+            function createParticleEffect(from, to, count = 5) {
+                const connection = connections.find(c => c.from === from && c.to === to);
+                
+                if (!connection) return;
+                
+                for (let i = 0; i < count; i++) {
+                    particles.push({
+                        from: from,
+                        to: to,
+                        progress: i * (1 / count), // Stagger particles
+                        speed: 0.01 * simulationSpeed,
+                        size: 5 + Math.random() * 3,
+                        effect: connection.effect
+                    });
+                }
+            }
+            
+            // Simulate the effects of changes in interest rates and government spending
+            function simulateEffects() {
+                if (isSimulating) return;
+                
+                isSimulating = true;
+                showLoading();
+                
+                // Get the current values from sliders
+                const interestValue = parseFloat(document.getElementById('interest-slider').value);
+                const spendingValue = parseFloat(document.getElementById('spending-slider').value);
+                
+                // Update the policy variables
+                nodes.interest.value = interestValue;
+                nodes.spending.value = spendingValue;
+                
+                // Calculate changes from baseline (5)
+                const interestChange = interestValue - 5;
+                const spendingChange = spendingValue - 5;
+                
+                // Reset economic outcome variables
+                nodes.inflation.value = 5;
+                nodes.unemployment.value = 5;
+                nodes.output.value = 5;
+                
+                // Update nodes immediately
+                updateNodes();
+                
+                // Set active focus to 'all' to show all connections
+                setActiveFocus('all');
+                
+                // Create a sequence of animations to show how changes propagate
+                setTimeout(() => {
+                    hideLoading();
+                    
+                    // Highlight policy nodes
+                    nodes.interest.element.classList.add('pulse-animation');
+                    nodes.spending.element.classList.add('pulse-animation');
+                    
+                    updateExplanation("Simulation Started", `
+                        <p>The simulation shows how changes in interest rates and government spending affect the economy. We'll track how these policy changes create ripple effects through the economic system.</p>
+                        <div class="key-fact">
+                            <p>Initial changes:</p>
+                            <ul>
+                                <li>Interest Rates: ${interestChange > 0 ? `Increased to ${interestValue.toFixed(1)}%` : `Decreased to ${interestValue.toFixed(1)}%`}</li>
+                                <li>Government Spending: ${spendingChange > 0 ? `Increased to ${spendingValue.toFixed(1)}` : `Decreased to ${spendingValue.toFixed(1)}`}</li>
+                            </ul>
+                        </div>
+                        <p>Watch as these changes propagate through the economy...</p>
+                    `);
+                    
+                    // First wave of effects: Policy variables → Output and Inflation
+                    setTimeout(() => {
+                        // Create particle effects for the connections
+                        createParticleEffect('interest', 'output');
+                        createParticleEffect('interest', 'inflation');
+                        createParticleEffect('spending', 'output');
+                        createParticleEffect('spending', 'inflation');
+                        
+                        // Calculate first-order effects
+                        const outputEffect = -0.7 * interestChange + 0.8 * spendingChange;
+                        const inflationEffect = -0.8 * interestChange + 0.5 * spendingChange;
+                        
+                        // Schedule the update of output and inflation after particles reach them
+                        setTimeout(() => {
+                            nodes.output.value = Math.max(1, Math.min(9, 5 + outputEffect));
+                            nodes.inflation.value = Math.max(1, Math.min(9, 5 + inflationEffect));
+                            
+                            // Update and pulse affected nodes
+                            updateNodes();
+                            nodes.output.element.classList.add('pulse-animation');
+                            nodes.inflation.element.classList.add('pulse-animation');
+                            
+                            updateExplanation("Primary Effects", `
+                                <p>The policy changes are now affecting output and inflation directly:</p>
+                                <div class="key-fact">
+                                    <ul>
+                                        <li>Economic Output: ${outputEffect > 0 ? 'Increasing' : 'Decreasing'} (now ${nodes.output.value.toFixed(1)})</li>
+                                        <li>Inflation: ${inflationEffect > 0 ? 'Rising' : 'Falling'} (now ${nodes.inflation.value.toFixed(1)}%)</li>
+                                    </ul>
+                                </div>
+                                <p>${interestChange > 0 ? 'Higher' : 'Lower'} interest rates ${interestChange > 0 ? 'slow' : 'stimulate'} economic activity and ${interestChange > 0 ? 'reduce' : 'increase'} inflation pressure.</p>
+                                <p>${spendingChange > 0 ? 'Higher' : 'Lower'} government spending ${spendingChange > 0 ? 'boosts' : 'reduces'} aggregate demand, ${spendingChange > 0 ? 'increasing' : 'decreasing'} both output and inflation.</p>
+                            `);
+                            
+                            // Second wave: Output → Unemployment
+                            setTimeout(() => {
+                                createParticleEffect('output', 'unemployment');
+                                createParticleEffect('output', 'inflation');
+                                
+                                // Calculate secondary effects
+                                const outputChange = nodes.output.value - 5;
+                                const unemploymentEffect = -0.9 * outputChange;
+                                const additionalInflationEffect = 0.6 * outputChange;
+                                
+                                setTimeout(() => {
+                                    nodes.unemployment.value = Math.max(1, Math.min(9, 5 + unemploymentEffect));
+                                    nodes.inflation.value = Math.max(1, Math.min(9, nodes.inflation.value + additionalInflationEffect));
+                                    
+                                    updateNodes();
+                                    nodes.unemployment.element.classList.add('pulse-animation');
+                                    nodes.inflation.element.classList.add('pulse-animation');
+                                    
+                                    showFloatingInfo('okuns-law-info');
+                                    
+                                    updateExplanation("Secondary Effects", `
+                                        <p>Changes in economic output are now affecting unemployment and creating additional inflation effects:</p>
+                                        <div class="key-fact">
+                                            <ul>
+                                                <li>Unemployment: ${unemploymentEffect > 0 ? 'Rising' : 'Falling'} (now ${nodes.unemployment.value.toFixed(1)}%)</li>
+                                                <li>Inflation: Further ${additionalInflationEffect > 0 ? 'increasing' : 'decreasing'} (now ${nodes.inflation.value.toFixed(1)}%)</li>
+                                            </ul>
+                                        </div>
+                                        <p>This demonstrates <span class="highlight">Okun's Law</span>: Higher output reduces unemployment as businesses hire more workers to meet increased demand.</p>
+                                        <p>Additionally, when output changes, it can create further inflation effects as the economy approaches or moves away from its capacity constraints.</p>
+                                    `);
+                                    
+                                    // Third wave: Unemployment → Inflation
+                                    setTimeout(() => {
+                                        createParticleEffect('unemployment', 'inflation');
+                                        
+                                        // Calculate tertiary effects
+                                        const unemploymentChange = nodes.unemployment.value - 5;
+                                        const finalInflationEffect = -0.7 * unemploymentChange;
+                                        
+                                        setTimeout(() => {
+                                            nodes.inflation.value = Math.max(1, Math.min(9, nodes.inflation.value + finalInflationEffect));
+                                            
+                                            updateNodes();
+                                            nodes.inflation.element.classList.add('pulse-animation');
+                                            
+                                            showFloatingInfo('phillips-curve-info');
+                                            
+                                            updateExplanation("Phillips Curve Effect", `
+                                                <p>Changes in unemployment are now affecting inflation, demonstrating the Phillips Curve relationship:</p>
+                                                <div class="key-fact">
+                                                    <ul>
+                                                        <li>Inflation: ${finalInflationEffect > 0 ? 'Rising further' : 'Falling further'} (now ${nodes.inflation.value.toFixed(1)}%)</li>
+                                                    </ul>
+                                                </div>
+                                                <p>The <span class="highlight">Phillips Curve</span> shows that ${unemploymentChange > 0 ? 'higher' : 'lower'} unemployment typically leads to ${finalInflationEffect > 0 ? 'higher' : 'lower'} inflation, as labor market conditions affect wage pressures.</p>
+                                            `);
+                                            
+                                            // Final wave: Inflation → Interest Rates (feedback loop)
+                                            setTimeout(() => {
+                                                createParticleEffect('inflation', 'interest');
+                                                
+                                                // This represents how central banks would respond to inflation changes
+                                                const inflationChange = nodes.inflation.value - 5;
+                                                const interestResponse = 0.8 * inflationChange;
+                                                
+                                                // We don't actually change the interest rate value since it's set by the user
+                                                // But we show the effect to illustrate the feedback loop
+                                                
+                                                setTimeout(() => {
+                                                    // Just pulse the interest rate node to show the feedback
+                                                    nodes.interest.element.classList.add('pulse-animation');
+                                                    
+                                                    updateExplanation("Feedback Loop Complete", `
+                                                        <p>The simulation is now complete, showing how changes in policy variables create ripple effects throughout the economy.</p>
+                                                        <div class="key-fact">
+                                                            <p>Final state of the economy:</p>
+                                                            <ul>
+                                                                <li>Economic Output: ${nodes.output.value.toFixed(1)} (${nodes.output.value > 5 ? 'Above' : 'Below'} baseline)</li>
+                                                                <li>Inflation: ${nodes.inflation.value.toFixed(1)}% (${nodes.inflation.value > 5 ? 'Above' : 'Below'} baseline)</li>
+                                                                <li>Unemployment: ${nodes.unemployment.value.toFixed(1)}% (${nodes.unemployment.value > 5 ? 'Above' : 'Below'} baseline)</li>
+                                                            </ul>
+                                                        </div>
+                                                        <p>Note how inflation would typically cause a central bank response: ${inflationChange > 0 ? 'Rising' : 'Falling'} inflation would normally lead to ${interestResponse > 0 ? 'higher' : 'lower'} interest rates as policymakers respond.</p>
+                                                        <p>This completes the circular flow of economic relationships, creating a dynamic system that constantly adjusts to maintain equilibrium.</p>
+                                                    `);
+                                                    
+                                                    setTimeout(() => {
+                                                        isSimulating = false;
+                                                    }, 1000);
+                                                }, 1000);
+                                            }, 1000);
+                                        }, 1000);
+                                    }, 1000);
+                                }, 1000);
+                            }, 1000);
+                        }, 1000);
+                    }, 1000);
+                }, 500);
+            }
+            
+            // Reset the visualization
+            function resetVisualization() {
+                // Reset all values to 5 (baseline)
+                for (const key in nodes) {
+                    nodes[key].value = 5;
+                }
+                
+                // Reset sliders
+                document.getElementById('interest-slider').value = 5;
+                document.getElementById('spending-slider').value = 5;
+                document.getElementById('interest-value').textContent = '5%';
+                document.getElementById('spending-value').textContent = '5';
+                
+                // Clear particles
+                particles = [];
+                
+                // Reset active focus
+                setActiveFocus('all');
+                
+                // Update nodes
+                updateNodes();
+                
+                // Hide all floating infos
+                document.querySelectorAll('.floating-info').forEach(info => {
+                    info.style.opacity = '0';
+                });
+                
+                // Reset explanation
+                updateExplanation("How These Economic Variables Interact", `
+                    <p>This visualization shows the interconnected relationships between key macroeconomic variables. The economy functions as a dynamic system where changes in one variable create ripple effects throughout.</p>
+                    
+                    <div class="key-fact">
+                        <p><span class="highlight">Policy Variables:</span> Interest rates (monetary policy) and government spending (fiscal policy) are the primary tools used to influence economic outcomes.</p>
+                    </div>
+                    
+                    <p>To see these relationships in action, adjust the sliders for interest rates and government spending, then click "Simulate Effects" to watch how these changes propagate through the economic system.</p>
+                    
+                    <p>Click on any variable to see detailed information about its relationships with other variables.</p>
+                `);
+                
+                // Remove any animation classes
+                document.querySelectorAll('.pulse-animation').forEach(el => {
+                    el.classList.remove('pulse-animation');
+                });
+            }
+            
+            // Update the explanation panel
+            function updateExplanation(title, content) {
+                document.getElementById('explanation-title').textContent = title;
+                document.getElementById('explanation-content').innerHTML = content;
+            }
+            
+            // Show a specific floating info box
+            function showFloatingInfo(infoId) {
+                document.querySelectorAll('.floating-info').forEach(info => {
+                    info.style.opacity = '0';
+                });
+                
+                const infoBox = document.getElementById(infoId);
+                if (infoBox) {
+                    infoBox.style.opacity = '1';
+                    
+                    // Auto-hide after 5 seconds
+                    setTimeout(() => {
+                        infoBox.style.opacity = '0';
+                    }, 5000);
+                }
+            }
+            
+            // Set active focus
+            function setActiveFocus(focus) {
+                activeFocus = focus;
+                
+                // Update focus buttons
+                document.querySelectorAll('.focus-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.focus === focus);
+                });
+                
+                // Show/hide node labels based on focus
+                for (const [key, node] of Object.entries(nodes)) {
+                    const label = document.getElementById(`${node.type}-label-${key}`);
+                    if (label) {
+                        if (focus === 'all' || focus === key) {
+                            label.style.opacity = '1';
+                        } else {
+                            label.style.opacity = '0';
+                        }
+                    }
+                }
+                
+                // Update active node
+                if (focus !== 'all') {
+                    setActiveNode(focus);
+                } else {
+                    setActiveNode(null);
+                }
+            }
+            
+            // Set active node (for highlighting)
+            function setActiveNode(nodeKey) {
+                activeNode = nodeKey;
+                
+                // Remove active class from all nodes
+                for (const key in nodes) {
+                    nodes[key].element.classList.remove('active');
+                }
+                
+                // Add active class to selected node
+                if (nodeKey && nodes[nodeKey]) {
+                    nodes[nodeKey].element.classList.add('active');
+                    
+                    // Update explanation with node details
+                    updateExplanation(
+                        nodes[nodeKey].element.querySelector('.node-title').textContent,
+                        nodes[nodeKey].detailedContent
+                    );
+                }
+            }
+            
+            // Apply a scenario
+            function applyScenario(scenarioKey) {
+                if (!scenarios[scenarioKey]) return;
+                
+                const scenario = scenarios[scenarioKey];
+                
+                // Update sliders
+                document.getElementById('interest-slider').value = scenario.interest;
+                document.getElementById('spending-slider').value = scenario.spending;
+                
+                // Trigger input events to update displays
+                document.getElementById('interest-slider').dispatchEvent(new Event('input'));
+                document.getElementById('spending-slider').dispatchEvent(new Event('input'));
+                
+                // Update explanation with scenario description
+                updateExplanation(`${scenarioKey.charAt(0).toUpperCase() + scenarioKey.slice(1)} Scenario`, `
+                    <p>${scenario.description}</p>
+                    <div class="key-fact">
+                        <p>Policy settings for this scenario:</p>
+                        <ul>
+                            <li>Interest Rates: ${scenario.interest}%</li>
+                            <li>Government Spending: ${scenario.spending}</li>
+                        </ul>
+                    </div>
+                    <p>Click "Simulate Effects" to see how these policy settings affect the economy.</p>
+                `);
+                
+                // Highlight scenario button
+                document.querySelectorAll('.scenario-btn').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.scenario === scenarioKey);
+                });
+            }
+            
+            // Show loading overlay
+            function showLoading() {
+                document.querySelector('.loading-overlay').style.opacity = '1';
+                document.querySelector('.loading-overlay').style.pointerEvents = 'auto';
+            }
+            
+            // Hide loading overlay
+            function hideLoading() {
+                document.querySelector('.loading-overlay').style.opacity = '0';
+                document.querySelector('.loading-overlay').style.pointerEvents = 'none';
+            }
+            
+            // Resize canvas to match container
+            function resizeCanvas() {
+                const container = document.getElementById('visualization');
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+            }
+            
+            // Animation loop
+            function animate() {
+                drawConnections();
+                requestAnimationFrame(animate);
+            }
+            
+            // Initialize everything
+            function initialize() {
+                // Set up nodes
+                updateNodes();
+                positionNodes();
+                
+                // Start animation loop
+                animate();
+                
+                // Add event listeners
+                
+                // Slider events
+                document.getElementById('interest-slider').addEventListener('input', function() {
+                    const value = parseFloat(this.value);
+                    document.getElementById('interest-value').textContent = `${value.toFixed(1)}%`;
+                    nodes.interest.value = value;
+                    updateNodes();
+                });
+                
+                document.getElementById('spending-slider').addEventListener('input', function() {
+                    const value = parseFloat(this.value);
+                    document.getElementById('spending-value').textContent = value.toFixed(1);
+                    nodes.spending.value = value;
+                    updateNodes();
+                });
+                
+                // Button events
+                document.getElementById('simulate-btn').addEventListener('click', simulateEffects);
+                document.getElementById('reset-btn').addEventListener('click', resetVisualization);
+                
+                // Node events
+                for (const [key, node] of Object.entries(nodes)) {
+                    // Hover events for tooltip
+                    node.element.addEventListener('mouseenter', () => showTooltip(key));
+                    node.element.addEventListener('mouseleave', hideTooltip);
+                    
+                    // Click event to focus on node
+                    node.element.addEventListener('click', () => {
+                        setActiveFocus(key);
+                    });
+                }
+                
+                // Focus button events
+                document.querySelectorAll('.focus-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        setActiveFocus(this.dataset.focus);
+                    });
+                });
+                
+                // Scenario button events
+                document.querySelectorAll('.scenario-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        applyScenario(this.dataset.scenario);
+                    });
+                });
+                
+                // Show node type labels after a short delay
+                setTimeout(() => {
+                    document.querySelectorAll('.node-label').forEach(label => {
+                        label.style.opacity = '1';
+                    });
+                }, 1000);
+                
+                // Window resize event
+                window.addEventListener('resize', () => {
+                    resizeCanvas();
+                    positionNodes();
+                });
+            }
+            
+            // Initialize when DOM is loaded
+            initialize();
+        });
+    </script>
+</body>
+</html>

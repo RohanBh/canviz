@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jet Stream & Hurricane Visualization</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/d3-geo.v2.min.js"></script>
+    <script src="https://d3js.org/topojson.v3.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f8ff;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            color: #555;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+        
+        .map-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        svg {
+            background-color: #cde6f5;
+            border-radius: 8px;
+        }
+        
+        .land {
+            fill: #d9d9d9;
+            stroke: #a9a9a9;
+            stroke-width: 0.5px;
+        }
+        
+        .us-land {
+            fill: #c9c9c9;
+            stroke: #a9a9a9;
+            stroke-width: 0.5px;
+        }
+        
+        .jet-stream {
+            fill: none;
+            stroke: #3498db;
+            stroke-width: 4px;
+            stroke-linecap: round;
+            stroke-dasharray: 10, 5;
+            opacity: 0.7;
+        }
+        
+        .hurricane-path {
+            fill: none;
+            stroke: #e74c3c;
+            stroke-width: 3px;
+            stroke-linecap: round;
+            stroke-dasharray: 1, 0;
+        }
+        
+        .hurricane-symbol {
+            fill: #e74c3c;
+        }
+        
+        .formation-area {
+            fill: rgba(231, 76, 60, 0.1);
+            stroke: #e74c3c;
+            stroke-width: 1px;
+            stroke-dasharray: 3, 3;
+        }
+        
+        .tooltip {
+            position: absolute;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            pointer-events: none;
+            max-width: 250px;
+            transition: opacity 0.3s;
+            font-size: 14px;
+            z-index: 100;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        button.active {
+            background-color: #e74c3c;
+        }
+        
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 3px;
+            margin-right: 10px;
+        }
+        
+        .legend-text {
+            font-size: 12px;
+        }
+        
+        .explanation {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .highlight-box {
+            position: absolute;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 5px;
+            border-left: 4px solid #e74c3c;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 250px;
+            font-size: 14px;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>How the Polar Jet Stream Influences Hurricanes</h1>
+        <p class="description">Explore how the position and strength of the polar jet stream affects hurricane formation, paths, and intensity in the Atlantic basin.</p>
+        
+        <div class="controls">
+            <button id="normal-btn" class="active">Normal Jet Stream Pattern</button>
+            <button id="dipping-btn">Dipping Jet Stream</button>
+            <button id="historical-btn">Historical Examples</button>
+            <button id="reset-btn">Reset</button>
+        </div>
+        
+        <div class="map-container">
+            <div id="tooltip" class="tooltip" style="opacity:0"></div>
+            <div id="highlight" class="highlight-box" style="opacity:0"></div>
+        </div>
+        
+        <div class="explanation">
+            <h3>How the Jet Stream Influences Hurricanes:</h3>
+            <ol>
+                <li><strong>Formation:</strong> The jet stream creates wind shear (changes in wind direction and speed with height) that can prevent hurricane formation when it extends too far south.</li>
+                <li><strong>Steering:</strong> The jet stream acts like a barrier or a steering current, influencing where hurricanes travel. It often determines whether hurricanes curve out to sea or make landfall in the United States.</li>
+                <li><strong>Intensity:</strong> If a hurricane moves into an area with strong jet stream winds, the increased wind shear can weaken or even dissipate the hurricane structure.</li>
+                <li><strong>Seasonal Changes:</strong> The jet stream typically moves northward in summer (hurricane season) and southward in winter, affecting the likelihood and paths of hurricanes throughout the season.</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // Map setup
+        const width = 1000;
+        const height = 500;
+        
+        const svg = d3.select(".map-container")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+            
+        const projection = d3.geoMercator()
+            .center([-70, 30])
+            .scale(300)
+            .translate([width / 2, height / 2]);
+            
+        const path = d3.geoPath()
+            .projection(projection);
+            
+        // Load world map
+        d3.json("https://unpkg.com/world-atlas@2.0.2/countries-110m.json").then(worldData => {
+            const countries = topojson.feature(worldData, worldData.objects.countries).features;
+            
+            // Draw world map
+            svg.selectAll(".land")
+                .data(countries)
+                .enter()
+                .append("path")
+                .attr("class", "land")
+                .attr("d", path)
+                .attr("fill", d => {
+                    // Highlight the United States
+                    return d.id === 840 ? "#c9c9c9" : "#d9d9d9";
+                });
+                
+            // Add map labels
+            const labels = [
+                { name: "United States", coords: [-95, 40] },
+                { name: "Atlantic Ocean", coords: [-50, 35] },
+                { name: "Caribbean Sea", coords: [-75, 17] },
+                { name: "Gulf of Mexico", coords: [-90, 25] }
+            ];
+            
+            svg.selectAll(".map-label")
+                .data(labels)
+                .enter()
+                .append("text")
+                .attr("class", "map-label")
+                .attr("x", d => projection(d.coords)[0])
+                .attr("y", d => projection(d.coords)[1])
+                .attr("text-anchor", "middle")
+                .attr("font-size", "12px")
+                .attr("fill", "#555")
+                .text(d => d.name);
+                
+            // Add hurricane formation area
+            const formationArea = [
+                [-85, 10], [-60, 10], [-60, 25], [-85, 25], [-85, 10]
+            ];
+            
+            svg.append("path")
+                .attr("class", "formation-area")
+                .attr("d", path({
+                    type: "Polygon",
+                    coordinates: [formationArea]
+                }));
+                
+            svg.append("text")
+                .attr("x", projection([-72.5, 17.5])[0])
+                .attr("y", projection([-72.5, 17.5])[1])
+                .attr("text-anchor", "middle")
+                .attr("font-size", "12px")
+                .attr("fill", "#e74c3c")
+                .text("Hurricane Formation Area");
+                
+            // Add legend
+            const legend = svg.append("g")
+                .attr("class", "legend")
+                .attr("transform", "translate(20, 430)");
+                
+            legend.append("rect")
+                .attr("width", 180)
+                .attr("height", 60)
+                .attr("fill", "rgba(255, 255, 255, 0.8)")
+                .attr("rx", 5);
+                
+            const legendItems = [
+                { color: "#3498db", label: "Jet Stream" },
+                { color: "#e74c3c", label: "Hurricane Path" },
+                { color: "rgba(231, 76, 60, 0.1)", label: "Formation Area" }
+            ];
+            
+            legendItems.forEach((item, i) => {
+                const g = legend.append("g")
+                    .attr("transform", `translate(10, ${15 + i * 15})`);
+                    
+                g.append("line")
+                    .attr("x1", 0)
+                    .attr("y1", 0)
+                    .attr("x2", 20)
+                    .attr("y2", 0)
+                    .attr("stroke", item.color)
+                    .attr("stroke-width", 3);
+                    
+                g.append("text")
+                    .attr("x", 30)
+                    .attr("y", 4)
+                    .attr("font-size", "12px")
+                    .text(item.label);
+            });
+            
+            // Jet stream patterns
+            const normalJetStream = [
+                [-130, 45], [-110, 47], [-90, 48], [-70, 47], [-50, 45], [-30, 43], [-10, 40]
+            ];
+            
+            const dippingJetStream = [
+                [-130, 45], [-110, 42], [-90, 37], [-70, 35], [-50, 37], [-30, 40], [-10, 40]
+            ];
+            
+            // Initialize with normal jet stream
+            const jetStream = svg.append("path")
+                .attr("class", "jet-stream")
+                .attr("d", createCardinalSpline(normalJetStream));
+                
+            // Animate jet stream
+            function animateJetStream() {
+                d3.select(".jet-stream")
+                    .attr("stroke-dashoffset", 0)
+                    .transition()
+                    .duration(30000)
+                    .ease(d3.easeLinear)
+                    .attr("stroke-dashoffset", 1000)
+                    .on("end", animateJetStream);
+            }
+            
+            animateJetStream();
+            
+            // Hurricane paths
+            const normalHurricanePath = [
+                [-60, 15], [-65, 18], [-70, 20], [-75, 23], [-80, 27], 
+                [-82, 32], [-80, 37], [-76, 41], [-70, 44], [-63, 47]
+            ];
+            
+            const dippingHurricanePath = [
+                [-60, 15], [-65, 18], [-70, 20], [-75, 23], [-80, 27], 
+                [-84, 32], [-88, 34], [-92, 35], [-96, 36]
+            ];
+            
+            // Historical hurricanes
+            const hurricane1 = { // Sandy (2012)
+                name: "Hurricane Sandy (2012)",
+                path: [
+                    [-78, 20], [-75, 22], [-74, 25], [-73, 28], [-74, 31], 
+                    [-75, 34], [-74, 38], [-73, 40]
+                ],
+                description: "Hurricane Sandy was influenced by an unusual jet stream pattern that pushed it westward into New Jersey rather than allowing it to curve out to sea. The jet stream blocked its normal path and created a sharp left turn."
+            };
+            
+            const hurricane2 = { // Katrina (2005)
+                name: "Hurricane Katrina (2005)",
+                path: [
+                    [-75, 24], [-78, 25], [-82, 25], [-85, 26], [-88, 28], 
+                    [-89, 30], [-89, 33], [-87, 37], [-84, 41]
+                ],
+                description: "Katrina intensified in the Gulf where it was protected from the jet stream's wind shear. The jet stream position allowed Katrina to move northward into the Gulf Coast rather than being steered away from land."
+            };
+            
+            // Add tooltip
+            const tooltip = d3.select("#tooltip");
+            const highlightBox = d3.select("#highlight");
+            
+            // Button controls
+            d3.select("#normal-btn").on("click", function() {
+                resetVisualization();
+                d3.selectAll("button").classed("active", false);
+                d3.select(this).classed("active", true);
+                
+                // Set normal jet stream
+                jetStream.transition()
+                    .duration(1000)
+                    .attr("d", createCardinalSpline(normalJetStream));
+                    
+                // Show normal hurricane path after a delay
+                setTimeout(() => {
+                    const hurricane = svg.append("path")
+                        .attr("class", "hurricane-path")
+                        .attr("d", createCardinalSpline(normalHurricanePath))
+                        .attr("stroke-dasharray", getTotalLength)
+                        .attr("stroke-dashoffset", getTotalLength);
+                    
+                    const hurricaneSymbol = svg.append("circle")
+                        .attr("class", "hurricane-symbol")
+                        .attr("r", 5)
+                        .attr("cx", projection(normalHurricanePath[0])[0])
+                        .attr("cy", projection(normalHurricanePath[0])[1]);
+                    
+                    // Animate hurricane along path
+                    animateHurricane(hurricane, hurricaneSymbol, normalHurricanePath);
+                    
+                    // Show tooltip explaining curved path
+                    setTimeout(() => {
+                        showHighlight(
+                            projection([-76, 41])[0],
+                            projection([-76, 41])[1],
+                            "Normal Jet Stream Pattern: Hurricanes typically curve northeastward away from the US mainland when the jet stream is in its normal position. The jet stream acts as a boundary that steers hurricanes out to sea."
+                        );
+                    }, 3000);
+                }, 1000);
+            });
+            
+            d3.select("#dipping-btn").on("click", function() {
+                resetVisualization();
+                d3.selectAll("button").classed("active", false);
+                d3.select(this).classed("active", true);
+                
+                // Set dipping jet stream
+                jetStream.transition()
+                    .duration(1000)
+                    .attr("d", createCardinalSpline(dippingJetStream));
+                    
+                // Show dipping hurricane path after a delay
+                setTimeout(() => {
+                    const hurricane = svg.append("path")
+                        .attr("class", "hurricane-path")
+                        .attr("d", createCardinalSpline(dippingHurricanePath))
+                        .attr("stroke-dasharray", getTotalLength)
+                        .attr("stroke-dashoffset", getTotalLength);
+                    
+                    const hurricaneSymbol = svg.append("circle")
+                        .attr("class", "hurricane-symbol")
+                        .attr("r", 5)
+                        .attr("cx", projection(dippingHurricanePath[0])[0])
+                        .attr("cy", projection(dippingHurricanePath[0])[1]);
+                    
+                    // Animate hurricane along path
+                    animateHurricane(hurricane, hurricaneSymbol, dippingHurricanePath);
+                    
+                    // Show tooltip explaining impact
+                    setTimeout(() => {
+                        showHighlight(
+                            projection([-92, 35])[0],
+                            projection([-92, 35])[1],
+                            "Dipping Jet Stream: When the jet stream dips southward, it can create a corridor that steers hurricanes toward the US mainland rather than turning them out to sea. This pattern increases the likelihood of US landfalls."
+                        );
+                    }, 3000);
+                }, 1000);
+            });
+            
+            d3.select("#historical-btn").on("click", function() {
+                resetVisualization();
+                d3.selectAll("button").classed("active", false);
+                d3.select(this).classed("active", true);
+                
+                // Show Sandy first
+                const sandy = svg.append("path")
+                    .attr("class", "hurricane-path")
+                    .style("stroke", "#e74c3c")
+                    .attr("d", createCardinalSpline(hurricane1.path))
+                    .attr("stroke-dasharray", getTotalLength)
+                    .attr("stroke-dashoffset", getTotalLength);
+                
+                svg.append("text")
+                    .attr("x", projection(hurricane1.path[0])[0] - 10)
+                    .attr("y", projection(hurricane1.path[0])[1] - 10)
+                    .attr("font-size", "12px")
+                    .attr("fill", "#e74c3c")
+                    .text(hurricane1.name);
+                
+                // Show Katrina with a delay
+                setTimeout(() => {
+                    const katrina = svg.append("path")
+                        .attr("class", "hurricane-path")
+                        .style("stroke", "#9b59b6")
+                        .attr("d", createCardinalSpline(hurricane2.path))
+                        .attr("stroke-dasharray", getTotalLength)
+                        .attr("stroke-dashoffset", getTotalLength);
+                    
+                    svg.append("text")
+                        .attr("x", projection(hurricane2.path[0])[0] - 10)
+                        .attr("y", projection(hurricane2.path[0])[1] - 10)
+                        .attr("font-size", "12px")
+                        .attr("fill", "#9b59b6")
+                        .text(hurricane2.name);
+                    
+                    katrina.transition()
+                        .duration(3000)
+                        .attr("stroke-dashoffset", 0);
+                    
+                    // Show explanation for Katrina
+                    setTimeout(() => {
+                        showHighlight(
+                            projection([-89, 30])[0] + 20,
+                            projection([-89, 30])[1],
+                            hurricane2.description
+                        );
+                    }, 1500);
+                }, 4000);
+                
+                // Animate Sandy path
+                sandy.transition()
+                    .duration(3000)
+                    .attr("stroke-dashoffset", 0);
+                
+                // Show explanation for Sandy
+                setTimeout(() => {
+                    showHighlight(
+                        projection([-74, 38])[0] + 20,
+                        projection([-74, 38])[1],
+                        hurricane1.description
+                    );
+                }, 1500);
+            });
+            
+            d3.select("#reset-btn").on("click", resetVisualization);
+            
+            // Helper functions
+            function createCardinalSpline(points) {
+                return d3.line()
+                    .x(d => projection(d)[0])
+                    .y(d => projection(d)[1])
+                    .curve(d3.curveCardinal.tension(0.5))
+                    (points);
+            }
+            
+            function getTotalLength(d) {
+                return this.getTotalLength();
+            }
+            
+            function animateHurricane(pathElement, symbolElement, coordinates) {
+                const path = pathElement.node();
+                const pathLength = path.getTotalLength();
+                
+                // Animate path
+                pathElement.transition()
+                    .duration(5000)
+                    .attr("stroke-dashoffset", 0);
+                
+                // Animate hurricane symbol along path
+                let start = Date.now();
+                const duration = 5000;
+                const end = start + duration;
+                
+                function frame() {
+                    const now = Date.now();
+                    if (now >= end) return;
+                    
+                    const progress = (now - start) / duration;
+                    const point = path.getPointAtLength(pathLength * progress);
+                    
+                    symbolElement
+                        .attr("cx", point.x)
+                        .attr("cy", point.y)
+                        .attr("r", 5 + Math.sin(progress * 10) * 2); // Pulsing effect
+                    
+                    requestAnimationFrame(frame);
+                }
+                
+                requestAnimationFrame(frame);
+            }
+            
+            function showHighlight(x, y, text) {
+                highlightBox
+                    .style("left", x + "px")
+                    .style("top", y + "px")
+                    .html(text)
+                    .transition()
+                    .duration(500)
+                    .style("opacity", 1);
+                
+                // Auto-hide after a while
+                setTimeout(() => {
+                    highlightBox.transition()
+                        .duration(500)
+                        .style("opacity", 0);
+                }, 10000);
+            }
+            
+            function resetVisualization() {
+                // Clear hurricane paths and symbols
+                svg.selectAll(".hurricane-path, .hurricane-symbol").remove();
+                
+                // Hide tooltips
+                highlightBox.transition().duration(300).style("opacity", 0);
+                tooltip.transition().duration(300).style("opacity", 0);
+                
+                // Reset jet stream to normal position
+                jetStream.transition()
+                    .duration(1000)
+                    .attr("d", createCardinalSpline(normalJetStream));
+                
+                // Reset buttons
+                d3.selectAll("button").classed("active", false);
+            }
+            
+            // Initialize with normal pattern
+            d3.select("#normal-btn").dispatch("click");
+        });
+    </script>
+</body>
+</html>

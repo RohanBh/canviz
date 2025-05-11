@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jet Stream & Hurricane Interaction</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/d3-geo.v2.min.js"></script>
+    <script src="https://d3js.org/topojson.v3.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .vis-container {
+            position: relative;
+            background-color: #daeffb;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        #visualization {
+            width: 100%;
+            height: 600px;
+        }
+        .land {
+            fill: #d4d4d4;
+            stroke: #ffffff;
+            stroke-width: 0.5px;
+        }
+        .us {
+            fill: #c0c0c0;
+            stroke: #ffffff;
+            stroke-width: 0.5px;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            background-color: #f8f8f8;
+            border-top: 1px solid #ddd;
+        }
+        .btn {
+            padding: 8px 15px;
+            margin: 0 5px;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #3a7bc8;
+        }
+        .btn:disabled {
+            background-color: #b0c4de;
+            cursor: not-allowed;
+        }
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        .step {
+            width: 12px;
+            height: 12px;
+            background-color: #ddd;
+            border-radius: 50%;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+        .step.active {
+            background-color: #4a90e2;
+        }
+        .explanation-box {
+            position: absolute;
+            width: 300px;
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            top: 20px;
+            right: 20px;
+            font-size: 14px;
+            line-height: 1.4;
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+        .explanation-box.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 12px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            margin-right: 8px;
+            border-radius: 2px;
+        }
+        .hurricane-formation {
+            fill: rgba(255, 180, 0, 0.2);
+            stroke: orange;
+            stroke-width: 1px;
+            stroke-dasharray: 4;
+        }
+        .jet-stream {
+            fill: none;
+            stroke-width: 2px;
+            stroke-linecap: round;
+        }
+        .hurricane-path {
+            fill: none;
+            stroke-width: 2px;
+            stroke-dasharray: 2;
+        }
+        .hurricane-point {
+            fill: red;
+            stroke: white;
+            stroke-width: 1px;
+        }
+        .tooltip {
+            position: absolute;
+            background-color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            pointer-events: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>How the Polar Jet Stream Influences Hurricanes</h1>
+            <p>Explore the relationship between the jet stream and hurricane formation, path, and intensity</p>
+        </div>
+        
+        <div class="vis-container">
+            <div id="visualization"></div>
+            
+            <div class="explanation-box" id="explanation">
+                <h3 id="explanation-title">Jet Stream & Hurricanes</h3>
+                <p id="explanation-text">The polar jet stream is a fast-flowing air current in the upper atmosphere that can significantly influence hurricane behavior near the United States.</p>
+            </div>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #4a90e2;"></div>
+                    <span>Polar Jet Stream</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: rgba(255, 180, 0, 0.2); border: 1px dashed orange;"></div>
+                    <span>Hurricane Formation Areas</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: red;"></div>
+                    <span>Hurricane</span>
+                </div>
+                <div class="legend-item">
+                    <div style="width: 15px; height: 2px; background-color: purple; margin-right: 8px;"></div>
+                    <span>Hurricane Path</span>
+                </div>
+            </div>
+            
+            <div class="tooltip" id="tooltip"></div>
+        </div>
+        
+        <div class="step-indicator">
+            <div class="step active" data-step="0"></div>
+            <div class="step" data-step="1"></div>
+            <div class="step" data-step="2"></div>
+            <div class="step" data-step="3"></div>
+        </div>
+        
+        <div class="controls">
+            <button id="prev-btn" class="btn" disabled>Previous</button>
+            <button id="play-btn" class="btn">Play Animation</button>
+            <button id="next-btn" class="btn">Next</button>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentStep = 0;
+        const totalSteps = 4;
+        let isPlaying = false;
+        let animationTimer;
+        
+        // Explanation content for each step
+        const explanations = [
+            {
+                title: "Introduction",
+                text: "The polar jet stream is a fast-flowing river of air in the upper atmosphere that separates cold polar air from warmer southern air. We'll explore how it affects hurricanes in three key ways."
+            },
+            {
+                title: "Hurricane Formation",
+                text: "The jet stream helps determine where hurricanes can form. When it shifts northward in summer and fall, warm ocean water and reduced wind shear in the Atlantic create favorable conditions for hurricane development."
+            },
+            {
+                title: "Hurricane Path",
+                text: "The jet stream acts like a steering current for hurricanes. Its position can guide hurricanes toward or away from the U.S. coastline. A dip in the jet stream can pull hurricanes northward, while a ridge can block their path."
+            },
+            {
+                title: "Hurricane Intensity",
+                text: "The jet stream influences hurricane strength through wind shear. When it's far north, hurricanes can intensify without disruption. When it dips south, its strong winds can shear off hurricane tops, weakening them."
+            }
+        ];
+
+        // Hurricane formation areas
+        const formationAreas = [
+            {
+                name: "Main Development Region",
+                polygon: [
+                    [-60, 10], [-80, 10], [-85, 20], 
+                    [-75, 25], [-60, 25], [-50, 20], [-60, 10]
+                ]
+            },
+            {
+                name: "Gulf of Mexico",
+                polygon: [
+                    [-97, 18], [-97, 30], [-80, 30],
+                    [-80, 18], [-97, 18]
+                ]
+            }
+        ];
+
+        // Sample hurricane paths for demonstration
+        const hurricanePaths = [
+            {
+                name: "Hurricane Example 1",
+                category: 4,
+                year: 2017,
+                path: [
+                    {lon: -45, lat: 15, stage: 1},
+                    {lon: -55, lat: 17, stage: 2},
+                    {lon: -65, lat: 20, stage: 3},
+                    {lon: -75, lat: 23, stage: 4},
+                    {lon: -80, lat: 26, stage: 4},
+                    {lon: -82, lat: 30, stage: 3},
+                    {lon: -85, lat: 34, stage: 2},
+                    {lon: -87, lat: 38, stage: 1}
+                ],
+                visible: false
+            },
+            {
+                name: "Hurricane Example 2",
+                category: 3,
+                year: 2018,
+                path: [
+                    {lon: -40, lat: 12, stage: 1},
+                    {lon: -50, lat: 13, stage: 2},
+                    {lon: -60, lat: 15, stage: 3},
+                    {lon: -70, lat: 18, stage: 3},
+                    {lon: -77, lat: 25, stage: 2},
+                    {lon: -78, lat: 32, stage: 1}
+                ],
+                visible: false
+            },
+            {
+                name: "Hurricane Example 3",
+                category: 5,
+                year: 2019,
+                path: [
+                    {lon: -60, lat: 18, stage: 1},
+                    {lon: -65, lat: 19, stage: 2},
+                    {lon: -70, lat: 20, stage: 3},
+                    {lon: -75, lat: 22, stage: 4},
+                    {lon: -80, lat: 25, stage: 5},
+                    {lon: -85, lat: 28, stage: 4},
+                    {lon: -90, lat: 32, stage: 3},
+                    {lon: -93, lat: 36, stage: 2},
+                    {lon: -95, lat: 40, stage: 1}
+                ],
+                visible: false
+            }
+        ];
+
+        // Sample jet stream patterns
+        const jetStreamPatterns = [
+            // Normal pattern (step 0 - intro)
+            [
+                {lon: -130, lat: 55}, {lon: -120, lat: 52}, {lon: -110, lat: 50},
+                {lon: -100, lat: 49}, {lon: -90, lat: 47}, {lon: -80, lat: 45},
+                {lon: -70, lat: 44}, {lon: -60, lat: 43}, {lon: -50, lat: 42}
+            ],
+            // Formation pattern (step 1)
+            [
+                {lon: -130, lat: 60}, {lon: -120, lat: 58}, {lon: -110, lat: 57},
+                {lon: -100, lat: 56}, {lon: -90, lat: 54}, {lon: -80, lat: 53},
+                {lon: -70, lat: 52}, {lon: -60, lat: 50}, {lon: -50, lat: 48}
+            ],
+            // Path pattern (step 2) - dip that pulls hurricanes north
+            [
+                {lon: -130, lat: 55}, {lon: -120, lat: 53}, {lon: -110, lat: 52},
+                {lon: -100, lat: 50}, {lon: -90, lat: 45}, {lon: -80, lat: 42},
+                {lon: -70, lat: 45}, {lon: -60, lat: 48}, {lon: -50, lat: 50}
+            ],
+            // Intensity pattern (step 3) - southern dip creating wind shear
+            [
+                {lon: -130, lat: 52}, {lon: -120, lat: 50}, {lon: -110, lat: 45},
+                {lon: -100, lat: 40}, {lon: -90, lat: 38}, {lon: -80, lat: 40},
+                {lon: -70, lat: 42}, {lon: -60, lat: 45}, {lon: -50, lat: 47}
+            ]
+        ];
+
+        // Initialize the visualization
+        document.addEventListener('DOMContentLoaded', () => {
+            initVisualization();
+            setupEventListeners();
+            updateVisualization(currentStep);
+        });
+
+        // Set up the map and basic elements
+        function initVisualization() {
+            const width = document.getElementById('visualization').clientWidth;
+            const height = document.getElementById('visualization').clientHeight;
+            
+            // Create SVG
+            const svg = d3.select('#visualization')
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height);
+            
+            // Create map projection
+            const projection = d3.geoMercator()
+                .center([-80, 35])
+                .scale(width / 2)
+                .translate([width / 2, height / 2]);
+            
+            // Create path generator
+            const path = d3.geoPath().projection(projection);
+            
+            // Add water background
+            svg.append('rect')
+                .attr('width', width)
+                .attr('height', height)
+                .attr('fill', '#daeffb');
+            
+            // Load world map data
+            d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+                .then(data => {
+                    // Draw land
+                    svg.append('g')
+                        .selectAll('path')
+                        .data(topojson.feature(data, data.objects.countries).features)
+                        .enter()
+                        .append('path')
+                        .attr('class', 'land')
+                        .attr('d', path);
+                    
+                    // Highlight US
+                    svg.append('g')
+                        .selectAll('path')
+                        .data(topojson.feature(data, data.objects.countries).features.filter(d => d.id === 840)) // 840 is the ISO code for US
+                        .enter()
+                        .append('path')
+                        .attr('class', 'us')
+                        .attr('d', path);
+                    
+                    // Add hurricane formation areas
+                    svg.append('g')
+                        .attr('class', 'formation-areas')
+                        .selectAll('path')
+                        .data(formationAreas)
+                        .enter()
+                        .append('path')
+                        .attr('class', 'hurricane-formation')
+                        .attr('d', d => {
+                            return path({
+                                type: 'Polygon',
+                                coordinates: [d.polygon]
+                            });
+                        })
+                        .attr('opacity', 0);
+                    
+                    // Create jet stream path group
+                    svg.append('path')
+                        .attr('class', 'jet-stream')
+                        .attr('stroke', '#4a90e2')
+                        .attr('stroke-width', 3)
+                        .attr('opacity', 0);
+                    
+                    // Create hurricane paths group
+                    const hurricaneGroup = svg.append('g')
+                        .attr('class', 'hurricane-group');
+                    
+                    // Create tooltip
+                    const tooltip = d3.select('#tooltip');
+                    
+                    // Now we'll draw hurricane paths when needed in updateVisualization
+                });
+        }
+
+        // Set up event listeners for buttons
+        function setupEventListeners() {
+            // Next button
+            document.getElementById('next-btn').addEventListener('click', () => {
+                if (currentStep < totalSteps - 1) {
+                    currentStep++;
+                    updateVisualization(currentStep);
+                    updateButtonStates();
+                    updateStepIndicators();
+                }
+            });
+            
+            // Previous button
+            document.getElementById('prev-btn').addEventListener('click', () => {
+                if (currentStep > 0) {
+                    currentStep--;
+                    updateVisualization(currentStep);
+                    updateButtonStates();
+                    updateStepIndicators();
+                }
+            });
+            
+            // Play/pause button
+            document.getElementById('play-btn').addEventListener('click', togglePlayPause);
+            
+            // Step indicators
+            document.querySelectorAll('.step').forEach(step => {
+                step.addEventListener('click', (e) => {
+                    currentStep = parseInt(e.target.dataset.step);
+                    updateVisualization(currentStep);
+                    updateButtonStates();
+                    updateStepIndicators();
+                });
+            });
+        }
+
+        // Toggle play/pause animation
+        function togglePlayPause() {
+            const playBtn = document.getElementById('play-btn');
+            
+            if (isPlaying) {
+                clearInterval(animationTimer);
+                playBtn.textContent = 'Play Animation';
+                isPlaying = false;
+            } else {
+                playBtn.textContent = 'Pause Animation';
+                isPlaying = true;
+                
+                animationTimer = setInterval(() => {
+                    if (currentStep < totalSteps - 1) {
+                        currentStep++;
+                        updateVisualization(currentStep);
+                        updateButtonStates();
+                        updateStepIndicators();
+                    } else {
+                        clearInterval(animationTimer);
+                        playBtn.textContent = 'Play Animation';
+                        isPlaying = false;
+                    }
+                }, 5000); // Advance every 5 seconds
+            }
+        }
+
+        // Update button states based on current step
+        function updateButtonStates() {
+            document.getElementById('prev-btn').disabled = (currentStep === 0);
+            document.getElementById('next-btn').disabled = (currentStep === totalSteps - 1);
+        }
+
+        // Update step indicators
+        function updateStepIndicators() {
+            document.querySelectorAll('.step').forEach((step, index) => {
+                if (index === currentStep) {
+                    step.classList.add('active');
+                } else {
+                    step.classList.remove('active');
+                }
+            });
+        }
+
+        // Update the visualization based on the current step
+        function updateVisualization(step) {
+            const svg = d3.select('#visualization svg');
+            const width = document.getElementById('visualization').clientWidth;
+            const height = document.getElementById('visualization').clientHeight;
+            
+            // Update explanation text
+            document.getElementById('explanation-title').textContent = explanations[step].title;
+            document.getElementById('explanation-text').textContent = explanations[step].text;
+            
+            // Make explanation visible
+            d3.select('#explanation').classed('visible', true);
+            
+            // Update jet stream path based on current step
+            const projection = d3.geoMercator()
+                .center([-80, 35])
+                .scale(width / 2)
+                .translate([width / 2, height / 2]);
+            
+            const jetStreamLine = d3.line()
+                .x(d => projection([d.lon, d.lat])[0])
+                .y(d => projection([d.lon, d.lat])[1])
+                .curve(d3.curveBasis);
+            
+            // Animate jet stream
+            svg.select('.jet-stream')
+                .attr('opacity', 1)
+                .attr('d', jetStreamLine(jetStreamPatterns[0]))
+                .transition()
+                .duration(1000)
+                .attr('d', jetStreamLine(jetStreamPatterns[step]));
+            
+            // Handle specific step visualizations
+            switch(step) {
+                case 0: // Introduction
+                    // Hide formation areas
+                    svg.selectAll('.hurricane-formation')
+                        .transition()
+                        .duration(500)
+                        .attr('opacity', 0);
+                    
+                    // Clear any hurricane paths
+                    svg.selectAll('.hurricane-path, .hurricane-point').remove();
+                    break;
+                    
+                case 1: // Formation
+                    // Show formation areas
+                    svg.selectAll('.hurricane-formation')
+                        .transition()
+                        .duration(500)
+                        .attr('opacity', 0.8);
+                    
+                    // Clear any hurricane paths
+                    svg.selectAll('.hurricane-path, .hurricane-point').remove();
+                    
+                    // Add hurricane formation animation
+                    setTimeout(() => {
+                        addHurricaneFormationAnimation(svg, projection);
+                    }, 1000);
+                    break;
+                    
+                case 2: // Path
+                    // Hide formation areas
+                    svg.selectAll('.hurricane-formation')
+                        .transition()
+                        .duration(500)
+                        .attr('opacity', 0);
+                    
+                    // Clear any existing hurricane paths
+                    svg.selectAll('.hurricane-path, .hurricane-point').remove();
+                    
+                    // Show hurricane path examples
+                    drawHurricanePaths(svg, projection, [0, 2]); // Using examples 0 and 2
+                    break;
+                    
+                case 3: // Intensity
+                    // Hide formation areas
+                    svg.selectAll('.hurricane-formation')
+                        .transition()
+                        .duration(500)
+                        .attr('opacity', 0);
+                    
+                    // Clear any existing hurricane paths
+                    svg.selectAll('.hurricane-path, .hurricane-point').remove();
+                    
+                    // Show intensity examples
+                    drawHurricaneIntensityExample(svg, projection);
+                    break;
+            }
+        }
+
+        // Draw hurricane paths on the map
+        function drawHurricanePaths(svg, projection, indices) {
+            const pathGenerator = d3.line()
+                .x(d => projection([d.lon, d.lat])[0])
+                .y(d => projection([d.lon, d.lat])[1])
+                .curve(d3.curveBasis);
+            
+            const tooltip = d3.select('#tooltip');
+            
+            indices.forEach(index => {
+                const hurricane = hurricanePaths[index];
+                
+                // Draw path line
+                const path = svg.append('path')
+                    .attr('class', 'hurricane-path')
+                    .attr('stroke', 'purple')
+                    .attr('d', pathGenerator(hurricane.path))
+                    .attr('opacity', 0);
+                
+                // Animate path
+                const pathLength = path.node().getTotalLength();
+                
+                path
+                    .attr('stroke-dasharray', pathLength)
+                    .attr('stroke-dashoffset', pathLength)
+                    .attr('opacity', 1)
+                    .transition()
+                    .duration(2000)
+                    .attr('stroke-dashoffset', 0);
+                
+                // Add hurricane points with delay
+                hurricane.path.forEach((point, i) => {
+                    setTimeout(() => {
+                        const circle = svg.append('circle')
+                            .attr('class', 'hurricane-point')
+                            .attr('cx', projection([point.lon, point.lat])[0])
+                            .attr('cy', projection([point.lon, point.lat])[1])
+                            .attr('r', 0)
+                            .attr('fill', getHurricaneColor(point.stage))
+                            .on('mouseover', function(event) {
+                                tooltip
+                                    .style('opacity', 1)
+                                    .html(`<strong>${hurricane.name}</strong><br>Category: ${point.stage}<br>Year: ${hurricane.year}`)
+                                    .style('left', (event.pageX + 10) + 'px')
+                                    .style('top', (event.pageY - 25) + 'px');
+                            })
+                            .on('mouseout', function() {
+                                tooltip.style('opacity', 0);
+                            });
+                        
+                        circle.transition()
+                            .duration(300)
+                            .attr('r', 5 + point.stage);
+                        
+                    }, 2000 * (i / hurricane.path.length));
+                });
+            });
+        }
+
+        // Draw hurricane formation animation
+        function addHurricaneFormationAnimation(svg, projection) {
+            const formationPoints = [
+                {lon: -65, lat: 15},
+                {lon: -75, lat: 22},
+                {lon: -85, lat: 25}
+            ];
+            
+            formationPoints.forEach((point, i) => {
+                setTimeout(() => {
+                    // Create pulsing circle effect
+                    const circle = svg.append('circle')
+                        .attr('cx', projection([point.lon, point.lat])[0])
+                        .attr('cy', projection([point.lon, point.lat])[1])
+                        .attr('r', 0)
+                        .attr('fill', 'rgba(255, 0, 0, 0.7)')
+                        .attr('class', 'hurricane-point');
+                    
+                    // Pulse animation
+                    function pulseAnimation() {
+                        circle.transition()
+                            .duration(1000)
+                            .attr('r', 15)
+                            .attr('fill-opacity', 0.7)
+                            .transition()
+                            .duration(1000)
+                            .attr('r', 5)
+                            .attr('fill-opacity', 0.3)
+                            .on('end', pulseAnimation);
+                    }
+                    
+                    pulseAnimation();
+                }, i * 1000);
+            });
+        }
+
+        // Draw hurricane intensity example
+        function drawHurricaneIntensityExample(svg, projection) {
+            // Create example hurricanes with different intensities
+            const weakHurricane = {
+                name: "Weakened Hurricane",
+                category: 2,
+                year: 2020,
+                path: [
+                    {lon: -70, lat: 20, stage: 1},
+                    {lon: -75, lat: 23, stage: 3},
+                    {lon: -78, lat: 27, stage: 4},
+                    {lon: -80, lat: 30, stage: 3}, // Weakens when hitting jet stream
+                    {lon: -82, lat: 33, stage: 2},
+                    {lon: -85, lat: 36, stage: 1}
+                ]
+            };
+            
+            const strongHurricane = {
+                name: "Intensified Hurricane",
+                category: 5,
+                year: 2021,
+                path: [
+                    {lon: -55, lat: 15, stage: 1},
+                    {lon: -60, lat: 18, stage: 2},
+                    {lon: -65, lat: 20, stage: 3},
+                    {lon: -70, lat: 22, stage: 4},
+                    {lon: -75, lat: 24, stage: 5}, // Intensifies without jet stream interference
+                    {lon: -80, lat: 27, stage: 5}
+                ]
+            };
+            
+            // Draw the paths
+            drawHurricanePath(svg, projection, weakHurricane, 'blue', 0);
+            drawHurricanePath(svg, projection, strongHurricane, 'red', 2000);
+            
+            // Add annotations
+            setTimeout(() => {
+                // Weak hurricane annotation
+                addAnnotation(svg, projection, 
+                    {lon: -80, lat: 30}, 
+                    "Jet stream creates wind shear, weakening the hurricane",
+                    {x: 10, y: -30}
+                );
+                
+                // Strong hurricane annotation
+                addAnnotation(svg, projection, 
+                    {lon: -75, lat: 24}, 
+                    "Hurricane intensifies without jet stream interference",
+                    {x: 10, y: 30}
+                );
+            }, 3000);
+        }
+
+        // Helper function to draw a single hurricane path
+        function drawHurricanePath(svg, projection, hurricane, color, delay) {
+            const pathGenerator = d3.line()
+                .x(d => projection([d.lon, d.lat])[0])
+                .y(d => projection([d.lon, d.lat])[1])
+                .curve(d3.curveBasis);
+            
+            const tooltip = d3.select('#tooltip');
+            
+            setTimeout(() => {
+                // Draw path line
+                const path = svg.append('path')
+                    .attr('class', 'hurricane-path')
+                    .attr('stroke', color)
+                    .attr('d', pathGenerator(hurricane.path))
+                    .attr('opacity', 0);
+                
+                // Animate path
+                const pathLength = path.node().getTotalLength();
+                
+                path
+                    .attr('stroke-dasharray', pathLength)
+                    .attr('stroke-dashoffset', pathLength)
+                    .attr('opacity', 1)
+                    .transition()
+                    .duration(2000)
+                    .attr('stroke-dashoffset', 0);
+                
+                // Add hurricane points with delay
+                hurricane.path.forEach((point, i) => {
+                    setTimeout(() => {
+                        const circle = svg.append('circle')
+                            .attr('class', 'hurricane-point')
+                            .attr('cx', projection([point.lon, point.lat])[0])
+                            .attr('cy', projection([point.lon, point.lat])[1])
+                            .attr('r', 0)
+                            .attr('fill', getHurricaneColor(point.stage))
+                            .on('mouseover', function(event) {
+                                tooltip
+                                    .style('opacity', 1)
+                                    .html(`<strong>${hurricane.name}</strong><br>Category: ${point.stage}<br>Year: ${hurricane.year}`)
+                                    .style('left', (event.pageX + 10) + 'px')
+                                    .style('top', (event.pageY - 25) + 'px');
+                            })
+                            .on('mouseout', function() {
+                                tooltip.style('opacity', 0);
+                            });
+                        
+                        circle.transition()
+                            .duration(300)
+                            .attr('r', 5 + point.stage);
+                        
+                    }, 2000 * (i / hurricane.path.length));
+                });
+            }, delay);
+        }
+
+        // Add annotation to the map
+        function addAnnotation(svg, projection, point, text, offset) {
+            const [x, y] = projection([point.lon, point.lat]);
+            
+            const annotation = svg.append('g')
+                .attr('class', 'annotation')
+                .attr('transform', `translate(${x + offset.x}, ${y + offset.y})`);
+            
+            annotation.append('rect')
+                .attr('width', 200)
+                .attr('height', 40)
+                .attr('rx', 5)
+                .attr('ry', 5)
+                .attr('fill', 'white')
+                .attr('stroke', '#ccc')
+                .attr('opacity', 0.9);
+            
+            annotation.append('text')
+                .attr('x', 10)
+                .attr('y', 15)
+                .attr('font-size', '12px')
+                .text(text)
+                .call(wrap, 180);
+            
+            annotation.append('line')
+                .attr('x1', 0)
+                .attr('y1', offset.y < 0 ? 40 : 0)
+                .attr('x2', -offset.x)
+                .attr('y2', offset.y < 0 ? -offset.y : -offset.y)
+                .attr('stroke', '#ccc')
+                .attr('stroke-width', 1)
+                .attr('stroke-dasharray', '3,3');
+        }
+
+        // Text wrapping function for annotations
+        function wrap(text, width) {
+            text.each(function() {
+                let text = d3.select(this),
+                    words = text.text().split(/\s+/).reverse(),
+                    word,
+                    line = [],
+                    lineNumber = 0,
+                    lineHeight = 1.1, // ems
+                    x = text.attr("x"),
+                    y = text.attr("y"),
+                    dy = parseFloat(text.attr("dy") || 0),
+                    tspan = text.text(null).append("tspan").attr("x", x).attr("y", y).attr("dy", dy + "em");
+                
+                while (word = words.pop()) {
+                    line.push(word);
+                    tspan.text(line.join(" "));
+                    if (tspan.node().getComputedTextLength() > width) {
+                        line.pop();
+                        tspan.text(line.join(" "));
+                        line = [word];
+                        tspan = text.append("tspan").attr("x", x).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+                    }
+                }
+            });
+        }
+
+        // Get color based on hurricane intensity
+        function getHurricaneColor(stage) {
+            const colors = [
+                '#85C1E9', // Category 1
+                '#5DADE2', // Category 2
+                '#3498DB', // Category 3
+                '#2E86C1', // Category 4
+                '#1B4F72'  // Category 5
+            ];
+            
+            return colors[Math.min(stage - 1, 4)];
+        }
+    </script>
+</body>
+</html>

@@ -43,7 +43,7 @@
             });
 
             // Initialize tabs
-            showTab("research");
+            showTab("cs");
 
             // Animate elements when they come into view
             const observer = new IntersectionObserver((entries) => {
@@ -350,11 +350,89 @@
             margin-bottom: 12px;
         }
 
-        /* Demo section */
-        .demo {
-            padding: 80px 0;
+        /* Demo Preview Cards */
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 32px;
         }
 
+        .demo-preview-card {
+            background-color: var(--surface);
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .demo-preview-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--glow);
+        }
+
+        .preview-image {
+            position: relative;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+        }
+
+        .preview-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .demo-preview-card:hover .preview-image img {
+            transform: scale(1.05);
+        }
+
+        .preview-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .demo-preview-card:hover .preview-overlay {
+            opacity: 1;
+        }
+
+        .preview-overlay .launch-label {
+            background-color: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 500;
+            transform: translateY(10px);
+            transition: transform 0.3s ease;
+        }
+
+        .demo-preview-card:hover .preview-overlay .launch-label {
+            transform: translateY(0);
+        }
+
+        .demo-preview-card h3 {
+            padding: 20px 20px 8px 20px;
+            font-size: 1.3rem;
+            margin-bottom: 0;
+        }
+
+        .demo-preview-card p {
+            padding: 0 20px 20px 20px;
+            margin-bottom: 0;
+        }
+
+        /* Tab Container */
         .tab-container {
             margin-bottom: 32px;
             display: flex;
@@ -388,22 +466,8 @@
             box-shadow: 0 0 20px rgba(61, 90, 254, 0.3);
         }
 
-        .demo-container {
-            background-color: var(--surface);
-            border-radius: var(--card-radius);
-            overflow: hidden;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
-        }
-
         .tab-content {
             display: none;
-        }
-
-        iframe {
-            width: 100%;
-            height: 600px;
-            border: none;
         }
 
         /* CTA section */
@@ -556,8 +620,8 @@
                 text-align: center;
             }
 
-            iframe {
-                height: 400px;
+            .demo-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -737,32 +801,135 @@
         <div class="container">
             <h2 class="section-title animate">Interactive Demonstrations</h2>
 
+            <!-- Demo Tab Buttons -->
+            <!-- DEMO SECTION: TAB BUTTONS START -->
             <div class="tab-container animate delay-1">
-                <button class="tab-button active" data-tab="research" onclick="showTab('research')">Research
-                    Math</button>
-                <button class="tab-button" data-tab="business" onclick="showTab('business')">Business</button>
+                <button class="tab-button active" data-tab="cs" onclick="showTab('cs')">Computer Science</button>
                 <button class="tab-button" data-tab="science" onclick="showTab('science')">Science</button>
-                <button class="tab-button" data-tab="sports" onclick="showTab('sports')">Sports</button>
-                <button class="tab-button" data-tab="visual" onclick="showTab('visual')">Visual Reasoning</button>
+                <button class="tab-button" data-tab="geography" onclick="showTab('geography')">Geography</button>
+                <button class="tab-button" data-tab="history" onclick="showTab('history')">History</button>
+                <button class="tab-button" data-tab="economy" onclick="showTab('economy')">Economy</button>
             </div>
+            <!-- DEMO SECTION: TAB BUTTONS END -->
 
-            <div class="demo-container animate delay-2">
-                <div id="research" class="tab-content">
-                    <iframe src="demos/research.html"></iframe>
-                </div>
-                <div id="business" class="tab-content">
-                    <iframe src="demos/business.html"></iframe>
-                </div>
-                <div id="science" class="tab-content">
-                    <iframe src="demos/science.html"></iframe>
-                </div>
-                <div id="sports" class="tab-content">
-                    <iframe src="demos/sports.html"></iframe>
-                </div>
-                <div id="visual" class="tab-content">
-                    <iframe src="demos/visual.html"></iframe>
+            <!-- Tab Contents -->
+            <!-- DEMO SECTION: TAB CONTENTS START -->
+            
+            <!-- DEMO SECTION: COMPUTER SCIENCE TAB START -->
+            <div id="cs" class="tab-content">
+                <div class="demo-grid animate delay-2">
+                    <!-- CS Demo 1 -->
+                    <div class="demo-preview-card" onclick="window.open('demos/kernel.html', '_blank')">
+                        <div class="preview-image">
+                            <img src="/api/placeholder/400/225" alt="Parallel File Append: Deep Dive from OS to Hardware">
+                            <div class="preview-overlay">
+                                <span class="launch-label">Open Interactive Demo</span>
+                            </div>
+                        </div>
+                        <h3>Parallel File Append by 2 Processes</h3>
+                        <p>Prompt: Explain at a very detailed level (OS, kernel and hardware level) what happens when two processes are parallelly appending to a file descriptor.</p>
+                    </div>
+
+                    <!-- CS Demo 2 -->
+                    <div class="demo-preview-card" onclick="window.open('demos/data-structures.html', '_blank')">
+                        <div class="preview-image">
+                            <img src="/api/placeholder/400/225" alt="Prim vs. Kruskal MST algorithms">
+                            <div class="preview-overlay">
+                                <span class="launch-label">Open Interactive Demo</span>
+                            </div>
+                        </div>
+                        <h3>Prim vs. Kruskal MST algorithms</h3>
+                        <p>Prompt: Explain in detail the difference between Prim's vs. Kruskal's algorithms.</p>
+                    </div>
                 </div>
             </div>
+            <!-- DEMO SECTION: COMPUTER SCIENCE TAB END -->
+            
+            <!-- DEMO SECTION: science TAB START -->
+            <div id="science" class="tab-content">
+                <div class="demo-grid animate delay-2">
+                    <!-- science Demo 1 -->
+                    <div class="demo-preview-card" onclick="window.open('demos/lenz-law.html', '_blank')">
+                        <div class="preview-image">
+                            <img src="/api/placeholder/400/225" alt="Lenz's Law Demonstration">
+                            <div class="preview-overlay">
+                                <span class="launch-label">Open Interactive Demo</span>
+                            </div>
+                        </div>
+                        <h3>Lenz's Law</h3>
+                        <p>Prompt: Explain lenz's law.</p>
+                    </div>
+
+                    <!-- science Demo 2 -->
+                    <div class="demo-preview-card" onclick="window.open('demos/special-relativity.html', '_blank')">
+                        <div class="preview-image">
+                            <img src="/api/placeholder/400/225" alt="Special Relativity">
+                            <div class="preview-overlay">
+                                <span class="launch-label">Open Interactive Demo</span>
+                            </div>
+                        </div>
+                        <h3>Special Relativity</h3>
+                        <p>Prompt: Explain how motion changes time and space for different observers in special relativity.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- DEMO SECTION: science TAB END -->
+            
+            <!-- DEMO SECTION: geography TAB START -->
+            <div id="geography" class="tab-content">
+                <div class="demo-grid animate delay-2">
+                    <!-- geography Demo 1 -->
+                    <div class="demo-preview-card" onclick="window.open('demos/polar-jet-stream.html', '_blank')">
+                        <div class="preview-image">
+                            <img src="/api/placeholder/400/225" alt="Influence of Polar Jet Stream on Hurricanes">
+                            <div class="preview-overlay">
+                                <span class="launch-label">Open Interactive Demo</span>
+                            </div>
+                        </div>
+                        <h3>Influence of Polar Jet Stream on Hurricanes</h3>
+                        <p>Prompt: How does the polar jet stream influence the formation, path, and intensity of hurricanes that affect the United States? Show it with a world map (or at least with the US map) so I can see properly.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- DEMO SECTION: geography TAB END -->
+            
+            <!-- DEMO SECTION: history TAB START -->
+            <div id="history" class="tab-content">
+                <div class="demo-grid animate delay-2">
+                    <!-- history Demo 1 -->
+                    <div class="demo-preview-card" onclick="window.open('demos/ww2.html', '_blank')">
+                        <div class="preview-image">
+                            <img src="/api/placeholder/400/225" alt="World War 2 Timeline and Troop Movements">
+                            <div class="preview-overlay">
+                                <span class="launch-label">Open Interactive Demo</span>
+                            </div>
+                        </div>
+                        <h3>World War 2 Timeline and Troop Movements</h3>
+                        <p>Prompt: Show me world war 2 troop movements on the world map during various history events.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- DEMO SECTION: history TAB END -->
+            
+            <!-- DEMO SECTION: Economy TAB START -->
+            <div id="economy" class="tab-content">
+                <div class="demo-grid animate delay-2">
+                    <!-- Economy Demo 1 -->
+                    <div class="demo-preview-card" onclick="window.open('demos/policy-impact.html', '_blank')">
+                        <div class="preview-image">
+                            <img src="/api/placeholder/400/225" alt="Economy in Motion: Policy to Impact">
+                            <div class="preview-overlay">
+                                <span class="launch-label">Open Interactive Demo</span>
+                            </div>
+                        </div>
+                        <h3>Economy in Motion: Policy to Impact</h3>
+                        <p>Prompt: Explain how interest rates, government spending, inflation, unemployment, and output are all connected.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- DEMO SECTION: Economy TAB END -->
+            
+            <!-- DEMO SECTION: TAB CONTENTS END -->
         </div>
     </section>
 

@@ -1,0 +1,2472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Relativity: The Transformation of Spacetime</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --secondary: #e74c3c;
+            --secondary-dark: #c0392b;
+            --background: #f9f9f9;
+            --text: #2c3e50;
+            --light-text: #7f8c8d;
+            --border: #e0e0e0;
+            --card: #ffffff;
+            --highlight: #f1c40f;
+            --green: #2ecc71;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            font-weight: 700;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--text);
+        }
+        
+        h3 {
+            font-size: 1.3rem;
+            margin: 1rem 0;
+            color: var(--text);
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        .intro {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            text-align: center;
+            color: var(--light-text);
+        }
+        
+        .container {
+            background: var(--card);
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .container:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .tab {
+            padding: 12px 25px;
+            cursor: pointer;
+            background-color: #f8f8f8;
+            border-radius: 8px 8px 0 0;
+            font-weight: 600;
+            color: var(--light-text);
+            border: 1px solid var(--border);
+            border-bottom: none;
+            transition: all 0.3s ease;
+            position: relative;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tab:hover {
+            color: var(--primary);
+        }
+        
+        .tab.active {
+            background-color: var(--card);
+            color: var(--primary);
+            box-shadow: 0 -3px 8px rgba(0, 0, 0, 0.06);
+            z-index: 1;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+            position: relative;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-top: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            align-items: center;
+        }
+        
+        .slider-container {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .slider-label span:last-child {
+            font-weight: 600;
+            color: var(--primary);
+            background: rgba(52, 152, 219, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            min-width: 60px;
+            text-align: center;
+        }
+        
+        .c-value {
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+        
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+        
+        .frame-toggle {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: #f0f4f8;
+            padding: 10px 16px;
+            border-radius: 8px;
+            min-width: 350px;
+        }
+        
+        .toggle-label {
+            font-weight: 600;
+            color: var(--light-text);
+            transition: color 0.3s;
+        }
+        
+        .toggle-label.active {
+            color: var(--text);
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .toggle:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle {
+            background-color: var(--primary);
+        }
+        
+        input:checked + .toggle:before {
+            transform: translateX(30px);
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .canvas-container {
+            position: relative;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f0f0f0;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            background: #f8f8f8;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background-color: rgba(44, 62, 80, 0.95);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            max-width: 300px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            pointer-events: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 1000;
+        }
+        
+        .tooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .tooltip-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--highlight);
+        }
+        
+        .tooltip-arrow {
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid rgba(44, 62, 80, 0.95);
+        }
+        
+        .data-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            justify-content: center;
+        }
+        
+        .data-card {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            min-width: 180px;
+            flex: 1;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .data-card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .data-card h3 {
+            font-size: 0.9rem;
+            color: var(--light-text);
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+        }
+        
+        .data-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+        
+        .data-unit {
+            font-size: 0.9rem;
+            color: var(--light-text);
+        }
+        
+        .highlight {
+            color: var(--secondary);
+            font-weight: 600;
+        }
+        
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            margin: 1rem 0 1.5rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: #f0f4f8;
+            border-radius: 6px;
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px white, 0 0 0 3px #ccc;
+        }
+        
+        .explanation {
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: #f0f4f8;
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        .explanation:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+            border-radius: 4px 0 0 4px;
+        }
+        
+        .key-takeaways {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: linear-gradient(to right, #f9f9f9, #ffffff);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .key-takeaways h3 {
+            margin-top: 0;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .takeaway-list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+        
+        .takeaway-list li {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .takeaway-list li:before {
+            content: "•";
+            color: var(--primary);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        
+        .formula {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            background: #f5f5f5;
+            padding: 8px 15px;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 0.5rem 0;
+        }
+        
+        .spacetime-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.05;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.7; }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        .particle {
+            position: absolute;
+            background: var(--highlight);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        @keyframes travelPath {
+            0% { transform: scale(0); opacity: 0; }
+            20% { transform: scale(1); opacity: 1; }
+            80% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+        
+        .light-path {
+            position: absolute;
+            background: rgba(241, 196, 15, 0.3);
+            pointer-events: none;
+            z-index: 1;
+            transform-origin: 0 0;
+        }
+        
+        .overlay-text {
+            position: absolute;
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        
+        .interactive-button {
+            position: absolute;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            z-index: 10;
+        }
+        
+        .interactive-button:hover {
+            transform: scale(1.2);
+            background: var(--primary-dark);
+        }
+        
+        /* Responsiveness */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .container {
+                padding: 1.5rem;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab {
+                flex: 1;
+                min-width: 120px;
+                text-align: center;
+                padding: 10px 15px;
+            }
+            
+            .frame-toggle {
+                min-width: 0;
+                width: 100%;
+            }
+            
+            .data-card {
+                min-width: 140px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Special Relativity: How Motion Transforms Space and Time</h1>
+        <p class="intro">Experience Einstein's revolutionary theory through interactive visualizations that demonstrate how the fabric of spacetime changes for observers in relative motion.</p>
+    </header>
+    
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" data-tab="time-dilation">
+                <span>Time Dilation</span>
+            </div>
+            <div class="tab" data-tab="length-contraction">
+                <span>Length Contraction</span>
+            </div>
+            <div class="tab" data-tab="simultaneity">
+                <span>Relativity of Simultaneity</span>
+            </div>
+            <div class="tab" data-tab="unified">
+                <span>Unified Spacetime</span>
+            </div>
+        </div>
+        
+        <div class="tab-content active" id="time-dilation">
+            <div class="explanation">
+                <h3>Time Dilation: Motion Slows Time</h3>
+                <p>According to special relativity, a moving clock appears to tick more slowly compared to a stationary one. This effect, called <span class="highlight">time dilation</span>, becomes more pronounced as velocity approaches the speed of light.</p>
+                <p>The light clock demonstration below shows why: light traveling between mirrors in a moving clock follows a longer path when viewed from a stationary reference frame, causing each "tick" to take longer.</p>
+            </div>
+            
+            <div class="controls">
+                <div class="frame-toggle">
+                    <span class="toggle-label active" id="earth-label">Earth Frame</span>
+                    <label class="switch">
+                        <input type="checkbox" id="frame-switch-time">
+                        <span class="toggle"></span>
+                    </label>
+                    <span class="toggle-label" id="ship-label">Spaceship Frame</span>
+                </div>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Relative Velocity</span>
+                        <span id="velocity-value">0.00<i class="c-value">c</i></span>
+                    </div>
+                    <input type="range" id="velocity-slider" min="0" max="0.95" step="0.01" value="0">
+                </div>
+                
+                <button id="toggle-animation">
+                    <span id="animation-state">Pause</span>
+                </button>
+            </div>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: var(--primary);"></div>
+                    <span>Stationary Clock</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: var(--secondary);"></div>
+                    <span>Moving Clock</span>
+                </div>
+            </div>
+            
+            <div class="canvas-container">
+                <canvas id="time-dilation-canvas" width="1000" height="500"></canvas>
+                <div class="tooltip" id="tooltip"></div>
+            </div>
+            
+            <div class="data-panel">
+                <div class="data-card">
+                    <h3>Stationary Clock Time</h3>
+                    <div class="data-value" id="stationary-time">0.0</div>
+                    <div class="data-unit">seconds</div>
+                </div>
+                <div class="data-card">
+                    <h3>Moving Clock Time</h3>
+                    <div class="data-value" id="moving-time">0.0</div>
+                    <div class="data-unit">seconds</div>
+                </div>
+                <div class="data-card">
+                    <h3>Time Dilation Factor (γ)</h3>
+                    <div class="data-value" id="time-dilation-factor">1.00</div>
+                    <div class="formula">γ = 1/√(1-v²/c²)</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="length-contraction">
+            <div class="explanation">
+                <h3>Length Contraction: Motion Shrinks Space</h3>
+                <p>Objects moving relative to an observer appear shortened along their direction of motion. This <span class="highlight">length contraction</span> is a direct consequence of the relativity of simultaneity.</p>
+                <p>Notice how the spaceship's measured length decreases as its velocity increases, but only along the direction of motion. The effect becomes more dramatic at speeds approaching the speed of light.</p>
+            </div>
+            
+            <div class="controls">
+                <div class="frame-toggle">
+                    <span class="toggle-label active" id="earth-label-length">Earth Frame</span>
+                    <label class="switch">
+                        <input type="checkbox" id="frame-switch-length">
+                        <span class="toggle"></span>
+                    </label>
+                    <span class="toggle-label" id="ship-label-length">Spaceship Frame</span>
+                </div>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Relative Velocity</span>
+                        <span id="velocity-value-length">0.00<i class="c-value">c</i></span>
+                    </div>
+                    <input type="range" id="velocity-slider-length" min="0" max="0.95" step="0.01" value="0">
+                </div>
+            </div>
+            
+            <div class="canvas-container">
+                <canvas id="length-contraction-canvas" width="1000" height="500"></canvas>
+            </div>
+            
+            <div class="data-panel">
+                <div class="data-card">
+                    <h3>Proper Length</h3>
+                    <div class="data-value" id="proper-length">100</div>
+                    <div class="data-unit">meters</div>
+                </div>
+                <div class="data-card">
+                    <h3>Observed Length</h3>
+                    <div class="data-value" id="contracted-length">100</div>
+                    <div class="data-unit">meters</div>
+                </div>
+                <div class="data-card">
+                    <h3>Contraction Factor</h3>
+                    <div class="data-value" id="contraction-factor">1.00</div>
+                    <div class="formula">L = L₀/γ = L₀·√(1-v²/c²)</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="simultaneity">
+            <div class="explanation">
+                <h3>Relativity of Simultaneity: Motion Redefines "Now"</h3>
+                <p>Events that are simultaneous in one reference frame may not be simultaneous in another. This <span class="highlight">relativity of simultaneity</span> undermines our intuitive understanding of time as being the same for all observers.</p>
+                <p>In this visualization, lightning strikes at both ends of a moving train appear simultaneous to a platform observer but happen at different times according to an observer on the train.</p>
+            </div>
+            
+            <div class="controls">
+                <div class="frame-toggle">
+                    <span class="toggle-label active" id="platform-label">Platform Frame</span>
+                    <label class="switch">
+                        <input type="checkbox" id="frame-switch-simultaneity">
+                        <span class="toggle"></span>
+                    </label>
+                    <span class="toggle-label" id="train-label">Train Frame</span>
+                </div>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Train Velocity</span>
+                        <span id="velocity-value-simultaneity">0.00<i class="c-value">c</i></span>
+                    </div>
+                    <input type="range" id="velocity-slider-simultaneity" min="0" max="0.95" step="0.01" value="0">
+                </div>
+                
+                <button id="lightning-strike">Trigger Lightning Strikes</button>
+            </div>
+            
+            <div class="canvas-container">
+                <canvas id="simultaneity-canvas" width="1000" height="500"></canvas>
+            </div>
+            
+            <div class="explanation">
+                <div id="simultaneity-explanation">
+                    <p>In the platform frame, lightning strikes at both ends of the train are simultaneous. However, to an observer on the moving train, the front strike appears to happen first because they're moving toward the light from that strike and away from the light coming from the rear strike.</p>
+                    <p>This isn't just a matter of perception - each reference frame has its own legitimate definition of simultaneity.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="unified">
+            <div class="explanation">
+                <h3>Unified Spacetime: Everything Connected</h3>
+                <p>Time dilation, length contraction, and the relativity of simultaneity are not separate phenomena but different aspects of the same spacetime transformation - the Lorentz transformation.</p>
+                <p>This visualization shows how all these effects occur simultaneously when switching between reference frames in relative motion.</p>
+            </div>
+            
+            <div class="controls">
+                <div class="frame-toggle">
+                    <span class="toggle-label active" id="rest-label">Rest Frame</span>
+                    <label class="switch">
+                        <input type="checkbox" id="frame-switch-unified">
+                        <span class="toggle"></span>
+                    </label>
+                    <span class="toggle-label" id="moving-label">Moving Frame</span>
+                </div>
+                
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>Relative Velocity</span>
+                        <span id="velocity-value-unified">0.00<i class="c-value">c</i></span>
+                    </div>
+                    <input type="range" id="velocity-slider-unified" min="0" max="0.95" step="0.01" value="0">
+                </div>
+            </div>
+            
+            <div class="canvas-container">
+                <canvas id="unified-canvas" width="1000" height="500"></canvas>
+            </div>
+            
+            <div class="data-panel">
+                <div class="data-card">
+                    <h3>Time Dilation</h3>
+                    <div class="data-value" id="unified-time-factor">1.00</div>
+                    <div class="data-unit">× slower</div>
+                </div>
+                <div class="data-card">
+                    <h3>Length Contraction</h3>
+                    <div class="data-value" id="unified-length-factor">1.00</div>
+                    <div class="data-unit">× shorter</div>
+                </div>
+                <div class="data-card">
+                    <h3>Lorentz Factor (γ)</h3>
+                    <div class="data-value" id="unified-gamma">1.00</div>
+                    <div class="formula">γ = 1/√(1-v²/c²)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="key-takeaways">
+        <h3>Key Takeaways</h3>
+        <ul class="takeaway-list">
+            <li>The speed of light (c) is constant for all observers, regardless of their motion - this is the fundamental principle that leads to all relativistic effects.</li>
+            <li>Time runs slower for objects in motion relative to an observer - this is time dilation. The effect becomes significant only at speeds approaching the speed of light.</li>
+            <li>Objects in motion appear shortened in their direction of travel - this is length contraction.</li>
+            <li>Events that are simultaneous in one reference frame may occur at different times in another - this is the relativity of simultaneity.</li>
+            <li>These effects aren't optical illusions but real physical phenomena that have been experimentally verified (e.g., with atomic clocks on airplanes and GPS satellites).</li>
+            <li>All of these effects are governed by the Lorentz transformation and the Lorentz factor γ = 1/√(1-v²/c²).</li>
+            <li>Though counterintuitive, these effects preserve the spacetime interval between events, which is the true invariant quantity in relativity.</li>
+        </ul>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Global variables
+        let isAnimating = true;
+        let velocity = 0;
+        const c = 299792458; // Speed of light in m/s
+        
+        // Define canvas variables globally
+        let timeDilationCanvas, timeDilationCtx;
+        let stationaryTime = 0, movingTime = 0;
+        let stationaryClock = { x: 250, y: 250, width: 100, height: 200 };
+        let movingClock = { x: 650, y: 250, width: 100, height: 200 };
+        let photonPos1 = { x: stationaryClock.x + stationaryClock.width/2, y: stationaryClock.y };
+        let photonPos2 = { x: movingClock.x + movingClock.width/2, y: movingClock.y };
+        let photonDir1 = 1; // 1 for up, -1 for down
+        let photonDir2 = 1;
+        let photonTrail1 = [];
+        let photonTrail2 = [];
+        let lastBounceTime1 = 0;
+        let lastBounceTime2 = 0;
+        
+        // Length contraction variables
+        let lengthCanvas, lengthCtx;
+        const spaceshipProperLength = 100; // Proper length in meters
+        let spaceshipTime = 0;
+        
+        // Simultaneity variables
+        let simultaneityCanvas, simultaneityCtx;
+        let isLightningStriking = false;
+        let leftLightning = { x: 200, y: 250, time: 0, visible: false };
+        let rightLightning = { x: 700, y: 250, time: 0, visible: false };
+        let leftLightFront = { x: 200, y: 250, radius: 0, visible: false };
+        let rightLightFront = { x: 700, y: 250, radius: 0, visible: false };
+        let trainPosition = 0;
+        
+        // Unified view variables
+        let unifiedCanvas, unifiedCtx;
+        let unifiedTime = 0;
+        
+        // Tab navigation
+        initTabs();
+        
+        // Initialize visualizations - make sure all canvases exist before initializing
+        initTimeDilation();
+        initLengthContraction();
+        initSimultaneity();
+        initUnifiedView();
+        
+        // Start animations
+        requestAnimationFrame(animateAll);
+        
+        // Helper functions
+        function positionTooltip(tooltip, x, y, rect) {
+            // Position the tooltip near the mouse but ensure it stays in viewport
+            const tooltipWidth = 300;
+            const tooltipHeight = 100; // Approximate height
+            let tooltipX = x + 10;
+            let tooltipY = y - tooltipHeight - 10;
+            
+            // Adjust if too far right
+            if (tooltipX + tooltipWidth > rect.width) {
+                tooltipX = x - tooltipWidth - 10;
+            }
+            
+            // Adjust if too high
+            if (tooltipY < 0) {
+                tooltipY = y + 20;
+            }
+            
+            tooltip.style.left = tooltipX + 'px';
+            tooltip.style.top = tooltipY + 'px';
+        }
+        
+        function isPointInRect(x, y, rectX, rectY, rectWidth, rectHeight) {
+            return x >= rectX && x <= rectX + rectWidth && y >= rectY && y <= rectY + rectHeight;
+        }
+        
+        // Tab navigation
+        function initTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs and content
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        }
+        
+        // Frame toggle functionality
+        document.getElementById('frame-switch-time').addEventListener('change', function() {
+            toggleLabels('earth-label', 'ship-label', this.checked);
+            updateTimeDilation();
+        });
+        
+        document.getElementById('frame-switch-length').addEventListener('change', function() {
+            toggleLabels('earth-label-length', 'ship-label-length', this.checked);
+            updateLengthContraction();
+        });
+        
+        document.getElementById('frame-switch-simultaneity').addEventListener('change', function() {
+            toggleLabels('platform-label', 'train-label', this.checked);
+            updateSimultaneity();
+        });
+        
+        document.getElementById('frame-switch-unified').addEventListener('change', function() {
+            toggleLabels('rest-label', 'moving-label', this.checked);
+            updateUnifiedView();
+        });
+        
+        function toggleLabels(label1, label2, isChecked) {
+            document.getElementById(label1).classList.toggle('active', !isChecked);
+            document.getElementById(label2).classList.toggle('active', isChecked);
+        }
+        
+        // Toggle animation button
+        document.getElementById('toggle-animation').addEventListener('click', function() {
+            isAnimating = !isAnimating;
+            document.getElementById('animation-state').textContent = isAnimating ? 'Pause' : 'Resume';
+            if (isAnimating) {
+                requestAnimationFrame(animateAll);
+            }
+        });
+        
+        // Velocity sliders
+        document.getElementById('velocity-slider').addEventListener('input', function() {
+            velocity = parseFloat(this.value);
+            document.getElementById('velocity-value').innerHTML = velocity.toFixed(2) + '<i class="c-value">c</i>';
+            updateTimeDilation();
+        });
+        
+        document.getElementById('velocity-slider-length').addEventListener('input', function() {
+            const v = parseFloat(this.value);
+            document.getElementById('velocity-value-length').innerHTML = v.toFixed(2) + '<i class="c-value">c</i>';
+            updateLengthContraction();
+        });
+        
+        document.getElementById('velocity-slider-simultaneity').addEventListener('input', function() {
+            const v = parseFloat(this.value);
+            document.getElementById('velocity-value-simultaneity').innerHTML = v.toFixed(2) + '<i class="c-value">c</i>';
+            updateSimultaneity();
+        });
+        
+        document.getElementById('velocity-slider-unified').addEventListener('input', function() {
+            const v = parseFloat(this.value);
+            document.getElementById('velocity-value-unified').innerHTML = v.toFixed(2) + '<i class="c-value">c</i>';
+            updateUnifiedView();
+        });
+        
+        // Lightning strike button
+        document.getElementById('lightning-strike').addEventListener('click', function() {
+            triggerLightningStrikes();
+        });
+        
+        // Animation loop
+        function animateAll() {
+            if (!isAnimating) return;
+            
+            animateTimeDilation();
+            animateLengthContraction();
+            animateSimultaneity();
+            animateUnifiedView();
+            
+            requestAnimationFrame(animateAll);
+        }
+        
+        ///////////////////////
+        // TIME DILATION
+        ///////////////////////
+        
+        function initTimeDilation() {
+            // Get the canvas element
+            timeDilationCanvas = document.getElementById('time-dilation-canvas');
+            
+            // Make sure the canvas exists before proceeding
+            if (!timeDilationCanvas) {
+                console.error('Could not find time-dilation-canvas element');
+                return;
+            }
+            
+            timeDilationCtx = timeDilationCanvas.getContext('2d');
+            
+            // Reset times and positions
+            stationaryTime = 0;
+            movingTime = 0;
+            photonPos1 = { x: stationaryClock.x + stationaryClock.width/2, y: stationaryClock.y };
+            photonPos2 = { x: movingClock.x + movingClock.width/2, y: movingClock.y };
+            photonDir1 = 1;
+            photonDir2 = 1;
+            photonTrail1 = [];
+            photonTrail2 = [];
+            
+            // Update displays
+            updateTimeDilationDisplay();
+            
+            // Create tooltip for explanations
+            const tooltip = document.getElementById('tooltip');
+            
+            // Add event listeners for hoverable areas
+            timeDilationCanvas.addEventListener('mousemove', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // Check if mouse is over a clock
+                if (isPointInRect(x, y, stationaryClock.x, stationaryClock.y, stationaryClock.width, stationaryClock.height)) {
+                    tooltip.innerHTML = '<div class="tooltip-title">Stationary Light Clock</div>' + 
+                                       'This clock measures time using light bouncing between two mirrors. Each complete bounce (up and down) represents one "tick".';
+                    positionTooltip(tooltip, x, y, rect);
+                    tooltip.classList.add('visible');
+                } else if (isPointInRect(x, y, movingClock.x, movingClock.y, movingClock.width, movingClock.height)) {
+                    tooltip.innerHTML = '<div class="tooltip-title">Moving Light Clock</div>' + 
+                                       'From the stationary frame, light in this clock follows a diagonal path, making each "tick" take longer. This is time dilation.';
+                    positionTooltip(tooltip, x, y, rect);
+                    tooltip.classList.add('visible');
+                } else {
+                    tooltip.classList.remove('visible');
+                }
+            });
+            
+            timeDilationCanvas.addEventListener('mouseout', function() {
+                tooltip.classList.remove('visible');
+            });
+        }
+        
+        function animateTimeDilation() {
+            if (!timeDilationCanvas || !timeDilationCtx) return;
+            
+            const inMovingFrame = document.getElementById('frame-switch-time').checked;
+            
+            // Calculate gamma factor
+            const gamma = 1 / Math.sqrt(1 - velocity * velocity);
+            
+            // Speed of photon movement (adjusted for visibility)
+            const baseSpeed = 5;
+            const photonSpeed = baseSpeed;
+            
+            // Update photon position for stationary clock
+            photonPos1.y += photonDir1 * photonSpeed;
+            
+            // Add trail for visual effect
+            photonTrail1.push({x: photonPos1.x, y: photonPos1.y, alpha: 1});
+            if (photonTrail1.length > 10) photonTrail1.shift();
+            
+            // Check if photon hit mirrors in stationary clock
+            if (photonPos1.y <= stationaryClock.y || photonPos1.y >= stationaryClock.y + stationaryClock.height) {
+                photonDir1 *= -1;
+                lastBounceTime1 = Date.now();
+                if (photonPos1.y <= stationaryClock.y) {
+                    photonPos1.y = stationaryClock.y; // Correct position
+                } else {
+                    photonPos1.y = stationaryClock.y + stationaryClock.height; // Correct position
+                }
+                stationaryTime += 0.5; // Half a tick (one-way trip)
+            }
+            
+            // Calculate path for moving clock photon
+            if (inMovingFrame) {
+                // In moving frame - identical to stationary clock
+                photonPos2.y += photonDir2 * photonSpeed;
+                
+                // Add trail
+                photonTrail2.push({x: photonPos2.x, y: photonPos2.y, alpha: 1});
+                if (photonTrail2.length > 10) photonTrail2.shift();
+                
+                // Check for mirror hits
+                if (photonPos2.y <= movingClock.y || photonPos2.y >= movingClock.y + movingClock.height) {
+                    photonDir2 *= -1;
+                    lastBounceTime2 = Date.now();
+                    if (photonPos2.y <= movingClock.y) {
+                        photonPos2.y = movingClock.y; // Correct position
+                    } else {
+                        photonPos2.y = movingClock.y + movingClock.height; // Correct position
+                    }
+                    movingTime += 0.5; // Half a tick (identical to stationary in this frame)
+                }
+            } else {
+                // In stationary frame - diagonal path for moving clock
+                // Horizontal distance traveled by clock during photon movement
+                const hDistance = velocity * photonSpeed * Math.abs(photonDir2) * 20; // Scaled for visualization
+                
+                // Update photon position - diagonal path
+                photonPos2.y += photonDir2 * photonSpeed;
+                photonPos2.x += (photonDir2 * hDistance) / 2; // Half speed to make visualization clearer
+                
+                // Add trail
+                photonTrail2.push({x: photonPos2.x, y: photonPos2.y, alpha: 1});
+                if (photonTrail2.length > 10) photonTrail2.shift();
+                
+                // Check for mirror hits - need to handle diagonal path
+                if (photonPos2.y <= movingClock.y || photonPos2.y >= movingClock.y + movingClock.height) {
+                    photonDir2 *= -1;
+                    lastBounceTime2 = Date.now();
+                    
+                    // Correctly position photon at mirror
+                    if (photonPos2.y <= movingClock.y) {
+                        photonPos2.y = movingClock.y;
+                    } else {
+                        photonPos2.y = movingClock.y + movingClock.height;
+                    }
+                    
+                    // Center the x-position in the moving clock
+                    photonPos2.x = movingClock.x + movingClock.width/2;
+                    
+                    // Time runs slower in moving clock by gamma factor
+                    movingTime += 0.5 / gamma;
+                }
+            }
+            
+            // Fade out trail gradients
+            photonTrail1.forEach(p => p.alpha *= 0.8);
+            photonTrail2.forEach(p => p.alpha *= 0.8);
+            
+            // Draw everything
+            drawTimeDilation();
+            
+            // Update display values
+            updateTimeDilationDisplay();
+        }
+        
+        function drawTimeDilation() {
+            if (!timeDilationCanvas || !timeDilationCtx) return;
+            
+            timeDilationCtx.clearRect(0, 0, timeDilationCanvas.width, timeDilationCanvas.height);
+            
+            const inMovingFrame = document.getElementById('frame-switch-time').checked;
+            const gamma = 1 / Math.sqrt(1 - velocity * velocity);
+            
+            // Draw stars in background for visual effect
+            drawStarField(timeDilationCtx, timeDilationCanvas.width, timeDilationCanvas.height, inMovingFrame ? -velocity : 0);
+            
+            // Draw reference frame indicator
+            drawFrameIndicator(timeDilationCtx, inMovingFrame ? "Spaceship Frame" : "Earth Frame", timeDilationCanvas.width);
+            
+            // Draw stationary clock
+            drawClock(timeDilationCtx, stationaryClock, "rgba(52, 152, 219, 0.8)", "Stationary Clock", lastBounceTime1);
+            
+            // Draw moving clock
+            drawClock(timeDilationCtx, movingClock, "rgba(231, 76, 60, 0.8)", "Moving Clock", lastBounceTime2);
+            
+            // Draw light path for stationary clock
+            timeDilationCtx.strokeStyle = "rgba(241, 196, 15, 0.5)";
+            timeDilationCtx.lineWidth = 2;
+            timeDilationCtx.beginPath();
+            timeDilationCtx.moveTo(stationaryClock.x + stationaryClock.width/2, stationaryClock.y);
+            timeDilationCtx.lineTo(stationaryClock.x + stationaryClock.width/2, stationaryClock.y + stationaryClock.height);
+            timeDilationCtx.stroke();
+            
+            // Draw light path for moving clock
+            if (inMovingFrame) {
+                // Vertical path in moving frame
+                timeDilationCtx.strokeStyle = "rgba(241, 196, 15, 0.5)";
+                timeDilationCtx.beginPath();
+                timeDilationCtx.moveTo(movingClock.x + movingClock.width/2, movingClock.y);
+                timeDilationCtx.lineTo(movingClock.x + movingClock.width/2, movingClock.y + movingClock.height);
+                timeDilationCtx.stroke();
+            } else {
+                // Diagonal path in stationary frame
+                const displacement = velocity * movingClock.height * 4; // Exaggerated for visualization
+                
+                timeDilationCtx.strokeStyle = "rgba(241, 196, 15, 0.5)";
+                timeDilationCtx.beginPath();
+                timeDilationCtx.moveTo(movingClock.x + movingClock.width/2 - displacement/2, movingClock.y);
+                timeDilationCtx.lineTo(movingClock.x + movingClock.width/2 + displacement/2, movingClock.y + movingClock.height);
+                timeDilationCtx.stroke();
+                
+                timeDilationCtx.beginPath();
+                timeDilationCtx.moveTo(movingClock.x + movingClock.width/2 + displacement/2, movingClock.y + movingClock.height);
+                timeDilationCtx.lineTo(movingClock.x + movingClock.width/2 + displacement, movingClock.y);
+                timeDilationCtx.stroke();
+                
+                // Illustrate that the diagonal path is longer
+                if (velocity > 0.1) {
+                    timeDilationCtx.fillStyle = "rgba(255, 255, 255, 0.8)";
+                    timeDilationCtx.textAlign = "center";
+                    timeDilationCtx.font = "14px Arial";
+                    timeDilationCtx.fillText("Longer light path = slower tick rate", 
+                                          movingClock.x + movingClock.width/2 + displacement/4, 
+                                          movingClock.y + movingClock.height/2 - 20);
+                }
+            }
+            
+            // Draw photon trails
+            drawPhotonTrail(timeDilationCtx, photonTrail1, "rgba(241, 196, 15, ");
+            drawPhotonTrail(timeDilationCtx, photonTrail2, "rgba(241, 196, 15, ");
+            
+            // Draw photons
+            drawPhoton(timeDilationCtx, photonPos1.x, photonPos1.y, 6, "#f1c40f");
+            drawPhoton(timeDilationCtx, photonPos2.x, photonPos2.y, 6, "#f1c40f");
+            
+            // Draw time readings
+            drawTimeReadout(timeDilationCtx, stationaryClock, stationaryTime.toFixed(1) + "s");
+            drawTimeReadout(timeDilationCtx, movingClock, movingTime.toFixed(1) + "s");
+            
+            // Draw velocity vectors if moving
+            if (velocity > 0) {
+                drawVelocityVector(timeDilationCtx, 
+                                 movingClock.x - 50, 
+                                 movingClock.y + movingClock.height/2, 
+                                 velocity);
+            }
+            
+            // Draw length comparison to illustrate relativity
+            if (!inMovingFrame && velocity > 0.3) {
+                const compareY = 400;
+                const baseLength = 150;
+                const contractedLength = baseLength / gamma;
+                
+                timeDilationCtx.fillStyle = "rgba(255, 255, 255, 0.9)";
+                timeDilationCtx.textAlign = "center";
+                timeDilationCtx.font = "16px Arial";
+                timeDilationCtx.fillText("At this velocity, lengths also contract:", timeDilationCanvas.width/2, compareY - 30);
+                
+                // Draw proper length
+                timeDilationCtx.strokeStyle = "rgba(52, 152, 219, 0.8)";
+                timeDilationCtx.lineWidth = 4;
+                timeDilationCtx.beginPath();
+                timeDilationCtx.moveTo(timeDilationCanvas.width/2 - baseLength/2, compareY);
+                timeDilationCtx.lineTo(timeDilationCanvas.width/2 + baseLength/2, compareY);
+                timeDilationCtx.stroke();
+                timeDilationCtx.fillText("Proper Length", timeDilationCanvas.width/2, compareY + 20);
+                
+                // Draw contracted length
+                timeDilationCtx.strokeStyle = "rgba(231, 76, 60, 0.8)";
+                timeDilationCtx.lineWidth = 4;
+                timeDilationCtx.beginPath();
+                timeDilationCtx.moveTo(timeDilationCanvas.width/2 - contractedLength/2, compareY + 50);
+                timeDilationCtx.lineTo(timeDilationCanvas.width/2 + contractedLength/2, compareY + 50);
+                timeDilationCtx.stroke();
+                timeDilationCtx.fillText("Contracted Length", timeDilationCanvas.width/2, compareY + 70);
+            }
+        }
+        
+        function drawPhoton(ctx, x, y, radius, color) {
+            // Outer glow
+            const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius * 2);
+            gradient.addColorStop(0, color);
+            gradient.addColorStop(1, "rgba(241, 196, 15, 0)");
+            
+            ctx.beginPath();
+            ctx.arc(x, y, radius * 2, 0, Math.PI * 2);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            
+            // Inner bright core
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+            ctx.fill();
+        }
+        
+        function drawPhotonTrail(ctx, trail, baseColor) {
+            trail.forEach((point, index) => {
+                const size = (index / trail.length) * 4 + 1;
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
+                ctx.fillStyle = baseColor + point.alpha + ")";
+                ctx.fill();
+            });
+        }
+        
+        function drawClock(ctx, clock, color, label, lastBounceTime) {
+            // Draw clock body with shadow
+            ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
+            ctx.shadowBlur = 15;
+            ctx.shadowOffsetX = 5;
+            ctx.shadowOffsetY = 5;
+            
+            ctx.fillStyle = "rgba(245, 245, 245, 0.7)";
+            ctx.fillRect(clock.x, clock.y, clock.width, clock.height);
+            
+            ctx.shadowColor = "transparent";
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+            
+            // Draw clock border
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 4;
+            ctx.strokeRect(clock.x, clock.y, clock.width, clock.height);
+            
+            // Draw mirrors
+            const mirrorHeight = 8;
+            ctx.fillStyle = color;
+            
+            // Top mirror with pulse effect on bounce
+            if (Date.now() - lastBounceTime < 300 && photonPos1.y <= clock.y + 10) {
+                const pulseSize = Math.sin((Date.now() - lastBounceTime) / 300 * Math.PI) * 3;
+                ctx.fillRect(clock.x - pulseSize, clock.y - pulseSize, clock.width + pulseSize*2, mirrorHeight + pulseSize*2);
+            } else {
+                ctx.fillRect(clock.x, clock.y, clock.width, mirrorHeight);
+            }
+            
+            // Bottom mirror with pulse effect on bounce
+            if (Date.now() - lastBounceTime < 300 && photonPos1.y >= clock.y + clock.height - 10) {
+                const pulseSize = Math.sin((Date.now() - lastBounceTime) / 300 * Math.PI) * 3;
+                ctx.fillRect(clock.x - pulseSize, clock.y + clock.height - mirrorHeight - pulseSize, clock.width + pulseSize*2, mirrorHeight + pulseSize*2);
+            } else {
+                ctx.fillRect(clock.x, clock.y + clock.height - mirrorHeight, clock.width, mirrorHeight);
+            }
+            
+            // Draw label
+            ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+            ctx.textAlign = "center";
+            ctx.font = "16px Arial";
+            ctx.fillText(label, clock.x + clock.width/2, clock.y - 15);
+        }
+        
+        function drawTimeReadout(ctx, clock, time) {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+            ctx.textAlign = "center";
+            ctx.font = "16px Arial";
+            ctx.fillText("Time: " + time, clock.x + clock.width/2, clock.y + clock.height + 25);
+        }
+        
+        function drawFrameIndicator(ctx, frameLabel, canvasWidth) {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+            ctx.textAlign = "center";
+            ctx.font = "18px Arial";
+            ctx.fillText("Viewing from " + frameLabel, canvasWidth/2, 30);
+        }
+        
+        function drawVelocityVector(ctx, x, y, velocity) {
+            const arrowLength = velocity * 100;
+            
+            ctx.strokeStyle = "rgba(231, 76, 60, 0.8)";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + arrowLength, y);
+            ctx.stroke();
+            
+            // Arrow head
+            const headLength = 15;
+            const headAngle = Math.PI / 6;
+            
+            ctx.beginPath();
+            ctx.moveTo(x + arrowLength, y);
+            ctx.lineTo(x + arrowLength - headLength * Math.cos(headAngle), y - headLength * Math.sin(headAngle));
+            ctx.lineTo(x + arrowLength - headLength * Math.cos(headAngle), y + headLength * Math.sin(headAngle));
+            ctx.closePath();
+            ctx.fillStyle = "rgba(231, 76, 60, 0.8)";
+            ctx.fill();
+            
+            // Velocity label
+            ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+            ctx.textAlign = "center";
+            ctx.font = "14px Arial";
+            ctx.fillText(velocity.toFixed(2) + "c", x + arrowLength/2, y - 15);
+        }
+        
+        function drawStarField(ctx, width, height, scrollSpeed) {
+            // Create stars if not existing
+            if (!window.stars) {
+                window.stars = [];
+                for (let i = 0; i < 100; i++) {
+                    window.stars.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        size: Math.random() * 2 + 1,
+                        brightness: Math.random() * 0.5 + 0.5
+                    });
+                }
+            }
+            
+            // Move stars for parallax effect
+            window.stars.forEach(star => {
+                star.x += scrollSpeed * star.brightness * 5;
+                
+                // Reset position if out of bounds
+                if (star.x < 0) star.x += width;
+                if (star.x > width) star.x -= width;
+            });
+            
+            // Draw stars
+            ctx.fillStyle = "#f8f8f8"; // Canvas background
+            ctx.fillRect(0, 0, width, height);
+            
+            window.stars.forEach(star => {
+                ctx.fillStyle = `rgba(52, 152, 219, ${star.brightness})`;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+        
+        function updateTimeDilationDisplay() {
+            const gamma = 1 / Math.sqrt(1 - velocity * velocity);
+            
+            document.getElementById('stationary-time').textContent = stationaryTime.toFixed(1);
+            document.getElementById('moving-time').textContent = movingTime.toFixed(1);
+            document.getElementById('time-dilation-factor').textContent = gamma.toFixed(2);
+        }
+        
+        function updateTimeDilation() {
+            if (!timeDilationCanvas || !timeDilationCtx) return;
+            
+            // Called when velocity or reference frame changes
+            const gamma = 1 / Math.sqrt(1 - velocity * velocity);
+            document.getElementById('time-dilation-factor').textContent = gamma.toFixed(2);
+            
+            if (velocity === 0) {
+                // Reset everything at zero velocity
+                stationaryTime = 0;
+                movingTime = 0;
+                photonPos1 = { x: stationaryClock.x + stationaryClock.width/2, y: stationaryClock.y };
+                photonPos2 = { x: movingClock.x + movingClock.width/2, y: movingClock.y };
+                photonDir1 = 1;
+                photonDir2 = 1;
+                photonTrail1 = [];
+                photonTrail2 = [];
+                
+                updateTimeDilationDisplay();
+            }
+            
+            drawTimeDilation();
+        }
+        
+        ///////////////////////
+        // LENGTH CONTRACTION
+        ///////////////////////
+        
+        function initLengthContraction() {
+            lengthCanvas = document.getElementById('length-contraction-canvas');
+            if (!lengthCanvas) {
+                console.error('Could not find length-contraction-canvas element');
+                return;
+            }
+            
+            lengthCtx = lengthCanvas.getContext('2d');
+            updateLengthContraction();
+        }
+        
+        function animateLengthContraction() {
+            if (!lengthCanvas || !lengthCtx) return;
+            
+            spaceshipTime += 0.02;
+            drawLengthContraction();
+        }
+        
+        function drawLengthContraction() {
+            if (!lengthCanvas || !lengthCtx) return;
+            
+            const v = parseFloat(document.getElementById('velocity-slider-length').value);
+            const inMovingFrame = document.getElementById('frame-switch-length').checked;
+            const gamma = 1 / Math.sqrt(1 - v * v);
+            const contractedLength = spaceshipProperLength / gamma;
+            
+            lengthCtx.clearRect(0, 0, lengthCanvas.width, lengthCanvas.height);
+            
+            // Draw stars in background for visual effect
+            drawStarField(lengthCtx, lengthCanvas.width, lengthCanvas.height, inMovingFrame ? 0 : -v);
+            
+            // Draw reference frame indicator
+            drawFrameIndicator(lengthCtx, inMovingFrame ? "Spaceship Frame" : "Earth Frame", lengthCanvas.width);
+            
+            // Draw Earth
+            if (!inMovingFrame || v === 0) {
+                drawEarth(lengthCtx, 150, 250, 40);
+            } else {
+                // In moving frame, Earth moves in opposite direction
+                const earthX = 150 - Math.sin(spaceshipTime) * 20 - v * 300;
+                drawEarth(lengthCtx, earthX, 250, 40);
+                
+                // Draw Earth velocity vector
+                if (v > 0) {
+                    drawVelocityVector(lengthCtx, earthX + 70, 250, -v);
+                }
+            }
+            
+            // Draw spaceship
+            const shipX = inMovingFrame ? lengthCanvas.width/2 - (spaceshipProperLength * 2)/2 : 
+                                        400 + Math.sin(spaceshipTime) * 20 + v * 100;
+            const shipWidth = inMovingFrame ? spaceshipProperLength * 2 : contractedLength * 2;
+            
+            drawSpaceship(lengthCtx, shipX, 250, shipWidth, 60, inMovingFrame ? "#3498db" : "#e74c3c");
+            
+            // Draw velocity vector for ship if in Earth frame
+            if (!inMovingFrame && v > 0) {
+                drawVelocityVector(lengthCtx, shipX - 70, 250, v);
+            }
+            
+            // Draw measurement arrows
+            const measureY = 350;
+            drawMeasurementArrows(lengthCtx, shipX, measureY, shipWidth, 
+                                inMovingFrame ? spaceshipProperLength : contractedLength);
+            
+            // Draw explanation based on velocity
+            if (v > 0.5) {
+                lengthCtx.fillStyle = "rgba(231, 76, 60, 0.9)";
+                lengthCtx.textAlign = "center";
+                lengthCtx.font = "18px Arial";
+                
+                if (inMovingFrame) {
+                    lengthCtx.fillText("In the ship's frame, its length is normal (proper length)", 
+                                    lengthCanvas.width/2, 450);
+                } else {
+                    lengthCtx.fillText("From Earth's perspective, the moving ship is shorter in its direction of motion", 
+                                    lengthCanvas.width/2, 450);
+                }
+            }
+            
+            // Draw length comparison label
+            if (!inMovingFrame && v > 0.3) {
+                const compareX = 700;
+                const compareY = 150;
+                
+                lengthCtx.fillStyle = "rgba(0, 0, 0, 0.7)";
+                lengthCtx.textAlign = "center";
+                lengthCtx.font = "16px Arial";
+                lengthCtx.fillText("Length Comparison", compareX, compareY - 40);
+                
+                // Proper length
+                lengthCtx.strokeStyle = "#3498db";
+                lengthCtx.lineWidth = 8;
+                lengthCtx.beginPath();
+                lengthCtx.moveTo(compareX - spaceshipProperLength/2, compareY);
+                lengthCtx.lineTo(compareX + spaceshipProperLength/2, compareY);
+                lengthCtx.stroke();
+                lengthCtx.fillText("Proper Length (100m)", compareX, compareY + 20);
+                
+                // Contracted length
+                lengthCtx.strokeStyle = "#e74c3c";
+                lengthCtx.lineWidth = 8;
+                lengthCtx.beginPath();
+                lengthCtx.moveTo(compareX - contractedLength/2, compareY + 60);
+                lengthCtx.lineTo(compareX + contractedLength/2, compareY + 60);
+                lengthCtx.stroke();
+                lengthCtx.fillText(`Contracted Length (${contractedLength.toFixed(1)}m)`, compareX, compareY + 80);
+                
+                // Draw illustration of physical explanation
+                drawContractionExplanation(lengthCtx, 250, 120, v);
+            }
+        }
+        
+        function drawEarth(ctx, x, y, radius) {
+            // Glow effect
+            const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius * 1.5);
+            gradient.addColorStop(0, "rgba(46, 204, 113, 0.3)");
+            gradient.addColorStop(1, "rgba(46, 204, 113, 0)");
+            
+            ctx.beginPath();
+            ctx.arc(x, y, radius * 1.5, 0, Math.PI * 2);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            
+            // Earth
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = "#3498db";
+            ctx.fill();
+            
+            // Continents (simple representation)
+            ctx.beginPath();
+            ctx.arc(x - radius/3, y - radius/4, radius/2, 0, Math.PI * 2);
+            ctx.arc(x + radius/2, y + radius/3, radius/3, 0, Math.PI * 2);
+            ctx.fillStyle = "#2ecc71";
+            ctx.fill();
+            
+            // Label
+            ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+            ctx.textAlign = "center";
+            ctx.font = "16px Arial";
+            ctx.fillText("Earth", x, y - radius - 10);
+        }
+        
+        function drawSpaceship(ctx, x, y, width, height, color) {
+            // Shadow
+            ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+            ctx.shadowBlur = 15;
+            ctx.shadowOffsetX = 5;
+            ctx.shadowOffsetY = 5;
+            
+            // Main body
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + width * 0.8, y);
+            ctx.lineTo(x + width, y + height/2);
+            ctx.lineTo(x + width * 0.8, y + height);
+            ctx.lineTo(x, y + height);
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.fill();
+            
+            // Remove shadow
+            ctx.shadowColor = "transparent";
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+            
+            // Cockpit
+            ctx.beginPath();
+            ctx.moveTo(x + width * 0.7, y + height * 0.2);
+            ctx.quadraticCurveTo(
+                x + width * 0.9, y + height * 0.5,
+                x + width * 0.7, y + height * 0.8
+            );
+            ctx.lineTo(x + width * 0.5, y + height * 0.8);
+            ctx.lineTo(x + width * 0.5, y + height * 0.2);
+            ctx.closePath();
+            ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+            ctx.fill();
+            
+            // Engine glow
+            const engineGradient = ctx.createLinearGradient(x, y + height/2, x - 30, y + height/2);
+            engineGradient.addColorStop(0, "rgba(241, 196, 15, 0.8)");
+            engineGradient.addColorStop(1, "rgba(241, 196, 15, 0)");
+            
+            ctx.beginPath();
+            ctx.moveTo(x, y + height * 0.3);
+            ctx.lineTo(x - 30, y + height * 0.4);
+            ctx.lineTo(x - 30, y + height * 0.6);
+            ctx.lineTo(x, y + height * 0.7);
+            ctx.closePath();
+            ctx.fillStyle = engineGradient;
+            ctx.fill();
+            
+            // Label
+            ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+            ctx.textAlign = "center";
+            ctx.font = "16px Arial";
+            ctx.fillText("Spaceship", x + width/2, y - 10);
+        }
+        
+        function drawMeasurementArrows(ctx, x, y, visualWidth, actualLength) {
+            const arrowSize = 10;
+            
+            // Line
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + visualWidth, y);
+            ctx.strokeStyle = "#333";
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            // Arrows
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + arrowSize, y - arrowSize);
+            ctx.lineTo(x + arrowSize, y + arrowSize);
+            ctx.closePath();
+            ctx.fillStyle = "#333";
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.moveTo(x + visualWidth, y);
+            ctx.lineTo(x + visualWidth - arrowSize, y - arrowSize);
+            ctx.lineTo(x + visualWidth - arrowSize, y + arrowSize);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Length label
+            ctx.fillStyle = "#333";
+            ctx.textAlign = "center";
+            ctx.font = "14px Arial";
+            ctx.fillText(`Length: ${actualLength.toFixed(1)} meters`, x + visualWidth/2, y + 20);
+        }
+        
+        function drawContractionExplanation(ctx, x, y, v) {
+            if (v < 0.3) return;
+            
+            ctx.fillStyle = "rgba(52, 152, 219, 0.1)";
+            ctx.fillRect(x - 100, y - 30, 500, 80);
+            
+            ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+            ctx.textAlign = "left";
+            ctx.font = "15px Arial";
+            ctx.fillText("Length contraction occurs because:", x - 90, y - 10);
+            ctx.fillText("1. The speed of light is constant in all reference frames", x - 90, y + 10);
+            ctx.fillText("2. Time dilation affects simultaneity of measurements", x - 90, y + 30);
+            
+            // Draw formula
+            const gamma = 1 / Math.sqrt(1 - v * v);
+            ctx.fillStyle = "rgba(231, 76, 60, 0.9)";
+            ctx.textAlign = "center";
+            ctx.font = "16px Arial";
+            ctx.fillText(`L = L₀/γ = L₀·√(1-v²/c²) = ${(spaceshipProperLength/gamma).toFixed(1)}m`, x + 150, y + 60);
+        }
+        
+        function updateLengthContraction() {
+            if (!lengthCanvas || !lengthCtx) return;
+            
+            const v = parseFloat(document.getElementById('velocity-slider-length').value);
+            const inMovingFrame = document.getElementById('frame-switch-length').checked;
+            const gamma = 1 / Math.sqrt(1 - v * v);
+            const contractedLength = spaceshipProperLength / gamma;
+            
+            // Update display values
+            document.getElementById('proper-length').textContent = spaceshipProperLength;
+            document.getElementById('contracted-length').textContent = inMovingFrame ? 
+                                                                     spaceshipProperLength.toFixed(1) : 
+                                                                     contractedLength.toFixed(1);
+            document.getElementById('contraction-factor').textContent = gamma.toFixed(2);
+            
+            drawLengthContraction();
+        }
+        
+        ///////////////////////
+        // SIMULTANEITY
+        ///////////////////////
+        
+        function initSimultaneity() {
+            simultaneityCanvas = document.getElementById('simultaneity-canvas');
+            if (!simultaneityCanvas) {
+                console.error('Could not find simultaneity-canvas element');
+                return;
+            }
+            
+            simultaneityCtx = simultaneityCanvas.getContext('2d');
+            updateSimultaneity();
+        }
+        
+        function animateSimultaneity() {
+            if (!simultaneityCanvas || !simultaneityCtx) return;
+            
+            if (isLightningStriking) {
+                // Grow light fronts
+                if (leftLightFront.visible) {
+                    leftLightFront.radius += 5;
+                }
+                
+                if (rightLightFront.visible) {
+                    rightLightFront.radius += 5;
+                }
+                
+                // Check if light fronts reach observer
+                const trainObserver = { 
+                    x: trainPosition + 200, 
+                    y: 220 
+                };
+                
+                // Update explanation based on light fronts reaching observer
+                const platformObserver = { x: simultaneityCanvas.width/2, y: 300 };
+                
+                // Draw the updated scene
+                drawSimultaneity();
+            }
+        }
+        
+        function drawSimultaneity() {
+            if (!simultaneityCanvas || !simultaneityCtx) return;
+            
+            const v = parseFloat(document.getElementById('velocity-slider-simultaneity').value);
+            const inTrainFrame = document.getElementById('frame-switch-simultaneity').checked;
+            
+            simultaneityCtx.clearRect(0, 0, simultaneityCanvas.width, simultaneityCanvas.height);
+            
+            // Draw stars in background
+            drawStarField(simultaneityCtx, simultaneityCanvas.width, simultaneityCanvas.height, inTrainFrame ? 0 : -v);
+            
+            // Draw reference frame indicator
+            drawFrameIndicator(simultaneityCtx, inTrainFrame ? "Train Frame" : "Platform Frame", simultaneityCanvas.width);
+            
+            // Draw platform
+            simultaneityCtx.fillStyle = "#95a5a6";
+            simultaneityCtx.fillRect(0, 280, simultaneityCanvas.width, 20);
+            
+            // Add platform details
+            for (let i = 0; i < simultaneityCanvas.width; i += 50) {
+                simultaneityCtx.fillStyle = "#7f8c8d";
+                simultaneityCtx.fillRect(i, 280, 30, 20);
+            }
+            
+            // Update train position based on reference frame
+            if (inTrainFrame) {
+                // In train frame, train is stationary in center
+                trainPosition = simultaneityCanvas.width/2 - 200;
+            } else {
+                // In platform frame, train moves
+                trainPosition = (simultaneityCanvas.width/2 - 200) + v * 100;
+            }
+            
+            // Draw train
+            drawTrain(simultaneityCtx, trainPosition, 220, 400, 60, v, inTrainFrame);
+            
+            // Draw lightning strike points
+            simultaneityCtx.fillStyle = "#f39c12";
+            simultaneityCtx.beginPath();
+            simultaneityCtx.arc(leftLightning.x, leftLightning.y, 5, 0, Math.PI * 2);
+            simultaneityCtx.fill();
+            
+            simultaneityCtx.beginPath();
+            simultaneityCtx.arc(rightLightning.x, rightLightning.y, 5, 0, Math.PI * 2);
+            simultaneityCtx.fill();
+            
+            // Draw platform observer
+            if (!inTrainFrame) {
+                drawObserver(simultaneityCtx, simultaneityCanvas.width/2, 320, "#2c3e50", "Platform Observer");
+            }
+            
+            // Draw light fronts from lightning
+            if (isLightningStriking) {
+                if (leftLightning.visible) {
+                    drawLightning(simultaneityCtx, leftLightning.x, leftLightning.y - 80, leftLightning.x, leftLightning.y);
+                }
+                
+                if (rightLightning.visible) {
+                    drawLightning(simultaneityCtx, rightLightning.x, rightLightning.y - 80, rightLightning.x, rightLightning.y);
+                }
+                
+                // Draw light fronts
+                if (leftLightFront.visible) {
+                    drawLightFront(simultaneityCtx, leftLightFront.x, leftLightFront.y, leftLightFront.radius);
+                }
+                
+                if (rightLightFront.visible) {
+                    drawLightFront(simultaneityCtx, rightLightFront.x, rightLightFront.y, rightLightFront.radius);
+                }
+            }
+            
+            // Draw labels for lightning strikes
+            simultaneityCtx.fillStyle = "rgba(0, 0, 0, 0.7)";
+            simultaneityCtx.textAlign = "center";
+            simultaneityCtx.font = "14px Arial";
+            simultaneityCtx.fillText("Lightning Strike A", leftLightning.x, leftLightning.y - 90);
+            simultaneityCtx.fillText("Lightning Strike B", rightLightning.x, rightLightning.y - 90);
+            
+            // Draw explanation for current frame
+            if (v > 0) {
+                simultaneityCtx.fillStyle = "rgba(52, 152, 219, 0.9)";
+                simultaneityCtx.textAlign = "center";
+                simultaneityCtx.font = "16px Arial";
+                
+                if (inTrainFrame) {
+                    simultaneityCtx.fillText("In train frame: The platform moves left, so strike B's light reaches the observer first", 
+                                         simultaneityCanvas.width/2, 400);
+                    simultaneityCtx.fillText("Conclusion: Strike B happened BEFORE Strike A", 
+                                         simultaneityCanvas.width/2, 430);
+                } else {
+                    simultaneityCtx.fillText("In platform frame: Strikes are simultaneous, but the observer moves right", 
+                                         simultaneityCanvas.width/2, 400);
+                    simultaneityCtx.fillText("Conclusion: Observer encounters light from strike B first", 
+                                         simultaneityCanvas.width/2, 430);
+                }
+            }
+        }
+        
+        function drawTrain(ctx, x, y, width, height, velocity, inTrainFrame) {
+            // Draw shadow
+            ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+            ctx.shadowBlur = 10;
+            ctx.shadowOffsetX = 5;
+            ctx.shadowOffsetY = 5;
+            
+            // Train body
+            ctx.fillStyle = "#3498db";
+            ctx.fillRect(x, y, width, height);
+            
+            // Remove shadow
+            ctx.shadowColor = "transparent";
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+            
+            // Train details
+            ctx.fillStyle = "#2980b9";
+            ctx.fillRect(x, y + height - 15, width, 15); // Bottom stripe
+            
+            // Windows
+            for (let i = 20; i < width - 40; i += 60) {
+                ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+                ctx.fillRect(x + i, y + 10, 40, 25);
+            }
+            
+            // Front engine
+            ctx.fillStyle = "#2c3e50";
+            ctx.fillRect(x + width - 70, y, 70, height);
+            
+            // Draw train observer
+            drawObserver(ctx, x + width/2, y + height/2, "#fff", "Train Observer");
+            
+            // Draw velocity vector if moving
+            if (velocity > 0 && !inTrainFrame) {
+                drawVelocityVector(ctx, x - 50, y + height/2, velocity);
+            } else if (velocity > 0 && inTrainFrame) {
+                drawVelocityVector(ctx, x + width + 50, y + height/2, -velocity);
+            }
+        }
+        
+        function drawObserver(ctx, x, y, color, label) {
+            // Draw observer (simple stick figure)
+            // Head
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(x, y, 10, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Eyes
+            ctx.fillStyle = "#333";
+            ctx.beginPath();
+            ctx.arc(x - 3, y - 2, 2, 0, Math.PI * 2);
+            ctx.arc(x + 3, y - 2, 2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Label
+            ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+            ctx.textAlign = "center";
+            ctx.font = "14px Arial";
+            ctx.fillText(label, x, y - 20);
+        }
+        
+        function drawLightning(ctx, x1, y1, x2, y2) {
+            ctx.strokeStyle = "#f1c40f";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            
+            const segments = 5;
+            const dx = (x2 - x1) / segments;
+            const dy = (y2 - y1) / segments;
+            
+            for (let i = 1; i < segments; i++) {
+                const offsetX = (Math.random() - 0.5) * 15;
+                ctx.lineTo(x1 + dx * i + offsetX, y1 + dy * i);
+            }
+            
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+            
+            // Add glow effect
+            ctx.strokeStyle = "rgba(241, 196, 15, 0.3)";
+            ctx.lineWidth = 10;
+            ctx.stroke();
+        }
+        
+        function drawLightFront(ctx, x, y, radius) {
+            // Create gradient for light front
+            const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+            gradient.addColorStop(0, "rgba(241, 196, 15, 0.5)");
+            gradient.addColorStop(0.7, "rgba(241, 196, 15, 0.2)");
+            gradient.addColorStop(1, "rgba(241, 196, 15, 0)");
+            
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            
+            // Edge ring
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.strokeStyle = "rgba(241, 196, 15, 0.8)";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+        
+        function triggerLightningStrikes() {
+            isLightningStriking = true;
+            const inTrainFrame = document.getElementById('frame-switch-simultaneity').checked;
+            const v = parseFloat(document.getElementById('velocity-slider-simultaneity').value);
+            
+            // Reset light fronts
+            leftLightFront = { x: leftLightning.x, y: leftLightning.y, radius: 0, visible: false };
+            rightLightFront = { x: rightLightning.x, y: rightLightning.y, radius: 0, visible: false };
+            
+            if (inTrainFrame) {
+                // In train frame, strikes are not simultaneous
+                const timeGap = v * 300; // Time between strikes (ms)
+                
+                // Strike at the back first (right strike in train frame)
+                rightLightning.visible = true;
+                rightLightFront.visible = true;
+                
+                setTimeout(() => {
+                    leftLightning.visible = true;
+                    leftLightFront.visible = true;
+                }, timeGap);
+            } else {
+                // In platform frame, strikes are simultaneous
+                leftLightning.visible = true;
+                rightLightning.visible = true;
+                leftLightFront.visible = true;
+                rightLightFront.visible = true;
+            }
+            
+            // Reset after a few seconds
+            setTimeout(() => {
+                isLightningStriking = false;
+                leftLightning.visible = false;
+                rightLightning.visible = false;
+                leftLightFront.visible = false;
+                rightLightFront.visible = false;
+            }, 5000);
+        }
+        
+        function updateSimultaneity() {
+            if (!simultaneityCanvas || !simultaneityCtx) return;
+            drawSimultaneity();
+        }
+        
+        ///////////////////////
+        // UNIFIED VIEW
+        ///////////////////////
+        
+        function initUnifiedView() {
+            unifiedCanvas = document.getElementById('unified-canvas');
+            if (!unifiedCanvas) {
+                console.error('Could not find unified-canvas element');
+                return;
+            }
+            
+            unifiedCtx = unifiedCanvas.getContext('2d');
+            updateUnifiedView();
+        }
+        
+        function animateUnifiedView() {
+            if (!unifiedCanvas || !unifiedCtx) return;
+            
+            unifiedTime += 0.02;
+            drawUnifiedView();
+        }
+        
+        function drawUnifiedView() {
+            if (!unifiedCanvas || !unifiedCtx) return;
+            
+            const v = parseFloat(document.getElementById('velocity-slider-unified').value);
+            const inMovingFrame = document.getElementById('frame-switch-unified').checked;
+            const gamma = 1 / Math.sqrt(1 - v * v);
+            
+            unifiedCtx.clearRect(0, 0, unifiedCanvas.width, unifiedCanvas.height);
+            
+            // Draw stars background
+            drawStarField(unifiedCtx, unifiedCanvas.width, unifiedCanvas.height, inMovingFrame ? 0 : -v);
+            
+            // Draw reference frame indicator
+            drawFrameIndicator(unifiedCtx, inMovingFrame ? "Moving Frame" : "Rest Frame", unifiedCanvas.width);
+            
+            // Draw spacetime grid
+            drawSpacetimeGrid(unifiedCtx, v, inMovingFrame);
+            
+            // Draw unified effects visualization
+            drawUnifiedEffects(unifiedCtx, v, inMovingFrame, gamma);
+            
+            // Update data displays
+            document.getElementById('unified-time-factor').textContent = gamma.toFixed(2);
+            document.getElementById('unified-length-factor').textContent = (1/gamma).toFixed(2);
+            document.getElementById('unified-gamma').textContent = gamma.toFixed(2);
+        }
+        
+        function drawSpacetimeGrid(ctx, v, inMovingFrame) {
+            ctx.strokeStyle = "rgba(52, 152, 219, 0.2)";
+            ctx.lineWidth = 1;
+            
+            // Draw vertical lines (space)
+            for (let x = 0; x <= unifiedCanvas.width; x += 50) {
+                ctx.beginPath();
+                
+                if (inMovingFrame && v > 0) {
+                    // In moving frame, grid lines are tilted due to Lorentz transformation
+                    const slope = v;
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x - slope * unifiedCanvas.height, unifiedCanvas.height);
+                } else {
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, unifiedCanvas.height);
+                }
+                
+                ctx.stroke();
+            }
+            
+            // Draw horizontal lines (time)
+            for (let y = 0; y <= unifiedCanvas.height; y += 50) {
+                ctx.beginPath();
+                
+                if (inMovingFrame && v > 0) {
+                    // In moving frame, grid lines are tilted due to Lorentz transformation
+                    const slope = v * v / (1 - v * v);
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(unifiedCanvas.width, y + slope * unifiedCanvas.width);
+                } else {
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(unifiedCanvas.width, y);
+                }
+                
+                ctx.stroke();
+            }
+        }
+        
+        function drawUnifiedEffects(ctx, v, inMovingFrame, gamma) {
+            // Position objects based on the frame
+            const centerX = unifiedCanvas.width / 2;
+            const centerY = unifiedCanvas.height / 2;
+            
+            // Draw spacetime diagram explanation
+            ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+            ctx.textAlign = "center";
+            ctx.font = "18px Arial";
+            ctx.fillText("Spacetime Diagram", centerX, 30);
+            
+            if (v > 0) {
+                // Draw world lines for events
+                drawWorldLines(ctx, v, inMovingFrame, gamma);
+                
+                // Draw length contraction example
+                const shipY = 150;
+                const shipLength = 150;
+                const contractedLength = shipLength / gamma;
+                
+                if (inMovingFrame) {
+                    // In moving frame, ship is proper length and stationary
+                    drawSpaceship(ctx, centerX - shipLength/2, shipY, shipLength, 40, "#3498db");
+                    
+                    // Rest frame ship appears tilted and elongated in time
+                    drawTransformedObject(ctx, centerX - shipLength/2, shipY + 100, shipLength, 40, "#e74c3c", -v, gamma);
+                } else {
+                    // In rest frame, ship is contracted and moving
+                    const offset = 50 * Math.sin(unifiedTime);
+                    drawSpaceship(ctx, centerX - contractedLength/2 + offset, shipY, contractedLength, 40, "#e74c3c");
+                    
+                    // Ship in its own frame appears proper length but tilted in spacetime
+                    drawTransformedObject(ctx, centerX - shipLength/2, shipY + 100, shipLength, 40, "#3498db", v, 1/gamma);
+                }
+                
+                // Draw clock comparison (time dilation)
+                drawClockComparison(ctx, centerX, 350, v, gamma, inMovingFrame);
+                
+                // Draw explanatory text
+                if (v > 0.5) {
+                    ctx.fillStyle = "rgba(231, 76, 60, 0.9)";
+                    ctx.textAlign = "center";
+                    ctx.font = "16px Arial";
+                    
+                    if (inMovingFrame) {
+                        ctx.fillText("In the moving frame, your clock runs normally but outside clocks run slower", 
+                                 centerX, 450);
+                    } else {
+                        ctx.fillText("From the rest frame, moving clocks run slower and moving objects are shorter", 
+                                 centerX, 450);
+                    }
+                }
+            } else {
+                // At zero velocity, draw explanation
+                ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+                ctx.textAlign = "center";
+                ctx.font = "16px Arial";
+                ctx.fillText("Increase velocity to see how space and time transform between reference frames", 
+                         centerX, centerY);
+            }
+        }
+        
+        function drawWorldLines(ctx, v, inMovingFrame, gamma) {
+            const centerX = unifiedCanvas.width / 2;
+            const startY = 100;
+            const endY = 400;
+            
+            // Event A and B in rest frame
+            const eventA = { x: centerX - 100, y: startY + 50 };
+            const eventB = { x: centerX + 100, y: startY + 50 };
+            
+            // Draw events in current frame
+            if (inMovingFrame) {
+                // Transform events to moving frame
+                const transformedA = transformEvent(eventA, centerX, v, gamma);
+                const transformedB = transformEvent(eventB, centerX, v, gamma);
+                
+                // Draw world lines in moving frame
+                ctx.strokeStyle = "rgba(52, 152, 219, 0.8)";
+                ctx.lineWidth = 3;
+                
+                // Vertical world line for stationary object in moving frame
+                ctx.beginPath();
+                ctx.moveTo(centerX, startY);
+                ctx.lineTo(centerX, endY);
+                ctx.stroke();
+                
+                // Tilted world line for moving object (rest frame observer)
+                ctx.strokeStyle = "rgba(231, 76, 60, 0.8)";
+                ctx.beginPath();
+                ctx.moveTo(centerX + 100 * v * gamma, startY);
+                ctx.lineTo(centerX - 100 * v * gamma, endY);
+                ctx.stroke();
+                
+                // Draw events
+                drawEvent(ctx, transformedA.x, transformedA.y, "A");
+                drawEvent(ctx, transformedB.x, transformedB.y, "B");
+                
+                // Label
+                ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+                ctx.textAlign = "center";
+                ctx.font = "14px Arial";
+                ctx.fillText("Events that were simultaneous in the rest frame", centerX, startY + 90);
+                ctx.fillText("happen at different times in the moving frame", centerX, startY + 110);
+            } else {
+                // Draw world lines in rest frame
+                ctx.strokeStyle = "rgba(52, 152, 219, 0.8)";
+                ctx.lineWidth = 3;
+                
+                // Vertical world line for stationary object in rest frame
+                ctx.beginPath();
+                ctx.moveTo(centerX, startY);
+                ctx.lineTo(centerX, endY);
+                ctx.stroke();
+                
+                // Tilted world line for moving object
+                ctx.strokeStyle = "rgba(231, 76, 60, 0.8)";
+                ctx.beginPath();
+                ctx.moveTo(centerX - 100, startY);
+                ctx.lineTo(centerX + 100, endY);
+                ctx.stroke();
+                
+                // Draw events
+                drawEvent(ctx, eventA.x, eventA.y, "A");
+                drawEvent(ctx, eventB.x, eventB.y, "B");
+                
+                // Draw simultaneity line
+                ctx.strokeStyle = "rgba(46, 204, 113, 0.5)";
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(centerX - 150, eventA.y);
+                ctx.lineTo(centerX + 150, eventA.y);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // Label
+                ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+                ctx.textAlign = "center";
+                ctx.font = "14px Arial";
+                ctx.fillText("In the rest frame, these events happen simultaneously", centerX, startY + 90);
+            }
+        }
+        
+        function drawEvent(ctx, x, y, label) {
+            // Draw event point
+            ctx.fillStyle = "rgba(241, 196, 15, 0.8)";
+            ctx.beginPath();
+            ctx.arc(x, y, 8, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Add glow
+            ctx.beginPath();
+            ctx.arc(x, y, 12, 0, Math.PI * 2);
+            ctx.fillStyle = "rgba(241, 196, 15, 0.3)";
+            ctx.fill();
+            
+            // Label
+            ctx.fillStyle = "#333";
+            ctx.textAlign = "center";
+            ctx.font = "12px Arial";
+            ctx.fillText("Event " + label, x, y - 15);
+        }
+        
+        function transformEvent(event, centerX, v, gamma) {
+            // Lorentz transformation of an event
+            const x = event.x - centerX; // Position relative to center
+            const t = event.y;
+            
+            // Transform coordinates
+            const xPrime = gamma * (x - v * t);
+            const tPrime = gamma * (t - v * x);
+            
+            return {
+                x: centerX + xPrime,
+                y: tPrime
+            };
+        }
+        
+        function drawTransformedObject(ctx, x, y, width, height, color, v, gamma) {
+            // Draw object transformed by Lorentz transformation
+            ctx.beginPath();
+            
+            // Calculate corners transformed by Lorentz
+            const corners = [
+                transformPoint(x, y, v, gamma),
+                transformPoint(x + width, y, v, gamma),
+                transformPoint(x + width, y + height, v, gamma),
+                transformPoint(x, y + height, v, gamma)
+            ];
+            
+            ctx.moveTo(corners[0].x, corners[0].y);
+            ctx.lineTo(corners[1].x, corners[1].y);
+            ctx.lineTo(corners[2].x, corners[2].y);
+            ctx.lineTo(corners[3].x, corners[3].y);
+            ctx.closePath();
+            
+            ctx.fillStyle = color;
+            ctx.globalAlpha = 0.5;
+            ctx.fill();
+            ctx.globalAlpha = 1.0;
+            
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Label
+            ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+            ctx.textAlign = "center";
+            ctx.font = "14px Arial";
+            ctx.fillText("As seen in the other frame", (corners[0].x + corners[1].x) / 2, corners[0].y - 10);
+        }
+        
+        function transformPoint(x, y, v, gamma) {
+            // Adjust coordinates relative to center
+            const centerX = unifiedCanvas.width / 2;
+            const x1 = x - centerX;
+            
+            // Apply Lorentz transformation
+            const xPrime = gamma * (x1 - v * y);
+            const yPrime = y; // Simplified transformation for visualization
+            
+            return {
+                x: centerX + xPrime,
+                y: yPrime
+            };
+        }
+        
+        function drawClockComparison(ctx, x, y, v, gamma, inMovingFrame) {
+            const clockSize = 40;
+            const spacing = 150;
+            
+            // Draw stationary clock
+            drawClock2(ctx, x - spacing/2, y, clockSize, "#3498db", "Stationary Clock", 1, unifiedTime);
+            
+            // Draw moving clock
+            if (inMovingFrame) {
+                // In moving frame, the "moving" clock is stationary 
+                drawClock2(ctx, x + spacing/2, y, clockSize, "#e74c3c", "Moving Clock", 1, unifiedTime);
+            } else {
+                // In rest frame, the moving clock runs slower
+                drawClock2(ctx, x + spacing/2, y, clockSize, "#e74c3c", "Moving Clock", 1/gamma, unifiedTime);
+            }
+            
+            // Draw time dilation explanation
+            if (v > 0.3) {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+                ctx.textAlign = "center";
+                ctx.font = "14px Arial";
+                
+                if (inMovingFrame) {
+                    ctx.fillText("In your frame, all clocks tick at the same rate", x, y + clockSize + 30);
+                } else {
+                    ctx.fillText(`Moving clocks run ${gamma.toFixed(2)}× slower due to time dilation`, x, y + clockSize + 30);
+                }
+            }
+        }
+        
+        function drawClock2(ctx, x, y, size, color, label, timeRate, time) {
+            const radius = size / 2;
+            
+            // Draw clock face
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = "#fff";
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            
+            // Draw hour markers
+            for (let i = 0; i < 12; i++) {
+                const angle = i * Math.PI / 6;
+                const markerX = x + (radius - 5) * Math.sin(angle);
+                const markerY = y - (radius - 5) * Math.cos(angle);
+                
+                ctx.beginPath();
+                ctx.arc(markerX, markerY, 2, 0, Math.PI * 2);
+                ctx.fillStyle = "#333";
+                ctx.fill();
+            }
+            
+            // Draw hands - adjusted by timeRate
+            const adjustedTime = time * timeRate;
+            
+            // Hour hand
+            const hourAngle = adjustedTime % 12 * Math.PI / 6;
+            drawClockHand(ctx, x, y, radius * 0.5, hourAngle, 4, "#333");
+            
+            // Minute hand
+            const minuteAngle = adjustedTime * 12 % 60 * Math.PI / 30;
+            drawClockHand(ctx, x, y, radius * 0.7, minuteAngle, 2, "#333");
+            
+            // Second hand
+            const secondAngle = adjustedTime * 720 % 60 * Math.PI / 30;
+            drawClockHand(ctx, x, y, radius * 0.9, secondAngle, 1, "#e74c3c");
+            
+            // Center dot
+            ctx.beginPath();
+            ctx.arc(x, y, 3, 0, Math.PI * 2);
+            ctx.fillStyle = "#333";
+            ctx.fill();
+            
+            // Label
+            ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+            ctx.textAlign = "center";
+            ctx.font = "12px Arial";
+            ctx.fillText(label, x, y - radius - 10);
+        }
+        
+        function drawClockHand(ctx, x, y, length, angle, width, color) {
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(
+                x + length * Math.sin(angle),
+                y - length * Math.cos(angle)
+            );
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            ctx.lineCap = "round";
+            ctx.stroke();
+        }
+        
+        function updateUnifiedView() {
+            if (!unifiedCanvas || !unifiedCtx) return;
+            
+            const v = parseFloat(document.getElementById('velocity-slider-unified').value);
+            const gamma = 1 / Math.sqrt(1 - v * v);
+            
+            // Update display values
+            document.getElementById('unified-time-factor').textContent = gamma.toFixed(2);
+            document.getElementById('unified-length-factor').textContent = (1/gamma).toFixed(2);
+            document.getElementById('unified-gamma').textContent = gamma.toFixed(2);
+            
+            drawUnifiedView();
+        }
+    });
+    </script>
+</body>
+</html>
