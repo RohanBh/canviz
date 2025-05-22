@@ -851,6 +851,23 @@
                             algorithms.</div>
                         <span class="launch-demo">View Demo →</span>
                     </div>
+
+                    <!-- CS Demo 3 -->
+                    <div class="demo-card" onclick="window.open('demos/vllm.html', '_blank')">
+                        <div class="demo-emoji">🧠</div>
+                        <h3 class="demo-title">PagedAttention in vLLM</h3>
+                        <p class="demo-description">Explore how PagedAttention improves memory efficiency for KV cache
+                            handling in LLM inference, minimizing waste across multiple requests.</p>
+                        <div class="demo-prompt">Prompt: I'm reading https://arxiv.org/pdf/2309.06180 and trying to
+                            understand why existing KV Cache memory management (with static pre-allocation scheme) was
+                            ineffective until PagedAttention was introduced. Could you show what happens when multiple
+                            requests come in and how existing static memory allocation and PagedAttention handles them?
+                            I'm interested in seeing the 3 types of memory waste shown in the paper. I would like to
+                            deepen my understanding on PagedAttention and would like to see how it handles requests.
+                            Could you please use actual tokens like 'wa' and 's' (for 'was' word) as it helps me
+                            visualize better?</div>
+                        <span class="launch-demo">View Demo →</span>
+                    </div>
                 </div>
             </div>
             <!-- DEMO SECTION: COMPUTER SCIENCE TAB END -->

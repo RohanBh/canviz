@@ -1,0 +1,1880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PagedAttention: Memory Management for LLM KV Cache</title>
+    <style>
+        :root {
+            --color-bg: #f8f9fa;
+            --color-text: #2c3e50;
+            --color-primary: #3498db;
+            --color-secondary: #2ecc71;
+            --color-accent: #9b59b6;
+            --color-static: #3498db;
+            --color-paged: #2ecc71;
+            --color-internal-frag: #e74c3c;
+            --color-external-frag: #95a5a6;
+            --color-reserved: #f39c12;
+            --color-free: #ecf0f1;
+            --color-panel-bg: #ffffff;
+            --color-shadow: rgba(0,0,0,0.1);
+            --color-highlight: #ff9800;
+            --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --font-mono: 'Consolas', 'Monaco', monospace;
+            --border-radius: 8px;
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            line-height: 1.6;
+            color: var(--color-text);
+            background-color: var(--color-bg);
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--color-text);
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: var(--color-accent);
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .explanation {
+            background-color: #f1f8e9;
+            border-left: 4px solid #8bc34a;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            box-shadow: 0 2px 8px var(--color-shadow);
+        }
+
+        .visualization-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .token-stream-container {
+            background-color: var(--color-panel-bg);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: 0 4px 12px var(--color-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .token-stream-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--color-text);
+        }
+
+        .token-stream {
+            font-family: var(--font-mono);
+            padding: 15px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            border-radius: var(--border-radius);
+            overflow-x: auto;
+            white-space: nowrap;
+            min-height: 60px;
+            position: relative;
+        }
+
+        .token {
+            display: inline-block;
+            padding: 4px 8px;
+            margin: 0 4px;
+            border-radius: 4px;
+            background-color: #34495e;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s forwards;
+        }
+
+        .token.highlight {
+            background-color: var(--color-highlight);
+            color: #fff;
+            animation: pulse 2s infinite;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .button {
+            padding: 10px 20px;
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all var(--transition-speed);
+            box-shadow: 0 2px 6px var(--color-shadow);
+        }
+
+        .button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--color-shadow);
+        }
+
+        .button:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 3px var(--color-shadow);
+        }
+
+        .button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .button.prev {
+            background-color: #7f8c8d;
+        }
+
+        .button.prev:hover {
+            background-color: #6c7a7d;
+        }
+
+        .button.next {
+            background-color: var(--color-primary);
+        }
+
+        .button.reset {
+            background-color: #e74c3c;
+        }
+
+        .button.reset:hover {
+            background-color: #c0392b;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #ddd;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            box-shadow: 0 1px 3px var(--color-shadow);
+        }
+
+        .step-dot:hover {
+            transform: scale(1.2);
+        }
+
+        .step-dot.active {
+            background-color: var(--color-primary);
+            transform: scale(1.2);
+        }
+
+        .memory-panels {
+            display: flex;
+            gap: 30px;
+        }
+
+        .panel {
+            flex: 1;
+            background-color: var(--color-panel-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 12px var(--color-shadow);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all var(--transition-speed);
+        }
+
+        .panel-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            position: relative;
+        }
+
+        .panel-title.static {
+            color: var(--color-static);
+        }
+
+        .panel-title.static::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 30%;
+            width: 40%;
+            height: 2px;
+            background-color: var(--color-static);
+        }
+
+        .panel-title.paged {
+            color: var(--color-paged);
+        }
+
+        .panel-title.paged::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 30%;
+            width: 40%;
+            height: 2px;
+            background-color: var(--color-paged);
+        }
+
+        .panel-explanation {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeInUp 0.5s 0.2s forwards;
+        }
+
+        .request-info {
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            border-left: 3px solid var(--color-accent);
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeInUp 0.5s 0.3s forwards;
+        }
+
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 6px;
+            margin-top: 15px;
+            min-height: 220px;
+        }
+
+        .memory-block {
+            height: 50px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 2px 5px var(--color-shadow);
+            transform: scale(0);
+            animation: popIn 0.5s forwards;
+            overflow: hidden;
+        }
+
+        .memory-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .memory-block:hover::before {
+            opacity: 1;
+        }
+
+        .memory-block:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        .memory-block.memory-block-used {
+            background-color: var(--color-static);
+            animation-delay: calc(var(--index) * 0.05s);
+        }
+
+        .memory-block.memory-block-used-paged {
+            background-color: var(--color-paged);
+            animation-delay: calc(var(--index) * 0.05s);
+        }
+
+        .memory-block.memory-block-reserved {
+            background-color: var(--color-reserved);
+            animation-delay: calc(var(--index) * 0.05s);
+        }
+
+        .memory-block.memory-block-internal-frag {
+            background-color: var(--color-internal-frag);
+            animation-delay: calc(var(--index) * 0.05s);
+        }
+
+        .memory-block.memory-block-external-frag {
+            background-color: var(--color-external-frag);
+            animation-delay: calc(var(--index) * 0.05s);
+        }
+
+        .memory-block.memory-block-free {
+            background-color: var(--color-free);
+            color: #7f8c8d;
+            animation-delay: calc(var(--index) * 0.05s);
+        }
+
+        .memory-block .token-content {
+            z-index: 2;
+            position: relative;
+            font-weight: 600;
+        }
+
+        .memory-block .memory-size {
+            position: absolute;
+            bottom: 3px;
+            right: 5px;
+            font-size: 0.65rem;
+            opacity: 0.8;
+        }
+
+        .block-table-container {
+            margin-top: 20px;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeInUp 0.5s 0.4s forwards;
+        }
+
+        .block-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.85rem;
+        }
+
+        .block-table th {
+            background-color: #f4f6f8;
+            padding: 8px;
+            text-align: left;
+            border-bottom: 2px solid #ddd;
+            color: var(--color-text);
+        }
+
+        .block-table td {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .block-table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .block-table .ref-count {
+            font-weight: 600;
+            color: var(--color-accent);
+        }
+
+        .stats {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f4f6f8;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeInUp 0.5s 0.5s forwards;
+        }
+
+        .stats-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--color-text);
+        }
+
+        .stats-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .stats-value {
+            font-weight: 500;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: var(--color-panel-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 8px var(--color-shadow);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(44, 62, 80, 0.95);
+            color: white;
+            padding: 10px 15px;
+            border-radius: var(--border-radius);
+            font-size: 0.85rem;
+            z-index: 100;
+            max-width: 250px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            transform: translateY(10px);
+        }
+
+        .tooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .token-flow {
+            position: absolute;
+            z-index: 100;
+            padding: 4px 8px;
+            background-color: var(--color-highlight);
+            color: white;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            pointer-events: none;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background-color: var(--color-accent);
+            transition: width var(--transition-speed);
+        }
+
+        .summary {
+            background-color: #f1f8e9;
+            border-left: 4px solid #8bc34a;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            box-shadow: 0 2px 8px var(--color-shadow);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .summary.visible {
+            animation: fadeInUp 0.8s forwards;
+        }
+
+        .summary h3 {
+            margin-bottom: 15px;
+            color: var(--color-text);
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .comparison-table th {
+            background-color: #f4f6f8;
+            font-weight: 600;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .comparison-table .benefit {
+            color: var(--color-paged);
+            font-weight: 500;
+        }
+
+        .comparison-table .drawback {
+            color: var(--color-internal-frag);
+            font-weight: 500;
+        }
+
+        .connections {
+            position: absolute;
+            pointer-events: none;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .arrow {
+            position: absolute;
+            border-style: dashed;
+            border-color: rgba(44, 62, 80, 0.5);
+            border-width: 0 0 2px 2px;
+            pointer-events: none;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+            }
+            70% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 152, 0, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 152, 0, 0);
+            }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        @media (max-width: 1000px) {
+            .memory-panels {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .memory-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Understanding PagedAttention</h1>
+            <div class="subtitle">Memory Management for LLM KV Cache</div>
+        </header>
+
+        <div class="explanation">
+            <p>This visualization demonstrates how PagedAttention improves memory management compared to static pre-allocation schemes when processing LLM requests. Watch how both methods handle tokens like 'wa' and 's' and observe the three types of memory waste: <strong>internal fragmentation</strong>, <strong>external fragmentation</strong>, and <strong>reservation</strong>.</p>
+        </div>
+
+        <div class="visualization-container">
+            <div class="token-stream-container">
+                <div class="token-stream-title">Current Tokens in Processing:</div>
+                <div class="token-stream" id="tokenStream"></div>
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <div class="controls">
+                <button class="button prev" id="prevBtn">Previous Step</button>
+                <button class="button next" id="nextBtn">Next Step</button>
+                <button class="button reset" id="resetBtn">Reset</button>
+            </div>
+
+            <div class="step-indicator" id="stepIndicator"></div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: var(--color-static);"></div>
+                    <span>Used (Static)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: var(--color-paged);"></div>
+                    <span>Used (PagedAttention)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: var(--color-reserved);"></div>
+                    <span>Reserved</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: var(--color-internal-frag);"></div>
+                    <span>Internal Fragmentation</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: var(--color-external-frag);"></div>
+                    <span>External Fragmentation</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: var(--color-free);"></div>
+                    <span>Free</span>
+                </div>
+            </div>
+
+            <div class="memory-panels">
+                <div class="panel" id="staticPanel">
+                    <div class="panel-title static">Static KV Cache Allocation</div>
+                    <div class="panel-explanation" id="staticExplanation"></div>
+                    <div class="request-info" id="staticRequestInfo"></div>
+                    <div class="memory-grid" id="staticGrid"></div>
+                    <div class="stats" id="staticStats"></div>
+                </div>
+
+                <div class="panel" id="pagedPanel">
+                    <div class="panel-title paged">PagedAttention</div>
+                    <div class="panel-explanation" id="pagedExplanation"></div>
+                    <div class="request-info" id="pagedRequestInfo"></div>
+                    <div class="memory-grid" id="pagedGrid"></div>
+                    <div class="block-table-container" id="blockTableContainer"></div>
+                    <div class="stats" id="pagedStats"></div>
+                </div>
+            </div>
+
+            <div class="summary" id="summary"></div>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip"></div>
+    <div id="tokenFlowContainer"></div>
+
+    <script>
+        // Visualization state and DOM elements
+        const state = {
+            currentStep: 0,
+            totalSteps: 8,
+            tokenFlows: [],
+            animating: false
+        };
+
+        // DOM Elements
+        const tokenStream = document.getElementById('tokenStream');
+        const staticGrid = document.getElementById('staticGrid');
+        const pagedGrid = document.getElementById('pagedGrid');
+        const staticExplanation = document.getElementById('staticExplanation');
+        const pagedExplanation = document.getElementById('pagedExplanation');
+        const staticRequestInfo = document.getElementById('staticRequestInfo');
+        const pagedRequestInfo = document.getElementById('pagedRequestInfo');
+        const staticStats = document.getElementById('staticStats');
+        const pagedStats = document.getElementById('pagedStats');
+        const blockTableContainer = document.getElementById('blockTableContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const stepIndicator = document.getElementById('stepIndicator');
+        const tooltip = document.getElementById('tooltip');
+        const progressBar = document.getElementById('progressBar');
+        const summary = document.getElementById('summary');
+        const tokenFlowContainer = document.getElementById('tokenFlowContainer');
+
+        // Initialize step indicators
+        for (let i = 0; i < state.totalSteps; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'step-dot';
+            if (i === 0) dot.className += ' active';
+            dot.addEventListener('click', () => goToStep(i));
+            stepIndicator.appendChild(dot);
+        }
+
+        // Initialize grids
+        function initializeGrids() {
+            // Clear existing grids
+            staticGrid.innerHTML = '';
+            pagedGrid.innerHTML = '';
+
+            // Create static grid
+            for (let i = 0; i < 32; i++) {
+                const block = document.createElement('div');
+                block.className = 'memory-block memory-block-free';
+                block.style.setProperty('--index', i);
+                block.id = `static-block-${i}`;
+                block.innerHTML = `<span class="token-content"></span>`;
+                block.addEventListener('mouseenter', () => showTooltip(block, 'Free memory block'));
+                block.addEventListener('mouseleave', hideTooltip);
+                staticGrid.appendChild(block);
+            }
+
+            // Create paged grid
+            for (let i = 0; i < 32; i++) {
+                const block = document.createElement('div');
+                block.className = 'memory-block memory-block-free';
+                block.style.setProperty('--index', i);
+                block.id = `paged-block-${i}`;
+                block.innerHTML = `<span class="token-content"></span>`;
+                block.addEventListener('mouseenter', () => showTooltip(block, 'Free memory block'));
+                block.addEventListener('mouseleave', hideTooltip);
+                pagedGrid.appendChild(block);
+            }
+        }
+
+        // Tooltip functions
+        function showTooltip(element, text) {
+            tooltip.textContent = text;
+            tooltip.classList.add('visible');
+            
+            const rect = element.getBoundingClientRect();
+            const tooltipRect = tooltip.getBoundingClientRect();
+            
+            let left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+            let top = rect.top - tooltipRect.height - 10;
+            
+            // Keep tooltip on screen
+            if (left < 10) left = 10;
+            if (left + tooltipRect.width > window.innerWidth - 10) {
+                left = window.innerWidth - tooltipRect.width - 10;
+            }
+            
+            // If tooltip would go off the top, position it below the element
+            if (top < 10) {
+                top = rect.bottom + 10;
+            }
+            
+            tooltip.style.left = `${left}px`;
+            tooltip.style.top = `${top}px`;
+        }
+
+        function hideTooltip() {
+            tooltip.classList.remove('visible');
+        }
+
+        // Navigation functions
+        function previousStep() {
+            if (state.currentStep > 0 && !state.animating) {
+                state.currentStep--;
+                updateUI(true);
+            }
+        }
+
+        function nextStep() {
+            if (state.currentStep < state.totalSteps - 1 && !state.animating) {
+                state.currentStep++;
+                updateUI(false);
+            }
+        }
+
+        function goToStep(step) {
+            if (!state.animating) {
+                state.currentStep = step;
+                updateUI(state.currentStep < step);
+            }
+        }
+
+        function resetSimulation() {
+            if (!state.animating) {
+                state.currentStep = 0;
+                clearTokenFlows();
+                initializeGrids();
+                updateUI(false);
+            }
+        }
+
+        function updateStepIndicator() {
+            const dots = stepIndicator.querySelectorAll('.step-dot');
+            dots.forEach((dot, i) => {
+                dot.className = i === state.currentStep ? 'step-dot active' : 'step-dot';
+            });
+        }
+
+        function updateButtonState() {
+            prevBtn.disabled = state.currentStep === 0;
+            nextBtn.disabled = state.currentStep === state.totalSteps - 1;
+        }
+
+        function updateProgressBar() {
+            const progress = ((state.currentStep + 1) / state.totalSteps) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // Token flow animation
+        function createTokenFlow(text, startElement, endElement, delay = 0) {
+            const tokenFlow = document.createElement('div');
+            tokenFlow.className = 'token-flow';
+            tokenFlow.textContent = text;
+            tokenFlow.style.opacity = '0';
+            tokenFlowContainer.appendChild(tokenFlow);
+            
+            state.tokenFlows.push(tokenFlow);
+            
+            setTimeout(() => {
+                const startRect = startElement.getBoundingClientRect();
+                const endRect = endElement.getBoundingClientRect();
+                
+                tokenFlow.style.position = 'absolute';
+                tokenFlow.style.left = `${startRect.left + (startRect.width / 2) - (tokenFlow.offsetWidth / 2)}px`;
+                tokenFlow.style.top = `${startRect.top + (startRect.height / 2) - (tokenFlow.offsetHeight / 2)}px`;
+                tokenFlow.style.opacity = '1';
+                
+                setTimeout(() => {
+                    tokenFlow.style.left = `${endRect.left + (endRect.width / 2) - (tokenFlow.offsetWidth / 2)}px`;
+                    tokenFlow.style.top = `${endRect.top + (endRect.height / 2) - (tokenFlow.offsetHeight / 2)}px`;
+                    
+                    setTimeout(() => {
+                        tokenFlow.style.opacity = '0';
+                        setTimeout(() => {
+                            if (tokenFlowContainer.contains(tokenFlow)) {
+                                tokenFlowContainer.removeChild(tokenFlow);
+                            }
+                            const index = state.tokenFlows.indexOf(tokenFlow);
+                            if (index > -1) {
+                                state.tokenFlows.splice(index, 1);
+                            }
+                        }, 300);
+                    }, 600);
+                }, 100);
+            }, delay);
+        }
+
+        function clearTokenFlows() {
+            state.tokenFlows.forEach(flow => {
+                if (tokenFlowContainer.contains(flow)) {
+                    tokenFlowContainer.removeChild(flow);
+                }
+            });
+            state.tokenFlows = [];
+        }
+
+        // Memory block animation
+        function animateBlock(block, className, content, tooltipText) {
+            return new Promise(resolve => {
+                block.className = 'memory-block';
+                block.querySelector('.token-content').textContent = '';
+                
+                // Force reflow
+                void block.offsetWidth;
+                
+                block.className = `memory-block ${className}`;
+                
+                if (content) {
+                    block.querySelector('.token-content').textContent = content;
+                }
+                
+                if (tooltipText) {
+                    block.onmouseenter = () => showTooltip(block, tooltipText);
+                    block.onmouseleave = hideTooltip;
+                }
+                
+                // Wait for animation to complete
+                setTimeout(resolve, 300);
+            });
+        }
+
+        async function updateUI(reverse = false) {
+            state.animating = true;
+            updateStepIndicator();
+            updateButtonState();
+            updateProgressBar();
+            
+            clearTokenFlows();
+            
+            // Update content based on current step
+            switch (state.currentStep) {
+                case 0: await step0(); break;
+                case 1: await step1(reverse); break;
+                case 2: await step2(reverse); break;
+                case 3: await step3(reverse); break;
+                case 4: await step4(reverse); break;
+                case 5: await step5(reverse); break;
+                case 6: await step6(reverse); break;
+                case 7: await step7(reverse); break;
+            }
+            
+            state.animating = false;
+        }
+
+        // Step implementations
+        async function step0() {
+            tokenStream.innerHTML = '<span class="token">Starting simulation...</span>';
+            
+            staticExplanation.innerHTML = '<p>Static KV Cache pre-allocates a fixed amount of memory for each request, assuming maximum possible sequence length. This can lead to significant memory waste.</p>';
+            pagedExplanation.innerHTML = '<p>PagedAttention divides memory into blocks that are allocated dynamically as needed, significantly improving memory efficiency.</p>';
+            
+            staticRequestInfo.innerHTML = '<p>No requests yet</p>';
+            pagedRequestInfo.innerHTML = '<p>No requests yet</p>';
+            
+            staticStats.innerHTML = `
+                <div class="stats-title">Memory Statistics</div>
+                <div class="stats-item">
+                    <span>Memory waste:</span>
+                    <span class="stats-value">0%</span>
+                </div>
+            `;
+            
+            pagedStats.innerHTML = `
+                <div class="stats-title">Memory Statistics</div>
+                <div class="stats-item">
+                    <span>Memory waste:</span>
+                    <span class="stats-value">0%</span>
+                </div>
+            `;
+            
+            blockTableContainer.innerHTML = '<p>Block table is empty</p>';
+            
+            summary.className = 'summary';
+        }
+
+        async function step1(reverse = false) {
+            // Update token stream
+            tokenStream.innerHTML = '<span class="token">wa</span>';
+            
+            // Update explanations
+            staticExplanation.innerHTML = '<p>With static allocation, a large continuous memory block is pre-allocated for the full possible sequence length (assuming 8 tokens per request).</p>';
+            pagedExplanation.innerHTML = '<p>PagedAttention only allocates a single block for the current token, with space for more tokens in the same block (4 tokens per block).</p>';
+            
+            // Update request info
+            staticRequestInfo.innerHTML = '<p><strong>Request 1:</strong> Processing token "wa"</p>';
+            pagedRequestInfo.innerHTML = '<p><strong>Request 1:</strong> Processing token "wa"</p>';
+            
+            // Find token in stream
+            const tokenElements = tokenStream.querySelectorAll('.token');
+            const waToken = tokenElements[0];
+            
+            // Update static allocation visualization
+            for (let i = 0; i < 8; i++) {
+                const block = document.getElementById(`static-block-${i}`);
+                if (i === 0) {
+                    await animateBlock(block, 'memory-block-used', 'wa', 'Used: token "wa"');
+                    if (!reverse) {
+                        createTokenFlow('wa', waToken, block, 300);
+                    }
+                } else {
+                    await animateBlock(block, 'memory-block-reserved', '', 'Reserved but unused (waste)');
+                }
+            }
+            
+            // Update PagedAttention visualization
+            const pagedBlock = document.getElementById('paged-block-0');
+            await animateBlock(pagedBlock, 'memory-block-used-paged', 'wa', 'Used: token "wa"');
+            if (!reverse) {
+                createTokenFlow('wa', waToken, pagedBlock, 300);
+            }
+            
+            // Update block table
+            blockTableContainer.innerHTML = `
+                <div class="stats-title">Block Table</div>
+                <table class="block-table">
+                    <tr>
+                        <th>Logical Block</th>
+                        <th>Physical Block</th>
+                        <th>Filled</th>
+                        <th>Request</th>
+                    </tr>
+                    <tr>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>1/4</td>
+                        <td>1</td>
+                    </tr>
+                </table>
+            `;
+            
+            // Update stats
+            staticStats.innerHTML = `
+                <div class="stats-title">Memory Statistics</div>
+                <div class="stats-item">
+                    <span>Memory waste:</span>
+                    <span class="stats-value">87.5% (7/8 blocks)</span>
+                </div>
+                <div class="stats-item">
+                    <span>Reserved (waste):</span>
+                    <span class="stats-value">87.5% (7/8 blocks)</span>
+                </div>
+            `;
+            
+            pagedStats.innerHTML = `
+                <div class="stats-title">Memory Statistics</div>
+                <div class="stats-item">
+                    <span>Memory waste:</span>
+                    <span class="stats-value">0%</span>
+                </div>
+                <div class="stats-item">
+                    <span>Used blocks:</span>
+                    <span class="stats-value">1</span>
+                </div>
+                <div class="stats-item">
+                    <span>Block utilization:</span>
+                    <span class="stats-value">25% (1/4 slots)</span>
+                </div>
+            `;
+        }
+
+        async function step2(reverse = false) {
+            // Update token stream
+            tokenStream.innerHTML = '<span class="token">wa</span> <span class="token">s</span>';
+            
+            // Update explanations
+            staticExplanation.innerHTML = '<p>When the second token "s" arrives, it uses the next pre-allocated slot. The remaining slots stay reserved even if they might never be used.</p>';
+            pagedExplanation.innerHTML = '<p>PagedAttention uses the next position in the current block - no new allocation needed yet. This is more efficient as blocks can be partially filled.</p>';
+            
+            // Update request info
+            staticRequestInfo.innerHTML = '<p><strong>Request 1:</strong> Processing tokens "wa" and "s"</p>';
+            pagedRequestInfo.innerHTML = '<p><strong>Request 1:</strong> Processing tokens "wa" and "s"</p>';
+            
+            // Find token in stream
+            const tokenElements = tokenStream.querySelectorAll('.token');
+            const sToken = tokenElements[1];
+            
+            // Update static allocation visualization
+            for (let i = 0; i < 8; i++) {
+                const block = document.getElementById(`static-block-${i}`);
+                if (i === 0) {
+                    await animateBlock(block, 'memory-block-used', 'wa', 'Used: token "wa"');
+                } else if (i === 1) {
+                    await animateBlock(block, 'memory-block-used', 's', 'Used: token "s"');
+                    if (!reverse) {
+                        createTokenFlow('s', sToken, block, 300);
+                    }
+                } else {
+                    await animateBlock(block, 'memory-block-reserved', '', 'Reserved but unused (waste)');
+                }
+            }
+            
+            // Update PagedAttention visualization
+            const pagedBlock0 = document.getElementById('paged-block-0');
+            await animateBlock(pagedBlock0, 'memory-block-used-paged', 'wa', 'Used: token "wa"');
+            
+            const pagedBlock1 = document.getElementById('paged-block-1');
+            await animateBlock(pagedBlock1, 'memory-block-used-paged', 's', 'Used: token "s"');
+            if (!reverse) {
+                createTokenFlow('s', sToken, pagedBlock1, 300);
+            }
+            
+            // Update block table
+            blockTableContainer.innerHTML = `
+                <div class="stats-title">Block Table</div>
+                <table class="block-table">
+                    <tr>
+                        <th>Logical Block</th>
+                        <th>Physical Block</th>
+                        <th>Filled</th>
+                        <th>Request</th>
+                    </tr>
+                    <tr>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>2/4</td>
+                        <td>1</td>
+                    </tr>
+                </table>
+            `;
+            
+            // Update stats
+            staticStats.innerHTML = `
+                <div class="stats-title">Memory Statistics</div>
+                <div class="stats-item">
+                    <span>Memory waste:</span>
+                    <span class="stats-value">75% (6/8 blocks)</span>
+                </div>
+                <div class="stats-item">
+                    <span>Reserved (waste):</span>
+                    <span class="stats-value">75% (6/8 blocks)</span>
+                </div>
+            `;
+            
+            pagedStats.innerHTML = `
+                <div class="stats-title">Memory Statistics</div>
+                <div class="stats-item">
+                    <span>Memory waste:</span>
+                    <span class="stats-value">0%</span>
+                </div>
+                <div class="stats-item">
+                    <span>Used blocks:</span>
+                    <span class="stats-value">1</span>
+                </div>
+                <div class="stats-item">
+                    <span>Block utilization:</span>
+                    <span class="stats-value">50% (2/4 slots)</span>
+                </div>
+            `;
+        }
+
+        async function step3(reverse = false) {
+            // Update token stream
+            tokenStream.innerHTML = '<span class="token">wa</span> <span class="token">s</span> | <span class="token">he</span>';
+            
+            // Update explanations
+            staticExplanation.innerHTML = `
+                <p>When a second request arrives, a new continuous chunk must be allocated even though the first request only used 2 tokens of its allocation.</p>
+                <p>This leads to <strong>Internal Fragmentation</strong> - allocated but unused memory in the first request.</p>
+            `;
+            pagedExplanation.innerHTML = `
+                <p>PagedAttention allocates a new block for the second request, with its own block table entry.</p>
+                <p>The first block still has space, but we need a separate block for the new request to keep tokens organized.</p>
+            `;
+            
+            // Update request info
+            staticRequestInfo.innerHTML = '<p><strong>Request 1:</strong> "wa s" (complete)<br><strong>Request 2:</strong> Processing token "he"</p>';
+            pagedRequestInfo.innerHTML = '<p><strong>Request 1:</strong> "wa s" (complete)<br><strong>Request 2:</strong> Processing token "he"</p>';
+            
+            // Find token in stream
+            const tokenElements = tokenStream.querySelectorAll('.token');
+            const heToken = tokenElements[2];
+            
+            // Update static allocation visualization
+            for (let i = 0; i < 16; i++) {
+                const block = document.getElementById(`static-block-${i}`);
+                if (i === 0) {
+                    await animateBlock(block, 'memory-block-used', 'wa', 'Used: token "wa" (Request 1)');
+                } else if (i === 1) {
+                    await animateBlock(block, 'memory-block-used', 's', 'Used: token "s" (Request 1)');
+                } else if (i >= 2 && i < 8) {
+                    await animateBlock(block, 'memory-block-internal-frag', '', 'Internal Fragmentation: Allocated but never used for Request 1');
+                } else if (i === 8) {
+                    await animateBlock(block, 'memory-block-used', 'he', 'Used: token "he" (Request 2)');
+                    if (!reverse) {
+                        createTokenFlow('he', heToken, block, 300);
+                    }
+                } else if (i > 8 && i < 16) {
+                    await animateBlock(block, 'memory-block-reserved', '', 'Reserved but unused for Request 2 (waste)');
+                }
+            }
+            
+            // Update PagedAttention visualization
+            const pagedBlock0 = document.getElementById('paged-block-0');
+            await animateBlock(pagedBlock0, 'memory-block-used-paged', 'wa', 'Used: token "wa" (Request 1)');
+            
+            const pagedBlock1 = document.getElementById('paged-block-1');
+            await animateBlock(pagedBlock1, 'memory-block-used-paged', 's', 'Used: token "s" (Request 1)');
+            
+            const pagedBlock4 = document.getElementById('paged-block-4');
+            await animateBlock(pagedBlock4, 'memory-block-used-paged', 'he', 'Used: token "he" (Request 2)');
+            if (!reverse) {
+                createTokenFlow('he', heToken, pagedBlock4, 300);
+            }
+            
+            // Update block table
+            blockTableContainer.innerHTML = `
+                <div class="stats-title">Block Table</div>
+                <table class="block-table">
+                    <tr>
+                        <th>Logical Block</th>
+                        <th>Physical Block</th>
+                        <th>Filled</th>
+                        <th>Request</th>
+                    </tr>
+                    <tr>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>2/4</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>1/4</td>
+                        <td>2</td>
+                    </tr>
+                </table>
+            `;
+            
+            // Update stats
+            staticStats.innerHTML = `
+                <div class="stats-title">Memory Statistics</div>
+                <div class="stats-item">
+                    <span>Memory waste:</span>
+                    <span class="stats-value">81.25% (13/16 blocks)</span>
+                </div>
+                <div class="stats-item">
+                    <span>Internal Fragmentation:</span>
+                    <span class="stats-value">37.5% (6/16 blocks)</span>
+                </div>
+                <div class="stats-item">
+                    <span>Reserved (waste):</span>
+                    <span class="stats-value">43.75% (7/16 blocks)</span>
+                </div>
+            `;
+            
+            pagedStats.innerHTML = `
+                <div class="stats-title">Memory Statistics</div>
+                <div class="stats-item">
+                    <span>Memory waste:</span>
+                    <span class="stats-value">0%</span>
+                </div>
+                <div class="stats-item">
+                    <span>Used blocks:</span>
+                    <span class="stats-value">2</span>
+                </div>
+                <div class="stats-item">
+                    <span>Block utilization:</span>
+                    <span class="stats-value">37.5% (3/8 slots)</span>
+                </div>
+            `;
+        }
+
+        async function step4(reverse = false) {
+            // Update token stream
+            tokenStream.innerHTML = '<span class="token">wa</span> <span class="token">s</span> | <span class="token">he</span> | <span class="token">to</span> <span class="token">do</span>';
+            
+            // Update explanations
+            staticExplanation.innerHTML = `
+                <p>As a third request arrives, we see both <strong>Internal Fragmentation</strong> (allocated but unused memory in completed requests) and the start of <strong>External Fragmentation</strong> (gaps between allocations).</p>
+                <p>Each new request needs a contiguous memory block of maximum size.</p>
+            `;
+            pagedExplanation.innerHTML = `
+                <p>PagedAttention allocates a new block for the third request. It can use any available free block in memory.</p>
+                <p>No fragmentation issues arise because blocks are allocated independently, not requiring contiguous memory.</p>
+            `;
+            
+            // Update request info
+            staticRequestInfo.innerHTML = '<p><strong>Request 1:</strong> "wa s" (complete)<br><strong>Request 2:</strong> "he" (complete)<br><strong>Request 3:</strong> Processing tokens "to do"</p>';
+            pagedRequestInfo.innerHTML = '<p><strong>Request 1:</strong> "wa s" (complete)<br><strong>Request 2:</strong> "he" (complete)<br><strong>Request 3:</strong> Processing tokens "to do"</p>';
+            
+            // Find tokens in stream
+            const tokenElements = tokenStream.querySelectorAll('.token');
+            const toToken = tokenElements[3];
+            const doToken = tokenElements[4];
+            
+            // Update static allocation visualization - showing external fragmentation
+            for (let i = 0; i < 24; i++) {
+                const block = document.getElementById(`static-block-${i}`);
+                if (i === 0) {
+                    await animateBlock(block, 'memory-block-used', 'wa', 'Used: token "wa" (Request 1)');
+                } else if (i === 1) {
+                    await animateBlock(block, 'memory-block-used', 's', 'Used: token "s" (Request 1)');
+                } else if (i >= 2 && i < 8) {
+                    await animateBlock(block, 'memory-block-internal-frag', '', 'Internal Fragmentation: Allocated but never used for Request 1');
+                } else if (i === 8) {
+                    await animateBlock(block, 'memory-block-used', 'he', 'Used: token "he" (Request 2)');
+                } else if (i > 8 && i < 16) {
+                    await animateBlock(block, 'memory-block-internal-frag', '', 'Internal Fragmentation: Allocated but never used for Request 2');
+                } else if (i === 16) {
+                    await animateBlock(block, 'memory-block-used', 'to', 'Used: token "to" (Request 3)');
+                    if (!reverse) {
+                        createTokenFlow('to', toToken, block, 300);
+                    }
+                } else if (i === 17) {
+                    await animateBlock(block, 'memory-block-used', 'do', 'Used: token "do" (Request 3)');
+                    if (!reverse) {
+                        createTokenFlow('do', doToken, block, 600);
+                    }
+                } else if (i > 17 && i < 24) {
+                    await animateBlock(block, 'memory-block-reserved', '', 'Reserved but unused for Request 3 (waste)');
+                }
+            }
+            
+            // Update PagedAttention visualization
+            const pagedBlock0 = document.getElementById('paged-block-0');
+            await animateBlock(pagedBlock0, 'memory-block-used-paged', 'wa', 'Used: token "wa" (Request 1)');
+            
+            const pagedBlock1 = document.getElementById('paged-block-1');
+            await animateBlock(pagedBlock1, 'memory-block-used-paged', 's', 'Used: token "s" (Request 1)');
+            
+            const pagedBlock4 = document.getElementById('paged-block-4');
+            await animateBlock(pagedBlock4, 'memory-block-used-paged', 'he', 'Used: token "he" (Request 2)');
+            
+            const pagedBlock8 = document.getElementById('paged-block-8');
+            await animateBlock(pagedBlock8, 'memory-block-used-paged', 'to', 'Used: token "to" (Request 3)');
+            if (!reverse) {
+                createTokenFlow('to', toToken, pagedBlock8, 300);
+            }
+            
+            const pagedBlock9 = document.getElementById('paged-block-9');
+            await animateBlock(pagedBlock9, 'memory-block-used-paged', 'do', 'Used: token "do" (Request 3)');
+            if (!reverse) {
+                createTokenFlow('do', doToken, pagedBlock9, 600);
+            }
+            
+            // Update block table
+            blockTableContainer.innerHTML = `
+                <div class="stats-title">Block Table</div>
+                <table class="block-table">
+                    <tr>
+                        <th>Logical Block</th>
+                        <th>Physical Block</th>
+                        <th>Filled</th>
+                        <th>Request</th>
+                    </tr>
+                    <tr>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>2/4</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>1/4</td>
+                        <td>2</td>
+                    </tr>
+                    <tr>
+                        <td>0</td>
+                        <td>2</td>
+                        <td>2/4</td>
+                        <td>3</td>
+                    </tr>
+                </table>
+            `;
+            
+            // Update stats
+            staticStats.innerHTML = `
+                <div class="stats-title">Memory Statistics</div>
+                <div class="stats-item">
+                    <span>Memory waste:</span>
+                    <span class="stats-value">83.3% (20/24 blocks)</span>
+                </div>
+                <div class="stats-item">
+                    <span>Internal Fragmentation:</span>
+                    <span class="stats-value">50% (12/24 blocks)</span>
+                </div>
+                <div class="stats-item">
+                    <span>Reserved (waste):</span>
+                    <span class="stats-value">25% (6/24 blocks)</span>
+                </div>
+                <div class="stats-item">
+                    <span>External Fragmentation:</span>
+                    <span class="stats-value">8.3% (2/24 blocks)</span>
+                </div>
+            `;
+            
+            pagedStats.innerHTML = `
+                <div class="stats-title">Memory Statistics</div>
+                <div class="stats-item">
+                    <span>Memory waste:</span>
+                    <span class="stats-value">0%</span>
+                </div>
+                <div class="stats-item">
+                    <span>Used blocks:</span>
+                    <span class="stats-value">3</span>
+                </div>
+                <div class="stats-item">
+                    <span>Block utilization:</span>
+                    <span class="stats-value">41.7% (5/12 slots)</span>
+                </div>
+                <div class="stats-item">
+                    <span>Fragmentation:</span>
+                    <span class="stats-value">0%</span>
+                </div>
+            `;
+        }
+
+        async function step5(reverse = false) {
+            // Update token stream
+            tokenStream.innerHTML = '<span class="token">wa</span> <span class="token">s</span> | <span class="token">he</span> | <span class="token">to</span> <span class="token">do</span> | <span class="token">many</span> <span class="token">more</span> <span class="token">tokens</span> <span class="token">...</span>';
+            
+            // Update explanations
+            staticExplanation.innerHTML = `
+                <p>As requests continue to arrive and complete, all three types of memory waste accumulate:</p>
+                <ul>
+                    <li><strong>Internal Fragmentation:</strong> Memory allocated but never used within a request</li>
+                    <li><strong>External Fragmentation:</strong> Small gaps between allocated chunks that are too small to be useful</li>
+                    <li><strong>Reservation:</strong> Pre-allocated memory for future tokens that might never arrive</li>
+                </ul>
+                <p>This severely limits memory utilization efficiency.</p>
+            `;
+            pagedExplanation.innerHTML = `
+                <p>PagedAttention continues to allocate blocks efficiently:</p>
+                <ul>
+                    <li>Blocks are filled to capacity before new ones are allocated</li>
+                    <li>No pre-allocation of unused memory</li>
+                    <li>No fragmentation issues since blocks are allocated independently</li>
+                    <li>Memory utilization is near-optimal</li>
+                </ul>
+            `;
+            
+            // Update request info
+            staticRequestInfo.innerHTML = '<p>Multiple requests, some complete, some in progress. Memory utilization is poor due to all three types of memory waste.</p>';
+            pagedRequestInfo.innerHTML = '<p>Multiple requests, some complete, some in progress. Memory utilization remains efficient with PagedAttention.</p>';
+            
+            // Update static allocation visualization - complex scenario with all waste types
+            for (let i = 0; i < 32; i++) {
+                const block = document.getElementById(`static-block-${i}`);
+                if ([0, 1, 8, 16, 17, 24, 25, 26].includes(i)) {
+                    await animateBlock(block, 'memory-block-used', i.toString(), `Used block ${i}`);
+                } else if ([2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15].includes(i)) {
+                    await animateBlock(block, 'memory-block-internal-frag', '', 'Internal Fragmentation: Allocated but never used');
+                } else if ([18, 19, 20, 21, 22, 23].includes(i)) {
+                    await animateBlock(block, 'memory-block-reserved', '', 'Reserved but unused (waste)');
+                } else {
+                    await animateBlock(block, 'memory-block-external-frag', '', 'External Fragmentation: Gap too small to be useful');
+                }
+            }
+            
+            // PagedAttention uses blocks more efficiently
+            for (let i = 0; i < 16; i++) {
+                const block = document.getElementById(`paged-block-${i}`);
+                if (i < 8) {
+                    await animateBlock(block, 'memory-block-used-paged', `T${i}`, `Used block ${i}`);
+                } else if (i < 12) {
+                    await animateBlock(block, 'memory-block-used-paged', `T${i}`, `Used block ${i}`);
+                }
+            }
+            
+            // Update block table
+            blockTableContainer.innerHTML = `
+                <div class="stats-title">Block Table</div>
+                <table class="block-table">
+                    <tr>
+                        <th>Logical Block</th>
+                        <th>Physical Block</th>
+                        <th>Filled</th>
+                        <th>Request</th>
+                    </tr>
+                    <tr>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>4/4</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>4/4</td>
+                        <td>2</td>
+                    </tr>
+                    <tr>
+                        <td>0</td>
+                        <td>2</td>
+                        <td>4/4</td>
+                        <td>3</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>3</td>
+                        <td>3/4</td>
+                        <td>4</td>
+                    </tr>
+                </table>
+            `;
+            
+            // Update stats
+            staticStats.innerHTML = `
+                <div class="stats-title">Memory Statistics</div>
+                <div class="stats-item">
+                    <span>Memory waste:</span>
+                    <span class="stats-value">75% (24/32 blocks)</span>
+                </div>
+                <div class="stats-item">
+                    <span>Internal Fragmentation:</span>
+                    <span class="stats-value">40.6% (13/32 blocks)</span>
+                </div>
+                <div class="stats-item">
+                    <span>Reserved (waste):</span>
+                    <span class="stats-value">18.8% (6/32 blocks)</span>
+                </div>
+                <div class="stats-item">
+                    <span>External Fragmentation:</span>
+                    <span class="stats-value">15.6% (5/32 blocks)</span>
+                </div>
+            `;
+            
+            pagedStats.innerHTML = `
+                <div class="stats-title">Memory Statistics</div>
+                <div class="stats-item">
+                    <span>Memory waste:</span>
+                    <span class="stats-value">3.1% (only 1 slot in last block)</span>
+                </div>
+                <div class="stats-item">
+                    <span>Used blocks:</span>
+                    <span class="stats-value">4</span>
+                </div>
+                <div class="stats-item">
+                    <span>Block utilization:</span>
+                    <span class="stats-value">93.8% (15/16 slots)</span>
+                </div>
+                <div class="stats-item">
+                    <span>Efficiency improvement:</span>
+                    <span class="stats-value">~4x over static allocation</span>
+                </div>
+            `;
+        }
+
+        async function step6(reverse = false) {
+            // Update token stream
+            tokenStream.innerHTML = '<span class="token">wa</span> <span class="token">s</span> <span class="token">shared</span> <span class="token">prefix</span> | <span class="token">wa</span> <span class="token">s</span> <span class="token">shared</span> <span class="token">suffix</span> | <span class="token">wa</span> <span class="token">s</span> <span class="token">shared</span> <span class="token">ending</span>';
+            
+            // Update explanations
+            staticExplanation.innerHTML = `
+                <p>Static allocation cannot share memory between requests, even when they contain identical tokens.</p>
+                <p>Each request duplicates tokens like "wa", "s", and "shared" in its own memory space, wasting significant memory.</p>
+            `;
+            pagedExplanation.innerHTML = `
+                <p>PagedAttention enables <strong>memory sharing</strong> between requests with common tokens.</p>
+                <p>By using a reference counting mechanism, multiple requests can point to the same physical memory blocks for identical tokens, dramatically reducing memory usage.</p>
+            `;
+            
+            // Update request info
+            staticRequestInfo.innerHTML = '<p>Multiple requests with shared tokens must duplicate memory in static allocation.</p>';
+            pagedRequestInfo.innerHTML = '<p>PagedAttention can share memory blocks between requests for common tokens.</p>';
+            
+            // Static allocation - duplicated data
+            for (let i = 0; i < 32; i++) {
+                const block = document.getElementById(`static-block-${i}`);
+                if ([0, 8, 16].includes(i)) {
+                    await animateBlock(block, 'memory-block-used', 'wa', `Duplicated token "wa" (Request ${Math.floor(i/8) + 1})`);
+                } else if ([1, 9, 17].includes(i)) {
+                    await animateBlock(block, 'memory-block-used', 's', `Duplicated token "s" (Request ${Math.floor(i/8) + 1})`);
+                } else if ([2, 10, 18].includes(i)) {
+                    await animateBlock(block, 'memory-block-used', 'shared', `Duplicated token "shared" (Request ${Math.floor(i/8) + 1})`);
+                } else if (i === 3) {
+                    await animateBlock(block, 'memory-block-used', 'prefix', 'Unique token "prefix" (Request 1)');
+                } else if (i === 11) {
+                    await animateBlock(block, 'memory-block-used', 'suffix', 'Unique token "suffix" (Request 2)');
+                } else if (i === 19) {
+                    await animateBlock(block, 'memory-block-used', 'ending', 'Unique token "ending" (Request 3)');
+                } else if ([4, 5, 6, 7, 12, 13, 14, 15, 20, 21, 22, 23].includes(i)) {
+                    await animateBlock(block, 'memory-block-reserved', '', 'Reserved but unused (waste)');
+                } else {
+                    await animateBlock(block, 'memory-block-external-frag', '', 'External Fragmentation: Gap too small to be useful');
+                }
+            }
+            
+            // PagedAttention - shared blocks
+            for (let i = 0; i < 10; i++) {
+                const block = document.getElementById(`paged-block-${i}`);
+                if (i === 0) {
+                    await animateBlock(block, 'memory-block-used-paged', 'wa', 'Shared token "wa" (used by 3 requests)');
+                } else if (i === 1) {
+                    await animateBlock(block, 'memory-block-used-paged', 's', 'Shared token "s" (used by 3 requests)');
+                } else if (i === 2) {
+                    await animateBlock(block, 'memory-block-used-paged', 'shared', 'Shared token "shared" (used by 3 requests)');
+                } else if (i === 3) {
+                    await animateBlock(block, 'memory-block-used-paged', 'prefix', 'Unique token "prefix" (Request 1)');
+                } else if (i === 4) {
+                    await animateBlock(block, 'memory-block-used-paged', 'suffix', 'Unique token "suffix" (Request 2)');
+                } else if (i === 5) {
+                    await animateBlock(block, 'memory-block-used-paged', 'ending', 'Unique token "ending" (Request 3)');
+                }
+            }
+            
+            // Update block table - showing shared blocks
+            blockTableContainer.innerHTML = `
+                <div class="stats-title">Block Table</div>
+                <table class="block-table">
+                    <tr>
+                        <th>Logical Block</th>
+                        <th>Physical Block</th>
+                        <th>Filled</th>
+                        <th>Request</th>
+                        <th>Ref Count</th>
+                    </tr>
+                    <tr>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>3/4</td>
+                        <td>1, 2, 3</td>
+                        <td class="ref-count">3</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>1/4</td>
+                        <td>1</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>1/4</td>
+                        <td>2</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>3</td>
+                        <td>1/4</td>
+                        <td>3</td>
+                        <td>1</td>
+                    </tr>
+                </table>
+            `;
+            
+            // Update stats
+            staticStats.innerHTML = `
+                <div class="stats-title">Memory Statistics</div>
+                <div class="stats-item">
+                    <span>Memory waste:</span>
+                    <span class="stats-value">68.8% (22/32 blocks)</span>
+                </div>
+                <div class="stats-item">
+                    <span>Reserved (waste):</span>
+                    <span class="stats-value">37.5% (12/32 blocks)</span>
+                </div>
+                <div class="stats-item">
+                    <span>External Fragmentation:</span>
+                    <span class="stats-value">31.3% (10/32 blocks)</span>
+                </div>
+                <div class="stats-item">
+                    <span>Duplicated data:</span>
+                    <span class="stats-value">6 blocks (3 tokens x 2 duplicates)</span>
+                </div>
+            `;
+            
+            pagedStats.innerHTML = `
+                <div class="stats-title">Memory Statistics</div>
+                <div class="stats-item">
+                    <span>Memory sharing:</span>
+                    <span class="stats-value">3 blocks used by 3 requests</span>
+                </div>
+                <div class="stats-item">
+                    <span>Memory saving:</span>
+                    <span class="stats-value">6 blocks (compared to static)</span>
+                </div>
+                <div class="stats-item">
+                    <span>Block utilization:</span>
+                    <span class="stats-value">75% (6/8 slots)</span>
+                </div>
+                <div class="stats-item">
+                    <span>Memory efficiency:</span>
+                    <span class="stats-value">~3x over static allocation</span>
+                </div>
+            `;
+        }
+
+        async function step7(reverse = false) {
+            // Update token stream
+            tokenStream.innerHTML = '<span class="token">Simulation</span> <span class="token">complete</span>';
+            
+            // Create final summary
+            summary.className = 'summary visible';
+            summary.innerHTML = `
+                <h3>Key Findings: Why PagedAttention is Superior to Static KV Cache Allocation</h3>
+                
+                <p>Static KV Cache pre-allocation suffers from three types of memory waste that severely limit its efficiency:</p>
+                
+                <table class="comparison-table">
+                    <tr>
+                        <th>Memory Waste Type</th>
+                        <th>Static Allocation</th>
+                        <th>PagedAttention</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Internal Fragmentation</strong><br>Memory allocated to a request but never used</td>
+                        <td class="drawback">~40% waste<br>Occurs whenever requests finish early</td>
+                        <td class="benefit">~1-4% waste<br>Only in partially filled blocks</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Reservation</strong><br>Memory reserved for future tokens</td>
+                        <td class="drawback">~20-40% waste<br>All requests must pre-allocate maximum size</td>
+                        <td class="benefit">0% waste<br>Allocates only what's needed when needed</td>
+                    </tr>
+                    <tr>
+                        <td><strong>External Fragmentation</strong><br>Unusable gaps between memory blocks</td>
+                        <td class="drawback">~10-30% waste<br>Increases as more requests are processed</td>
+                        <td class="benefit">0% waste<br>Block-based allocation eliminates gaps</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Memory Sharing</strong></td>
+                        <td class="drawback">Not possible<br>Each request duplicates identical tokens</td>
+                        <td class="benefit">Enables sharing common tokens<br>Multiple requests can reference same blocks</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Overall Memory Efficiency</strong></td>
+                        <td class="drawback">~20-30% efficient<br>60-80% memory wasted</td>
+                        <td class="benefit">~95-99% efficient<br>Only 1-5% memory wasted</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Result</strong></td>
+                        <td class="drawback">Severely limited batch size and throughput</td>
+                        <td class="benefit">2-4x higher throughput with same memory</td>
+                    </tr>
+                </table>
+                
+                <p style="margin-top: 20px">PagedAttention's block-based memory management enables efficient, dynamic allocation and deallocation, significantly improving memory utilization for LLM inference.</p>
+            `;
+            
+            // Update explanations for final state
+            staticExplanation.innerHTML = `
+                <p><strong>Static KV Cache Allocation Suffers From Three Types of Memory Waste:</strong></p>
+                <ul>
+                    <li><strong>Internal Fragmentation:</strong> Memory allocated to a request but never used</li>
+                    <li><strong>Reservation:</strong> Memory reserved for future tokens but not yet needed</li>
+                    <li><strong>External Fragmentation:</strong> Unusable gaps between allocated memory blocks</li>
+                </ul>
+                <p>These wastes combine to make static allocation very inefficient (60-80% waste).</p>
+            `;
+            
+            pagedExplanation.innerHTML = `
+                <p><strong>PagedAttention Benefits:</strong></p>
+                <ul>
+                    <li><strong>Dynamic Allocation:</strong> Only allocates memory as needed</li>
+                    <li><strong>Block-based Storage:</strong> Eliminates external fragmentation</li>
+                    <li><strong>Memory Sharing:</strong> Multiple requests can share common blocks</li>
+                    <li><strong>Near-Zero Waste:</strong> Only ~4% waste in real-world scenarios</li>
+                </ul>
+                <p>This enables higher throughput by fitting more requests in the same memory.</p>
+            `;
+            
+            // Update request info
+            staticRequestInfo.innerHTML = '<p>Static pre-allocation significantly limits batch size due to memory waste.</p>';
+            pagedRequestInfo.innerHTML = '<p>PagedAttention enables much larger batch sizes with the same memory.</p>';
+            
+            // Create a colorful static grid illustrating all waste types
+            for (let i = 0; i < 32; i++) {
+                const block = document.getElementById(`static-block-${i}`);
+                if (i < 6) {
+                    await animateBlock(block, 'memory-block-used', `Data`, `Used memory (only ~20% of total)`);
+                } else if (i < 18) {
+                    await animateBlock(block, 'memory-block-internal-frag', '', 'Internal Fragmentation: Allocated but never used');
+                } else if (i < 25) {
+                    await animateBlock(block, 'memory-block-reserved', '', 'Reserved for future tokens but not needed');
+                } else {
+                    await animateBlock(block, 'memory-block-external-frag', '', 'External Fragmentation: Unusable gaps between allocations');
+                }
+            }
+            
+            // Create a PagedAttention grid showing efficient usage
+            for (let i = 0; i < 32; i++) {
+                const block = document.getElementById(`paged-block-${i}`);
+                if (i < 23) {
+                    await animateBlock(block, 'memory-block-used-paged', `Data`, `Efficiently used memory (~96% of total)`);
+                } else if (i < 24) {
+                    await animateBlock(block, 'memory-block-used-paged', `P1`, `Partially filled block (only waste in PagedAttention)`);
+                } else {
+                    await animateBlock(block, 'memory-block-free', '', 'Free memory available for new requests');
+                }
+            }
+            
+            // Final block table
+            blockTableContainer.innerHTML = `
+                <div class="stats-title">Block Table</div>
+                <table class="block-table">
+                    <tr>
+                        <th>Logical Block</th>
+                        <th>Physical Block</th>
+                        <th>Filled</th>
+                        <th>Ref Count</th>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="text-align: center;">Multiple block mappings with efficient memory usage</td>
+                    </tr>
+                </table>
+                <p style="text-align: center; margin-top: 10px;">PagedAttention achieves near-optimal memory usage (only ~4% waste)</p>
+            `;
+            
+            // Update stats
+            staticStats.innerHTML = `
+                <div class="stats-title">Memory Statistics</div>
+                <div class="stats-item">
+                    <span>Memory waste:</span>
+                    <span class="stats-value">~80%</span>
+                </div>
+                <div class="stats-item">
+                    <span>Internal Fragmentation:</span>
+                    <span class="stats-value">~37.5%</span>
+                </div>
+                <div class="stats-item">
+                    <span>Reservation:</span>
+                    <span class="stats-value">~21.9%</span>
+                </div>
+                <div class="stats-item">
+                    <span>External Fragmentation:</span>
+                    <span class="stats-value">~21.9%</span>
+                </div>
+            `;
+            
+            pagedStats.innerHTML = `
+                <div class="stats-title">Memory Statistics</div>
+                <div class="stats-item">
+                    <span>Memory waste:</span>
+                    <span class="stats-value">~4%</span>
+                </div>
+                <div class="stats-item">
+                    <span>Memory utilization:</span>
+                    <span class="stats-value">~96%</span>
+                </div>
+                <div class="stats-item">
+                    <span>Throughput improvement:</span>
+                    <span class="stats-value">2-4x over static allocation</span>
+                </div>
+            `;
+        }
+
+        // Initialize the visualization
+        initializeGrids();
+        updateUI();
+
+        // Event listeners for navigation
+        prevBtn.addEventListener('click', previousStep);
+        nextBtn.addEventListener('click', nextStep);
+        resetBtn.addEventListener('click', resetSimulation);
+    </script>
+</body>
+</html>
